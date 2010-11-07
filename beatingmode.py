@@ -14,13 +14,13 @@ import functools
 from itertools import product
 
 image_data = genfromtxt("dati3.dat")
-# image_data = genfromtxt("misura03.dat")
-image_data = image_data[:, 1:]
-
 PIXEL_F = 100.0
+# image_data = genfromtxt("misura03.dat")
 # SHUTTER_F = 5.856 / 2
+
 SHUTTER_F = 9.78 / 2
 TAU_P = 1 / PIXEL_F
+image_data = image_data[:, 1:]
 
 def phi_pixel(x, phi0):
     r = modf((x * TAU_P + phi0 * 1.0 / SHUTTER_F) / (1.0 / SHUTTER_F))
