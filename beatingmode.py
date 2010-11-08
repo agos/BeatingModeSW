@@ -13,9 +13,9 @@ from matplotlib import cbook
 import functools
 from itertools import product
 
-image_data = genfromtxt("dati3.dat")
+image_data = genfromtxt("dati/dati3.dat")
 PIXEL_F = 100.0
-# image_data = genfromtxt("misura03.dat")
+# image_data = genfromtxt("dati/misura03.dat")
 # SHUTTER_F = 5.856 / 2
 
 image_data = image_data[:, 1:]
