@@ -3,6 +3,7 @@
 
 import pylab
 import itertools
+import sys
 from math import pi
 import csv
 from numpy import *
@@ -12,6 +13,8 @@ from matplotlib.colors import LinearSegmentedColormap
 from matplotlib import cbook
 import functools
 from itertools import product
+
+DEBUG_COLUMNS_FIT = True
 
 image_data = genfromtxt("dati/dati3.dat")
 PIXEL_F = 100.0
@@ -77,8 +80,8 @@ segmentdata = {'red':   [(0.0, 0.0, 0.0),
 
 my_color_map = LinearSegmentedColormap("stdGreen", segmentdata)
 
+pylab.figure(1)
 h, w = 3, 3
-
 pylab.subplot(h, w, 1)
 first_image = pylab.imshow(image_data, cmap=my_color_map)
 first_image.set_interpolation('nearest')
@@ -330,5 +333,30 @@ print ratio
 # column_off = array([element for position, element in enumerate(compensated_image[:,50]) if not better_estimate[position, 50]])
 # pylab.plot(column_off)
 
+if DEBUG_COLUMNS_FIT:
+    # Seconda figura, per i grafici dei fit delle colonne
+    pylab.figure(2)
+    print "Inizio a scrivere i grafici dei fit delle colonne...",
+    sys.stdout.flush()
+    for i in range(image_data.shape[1]):
+        sample_verticale = image_data[:, i]
+        pylab.plot(sample_verticale)
+        sample_verticale_mask = better_estimate[:, i]
+        column = vstack((sample_verticale, sample_verticale_mask)).swapaxes(0,1)
+        compensated, p1, p2 = compensate_column_parameters(column)
+        time = arange(image_height)
+        fit_values_on = exponential(time, p1)
+        pylab.plot(time, fit_values_on)
+        fit_values_off = exponential(time, p2)
+        pylab.plot(time, fit_values_off)
+        pylab.plot(compensated)
+        filename = "out/fitcolonna{0:03d}.png".format(i)
+        pylab.savefig(filename)
+        pylab.clf()
+    pylab.close()
+    pylab.figure(1)
+    print "fatto!"
+
 pylab.show()
+
 
