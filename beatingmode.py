@@ -350,7 +350,7 @@ if DEBUG_COLUMNS_FIT:
         fit_values_off = exponential(time, p2)
         pylab.plot(time, fit_values_off)
         pylab.plot(compensated)
-        filename = "out/fitcolonna{0:03d}.png".format(i)
+        filename = "out/fitcolonna{0:02d}.png".format(i)
         pylab.savefig(filename)
         pylab.clf()
     pylab.close()
