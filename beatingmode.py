@@ -67,8 +67,6 @@ print "Min: ", image_data.min()
 probe_estimate = empty(image_data.shape, bool)
 for (position, value) in ndenumerate(image_data):
     probe_estimate[position] = value > image_data[position[0],:].mean()
-# writer = csv.writer(open("probe_estimate.csv", "wb"), delimiter="\t")
-# writer.writerows(probe_estimate)
 
 segmentdata = {'red':   [(0.0, 0.0, 0.0),
                          (1.0, 0.0, 0.0)],
@@ -136,7 +134,6 @@ for n, p in enumerate(phases):
 m, b = polyfit(arange(new_phases.shape[0]), new_phases,1)
 line = arange(new_phases.shape[0])* m + b
 
-
 #better_estimate = probe_estimate
 # better_estimate = apply_along_axis(fit_row, 1, probe_estimate)
 
@@ -200,14 +197,8 @@ def compensate_column_parameters(c):
         p0 = [samples.max() - samples.min(), 50, samples.min()]
         result = optimize.curve_fit(fitting_function, positions, samples, p0)
         parameters_on = result[0]
-        t = parameters_on[1]
-        def fitting_function_fixed_t(x, a, c):
-            return a * (exp(-1.0 * x /b)) + c
         positions = column_off[:, 0]
         samples = column_off[:, 1]
-        # p0 = [samples.max()- samples.min(), samples.min()]
-        # result = optimize.curve_fit(fitting_function_fixed_t, positions, samples, p0)
-        # parameters_off = [result[0][0], t, result[0][1]]
         p0 = [samples.max()- samples.min(), 50, samples.min()]
         result = optimize.curve_fit(fitting_function, positions, samples, p0)
         parameters_off = result[0]
@@ -218,19 +209,11 @@ def compensate_column_parameters(c):
         p0 = [samples.max() - samples.min(), 50, samples.min()]
         result = optimize.curve_fit(fitting_function, positions, samples, p0)
         parameters_off = result[0]
-        t = parameters_off[1]
-        def fitting_function_fixed_t(x, a, c):
-            return a * (exp(-1.0 * x /b)) + c
         positions = column_on[:,0]
         samples = column_on[:,1]
-        # p0 = [samples.max()- samples.min(), samples.min()]
-        # result = optimize.curve_fit(fitting_function_fixed_t, positions, samples, p0)
-        # parameters_on = [result[0][0], t, result[0][1]]
         p0 = [samples.max()- samples.min(), 50, samples.min()]
         result = optimize.curve_fit(fitting_function, positions, samples, p0)
         parameters_on = result[0]
-    # parameters_on = [ 158.29424826  , 35.99712695 , 138.85613414]
-    # parameters_off = [ 100.23392999  , 54.67714084 ,  113.73852978]
     compensated_off = array([compensate(item, parameters_off) for item in column_off])
     compensated_on = array([compensate(item, parameters_on) for item in column_on])
     c = concatenate((compensated_on, compensated_off))
@@ -318,20 +301,6 @@ for i in range(width):
 pylab.subplot(h,w,7)
 pylab.plot(image_on)
 pylab.plot(image_off)
-print ratio
-
-
-# pylab.plot(compensated_column_center_on)
-#writer = csv.writer(open("colonna_corretta_bleaching.csv", "wb"), delimiter="\t")
-#writer.writerow(compensated_column)
-
-# pylab.subplot(h, w, 7)
-# column_on = array([element for position, element in enumerate(compensated_image[:,50]) if better_estimate[position, 50]])
-# pylab.plot(column_on)
-# 
-# pylab.subplot(h, w, 9)
-# column_off = array([element for position, element in enumerate(compensated_image[:,50]) if not better_estimate[position, 50]])
-# pylab.plot(column_off)
 
 if DEBUG_COLUMNS_FIT:
     # Seconda figura, per i grafici dei fit delle colonne
