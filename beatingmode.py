@@ -41,7 +41,7 @@ def build_row(l, phi):
 def build_row_square(l, phi):
     x = arange(l)
     r = square( (2 * pi) * ((SHUTTER_F * x * TAU_P) + phi) )/2 + 0.5
-    return r >= 0.5
+    return r > 0.5
 
 # Costruisco l'istogramma
 # TODO provare con bincount o addirittura histogram
