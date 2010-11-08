@@ -247,12 +247,12 @@ pylab.title('Sample verticale')
 pylab.xlabel('Distanza')
 pylab.ylabel('Valore')
 
-n_colonna = 50
+col_n = 50
 
-sample_verticale = image_data[:, n_colonna]
+sample_verticale = image_data[:, col_n]
 pylab.plot(sample_verticale)
 
-sample_verticale_mask = better_estimate[:, n_colonna]
+sample_verticale_mask = better_estimate[:, col_n]
 column = vstack((sample_verticale, sample_verticale_mask)).swapaxes(0,1)
 
 compensated, p1, p2 = compensate_column_parameters(column)
@@ -278,7 +278,6 @@ corrected_image.set_interpolation('nearest')
 pylab.title('Immagine corretta per il bleaching')
 
 pylab.subplot(h, w, 5)
-col_n = 50
 compensated_column = compensated_image[:, col_n]
 pylab.plot(compensated_column)
 
@@ -311,7 +310,6 @@ for i in range(width):
     compensated_column_center_off = array([item for pos, item in enumerate(compensated_column) if central_part_off[pos,i]])
     off = compensated_column_center_off.mean()
     image_off[i] = off
-    
     ratio[i] = on / off
 
 pylab.subplot(h,w,7)
