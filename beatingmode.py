@@ -338,6 +338,7 @@ if DEBUG_COLUMNS_FIT:
     pylab.figure(2)
     print "Inizio a scrivere i grafici dei fit delle colonne...",
     sys.stdout.flush()
+    parameters_list = empty((image_data.shape[1],6), float)
     for i in range(image_data.shape[1]):
         sample_verticale = image_data[:, i]
         pylab.plot(sample_verticale)
@@ -353,7 +354,10 @@ if DEBUG_COLUMNS_FIT:
         filename = "out/fitcolonna{0:02d}.png".format(i)
         pylab.savefig(filename)
         pylab.clf()
+        parameters_list[i] = append(array(p1), p2)
     pylab.close()
+    writer = csv.writer(open("out/parametri_fit_esponenziale.csv", "wb"), delimiter="\t")
+    writer.writerows(parameters_list)
     pylab.figure(1)
     print "fatto!"
 
