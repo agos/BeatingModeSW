@@ -18,9 +18,10 @@ PIXEL_F = 100.0
 # image_data = genfromtxt("misura03.dat")
 # SHUTTER_F = 5.856 / 2
 
+image_data = image_data[:, 1:]
+
 SHUTTER_F = 9.78 / 2
 TAU_P = 1 / PIXEL_F
-image_data = image_data[:, 1:]
 
 def phi_pixel(x, phi0):
     r = modf((x * TAU_P + phi0 * 1.0 / SHUTTER_F) / (1.0 / SHUTTER_F))
@@ -36,7 +37,6 @@ def build_row(l, phi):
 
 def build_row_square(l, phi):
     x = arange(l)
-    # r = square(2 * pi * SHUTTER_F * (x * TAU_P + phi / SHUTTER_F))/2 + 0.5
     r = square( (2 * pi) * ((SHUTTER_F * x * TAU_P) + phi) )/2 + 0.5
     return r >= 0.5
 
@@ -144,7 +144,7 @@ for i, phi in enumerate(line):
 
 print "fatto!"
 
-#Ora produco altre due matrici simili per prendere solo la parte CENTRALE degli on e degli off
+# Ora produco altre due matrici simili per prendere solo la parte CENTRALE degli on e degli off
 
 def build_row_square_subset(l, phi, on):
     x = arange(l)
@@ -240,6 +240,8 @@ def compensate_column(c):
     r = compensate_column_parameters(c)
     return r[0]
 
+# Compenso una colonna singola
+
 pylab.subplot(h, w, 4)
 pylab.title('Sample verticale')
 pylab.xlabel('Distanza')
@@ -274,7 +276,6 @@ pylab.subplot(h, w, 6)
 corrected_image = pylab.imshow(compensated_image, cmap=my_color_map)
 corrected_image.set_interpolation('nearest')
 pylab.title('Immagine corretta per il bleaching')
-
 
 pylab.subplot(h, w, 5)
 col_n = 50
@@ -330,9 +331,6 @@ print ratio
 # pylab.subplot(h, w, 9)
 # column_off = array([element for position, element in enumerate(compensated_image[:,50]) if not better_estimate[position, 50]])
 # pylab.plot(column_off)
-
-
-
 
 pylab.show()
 
