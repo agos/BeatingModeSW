@@ -226,8 +226,8 @@ def compensate_column_parameters(c):
         p0 = [samples.max()- samples.min(), 50, samples.min()]
         result = optimize.curve_fit(fitting_function, positions, samples, p0)
         parameters_on = result[0]
-    parameters_on = [ 158.29424826  , 35.99712695 , 138.85613414]
-    parameters_off = [ 100.23392999  , 54.67714084 ,  113.73852978]
+    # parameters_on = [ 158.29424826  , 35.99712695 , 138.85613414]
+    # parameters_off = [ 100.23392999  , 54.67714084 ,  113.73852978]
     compensated_off = array([compensate(item, parameters_off) for item in column_off])
     compensated_on = array([compensate(item, parameters_on) for item in column_on])
     c = concatenate((compensated_on, compensated_off))
