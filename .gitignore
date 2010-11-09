@@ -1,9 +1,3 @@
-# Mac OS X files
-.DS_Store
-
-# Textmate project
-beatingmode.tmproj
-
 # Directory input e output
 out/
 dati/
