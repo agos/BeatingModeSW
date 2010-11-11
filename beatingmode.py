@@ -14,7 +14,7 @@ from matplotlib import cbook
 import functools
 from itertools import product
 
-DEBUG_COLUMNS_FIT = True
+DEBUG_COLUMNS_FIT = False
 
 image_data = genfromtxt("dati/dati3.dat")
 PIXEL_F = 100.0
