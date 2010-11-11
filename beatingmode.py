@@ -148,8 +148,8 @@ print "fatto!"
 
 def build_row_square_subset(l, phi, on):
     x = arange(l)
-    duty_cycle = 0.25
-    r = square(  (2 * pi) * ((SHUTTER_F * x * TAU_P) + phi  + (1 - duty_cycle)/2 + 0.5 * on ) , duty_cycle)/2 + 0.5
+    duty_cycle = 0.5
+    r = square(  (2 * pi) * ((SHUTTER_F * x * TAU_P) + phi  + (0.5 - duty_cycle)/2 + 0.5 * (not on) ) , duty_cycle)/2 + 0.5
     return r >= 0.5
 
 central_part_on = empty_like(probe_estimate)
@@ -290,6 +290,9 @@ for i in range(width):
 pylab.subplot(h,w,7)
 pylab.plot(image_on)
 pylab.plot(image_off)
+
+pylab.subplot(h,w,8)
+pylab.plot(ratio)
 
 if DEBUG_COLUMNS_FIT:
     # Seconda figura, per i grafici dei fit delle colonne
