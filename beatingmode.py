@@ -176,17 +176,18 @@ def fitting_function(x, a, b, c):
 def exponential(x, p):
     return fitting_function(x, p[0], p[1], p[2])
 
-def compensate(measurement, p):
+def compensate(measurement, p, column_length):
     x = measurement[0]
     y = measurement[1]
-    high = exponential(0, p)
-    return [x, y + (high - exponential(x, p))]
+    low = exponential(column_length, p)
+    return [x, y - (exponential(x, p) - low)]
 
 masked_image = dstack((image_data, better_estimate))
 
 def compensate_column_parameters(c):
     column = c[:, 0]
     mask = c[:, 1]
+    
     column_on = array([[position, element] for position, element in enumerate(column) if mask[position]])
     column_off = array([[position, element] for position, element in enumerate(column) if not mask[position]])
     # Trovo parametri bright
@@ -202,8 +203,8 @@ def compensate_column_parameters(c):
     result = optimize.curve_fit(fitting_function, positions, samples, p0)
     parameters_off = result[0]
     # Compenso
-    compensated_off = array([compensate(item, parameters_off) for item in column_off])
-    compensated_on = array([compensate(item, parameters_on) for item in column_on])
+    compensated_off = array([compensate(item, parameters_off, column.shape[0]) for item in column_off])
+    compensated_on = array([compensate(item, parameters_on, column.shape[0]) for item in column_on])
     c = concatenate((compensated_on, compensated_off))
     i = c[:, 0]
     c = c[:, 1]
