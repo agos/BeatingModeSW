@@ -189,31 +189,19 @@ def compensate_column_parameters(c):
     mask = c[:, 1]
     column_on = array([[position, element] for position, element in enumerate(column) if mask[position]])
     column_off = array([[position, element] for position, element in enumerate(column) if not mask[position]])
-
-    if mask[0]:
-        #Inizia con bright
-        positions = column_on[:,0]
-        samples = column_on[:,1]
-        p0 = [samples.max() - samples.min(), 50, samples.min()]
-        result = optimize.curve_fit(fitting_function, positions, samples, p0)
-        parameters_on = result[0]
-        positions = column_off[:, 0]
-        samples = column_off[:, 1]
-        p0 = [samples.max()- samples.min(), 50, samples.min()]
-        result = optimize.curve_fit(fitting_function, positions, samples, p0)
-        parameters_off = result[0]
-    else:
-        #Inizia con dark
-        positions = column_off[:, 0]
-        samples = column_off[:, 1]
-        p0 = [samples.max() - samples.min(), 50, samples.min()]
-        result = optimize.curve_fit(fitting_function, positions, samples, p0)
-        parameters_off = result[0]
-        positions = column_on[:,0]
-        samples = column_on[:,1]
-        p0 = [samples.max()- samples.min(), 50, samples.min()]
-        result = optimize.curve_fit(fitting_function, positions, samples, p0)
-        parameters_on = result[0]
+    # Trovo parametri bright
+    positions = column_on[:,0]
+    samples = column_on[:,1]
+    p0 = [samples.max() - samples.min(), 50, samples.min()]
+    result = optimize.curve_fit(fitting_function, positions, samples, p0)
+    parameters_on = result[0]
+    # Trovo parametri dark
+    positions = column_off[:, 0]
+    samples = column_off[:, 1]
+    p0 = [samples.max()- samples.min(), 50, samples.min()]
+    result = optimize.curve_fit(fitting_function, positions, samples, p0)
+    parameters_off = result[0]
+    # Compenso
     compensated_off = array([compensate(item, parameters_off) for item in column_off])
     compensated_on = array([compensate(item, parameters_on) for item in column_on])
     c = concatenate((compensated_on, compensated_off))
