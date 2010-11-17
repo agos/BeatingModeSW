@@ -17,13 +17,13 @@ from itertools import product
 DEBUG_COLUMNS_FIT = False
 
 image_data = genfromtxt("dati/dati.dat")
-PIXEL_F = 100.0
+SHUTTER_F = 9.78 / 2
 # image_data = genfromtxt("dati/misura03.dat")
 # SHUTTER_F = 5.856 / 2
 
 image_data = image_data[:, 1:]
 
-SHUTTER_F = 9.78 / 2
+PIXEL_F = 100.0
 TAU_P = 1 / PIXEL_F
 
 def phi_pixel(x, phi0):
