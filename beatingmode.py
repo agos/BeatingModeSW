@@ -16,7 +16,7 @@ from itertools import product
 
 DEBUG_COLUMNS_FIT = False
 
-image_data = genfromtxt("dati/dati3.dat")
+image_data = genfromtxt("dati/dati.dat")
 PIXEL_F = 100.0
 # image_data = genfromtxt("dati/misura03.dat")
 # SHUTTER_F = 5.856 / 2
