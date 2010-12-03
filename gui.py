@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import wx
+from beatingmode import BeatingData
 
 
 class MainFrame(wx.Frame):
@@ -20,6 +21,7 @@ class MainFrame(wx.Frame):
         self.statusbar = self.CreateStatusBar()
         self.Bind(wx.EVT_MENU, self.OnCloseMe, close_window_menu)
         self.Centre()
+        beatingdata = BeatingData(path="dati/dati.dat", pixel_frequency=100.0, shutter_frequency=9.78 / 2)
 
     def OnCloseMe(self, event):
         self.Close(True)

@@ -16,6 +16,14 @@ from itertools import product
 
 DEBUG_COLUMNS_FIT = False
 
+class BeatingData(object):
+    """docstring for BeatingData"""
+    def __init__(self, path, pixel_frequency=100.0, shutter_frequency=5.0):
+        super(BeatingData, self).__init__()
+        self.path = path
+        self.pixel_frequency = pixel_frequency
+        self.shutter_frequency = shutter_frequency
+        self.data = genfromtxt(path)
 
 if __name__ == '__main__':
 
