@@ -30,19 +30,22 @@ class MainFrame(wx.Frame):
         wx.Frame.__init__(self, parent, id, title, wx.DefaultPosition,
             wx.Size(900, 700), style=wx.DEFAULT_FRAME_STYLE)
 
-        menubar = wx.MenuBar()
-        file_menu = wx.Menu()
-        close_window_menu = wx.MenuItem(file_menu, 105,
-            'Close &Window\tCtrl+W', 'Close the Window')
-        file_menu.AppendItem(close_window_menu)
-        menubar.Append(file_menu, '&File')
-        self.SetMenuBar(menubar)
+        self.create_menu()
         self.statusbar = self.CreateStatusBar()
-        self.Bind(wx.EVT_MENU, self.OnCloseMe, close_window_menu)
         self.create_main_panel()
         self.Centre()
         self.beatingdata = BeatingData(path="dati/dati.dat", pixel_frequency=100.0, shutter_frequency=9.78 / 2)
         self.draw_figure()
+
+    def create_menu(self):
+        self.menubar = wx.MenuBar()
+        file_menu = wx.Menu()
+        close_window_menu = wx.MenuItem(file_menu, 105,
+            'Close &Window\tCtrl+W', 'Close the Window')
+        file_menu.AppendItem(close_window_menu)
+        self.Bind(wx.EVT_MENU, self.OnCloseMe, close_window_menu)
+        self.menubar.Append(file_menu, '&File')
+        self.SetMenuBar(self.menubar)
 
     def create_main_panel(self):
         """ Creates the main panel with all the controls on it:
