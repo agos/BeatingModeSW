@@ -134,7 +134,7 @@ class MainFrame(wx.Frame):
             self.x, self.y = x, y
             value = self.beatingdata.data[y, x]
             msg = "Coordinate: {0}, {1} Valore: {2}".format(x, y, value)
-            self.statusbar.SetStatusText(msg);
+            self.statusbar.SetStatusText(msg)
 
     def enter_axes(self, event):
         self.in_axes = True
@@ -145,7 +145,7 @@ class MainFrame(wx.Frame):
         self.in_axes = False
         self.canvas.mpl_disconnect(self.cid)
         self.timer.Stop()
-        self.statusbar.SetStatusText(" ");
+        self.statusbar.SetStatusText(" ")
         self.beating_image.set_array(self.beatingdata.data)
         self.canvas.draw()
 
@@ -160,6 +160,7 @@ class MainFrame(wx.Frame):
             self.beating_image.set_array(highlight_data)
             self.canvas.draw()
             self.prevx, self.prevy = x, y
+
 
 class beatingmode(wx.App):
 
