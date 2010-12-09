@@ -65,8 +65,6 @@ class MainFrame(wx.Frame):
         # work.
         self.axes = self.fig.add_subplot(111)
         self.in_axes = False
-        # self.canvas.mpl_connect('button_press_event', self.on_click)
-        
         self.canvas.mpl_connect('axes_enter_event', self.enter_axes)
         self.canvas.mpl_connect('axes_leave_event', self.leave_axes)
         self.textbox = wx.TextCtrl(
