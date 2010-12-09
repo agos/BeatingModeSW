@@ -64,8 +64,11 @@ class MainFrame(wx.Frame):
         # configuration tool in the navigation toolbar wouldn't
         # work.
         self.axes = self.fig.add_subplot(111)
-        # Bind the 'pick' event for clicking on one of the bars
-        #self.canvas.mpl_connect('pick_event', self.on_pick)
+        self.in_axes = False
+        # self.canvas.mpl_connect('button_press_event', self.on_click)
+        
+        self.canvas.mpl_connect('axes_enter_event', self.enter_axes)
+        self.canvas.mpl_connect('axes_leave_event', self.leave_axes)
         self.textbox = wx.TextCtrl(
             self.panel,
             size=(200, -1),
@@ -106,6 +109,9 @@ class MainFrame(wx.Frame):
         self.vbox.Add(self.hbox, 0, flag = wx.ALIGN_LEFT | wx.TOP)
         self.panel.SetSizer(self.vbox)
         self.vbox.Fit(self)
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.callback, self.timer)
+        self.prevx, self.prevy = -1, -1
 
     def draw_figure(self):
         """ Redraws the figure
@@ -122,6 +128,38 @@ class MainFrame(wx.Frame):
     def OnCloseMe(self, event):
         self.Close(True)
 
+    def on_mouseover(self, event):
+        if event.inaxes == self.axes:
+            x, y = int(floor(event.xdata)), int(floor(event.ydata))
+            self.x, self.y = x, y
+            value = self.beatingdata.data[y, x]
+            msg = "Coordinate: {0}, {1} Valore: {2}".format(x, y, value)
+            self.statusbar.SetStatusText(msg);
+
+    def enter_axes(self, event):
+        self.in_axes = True
+        self.cid = self.canvas.mpl_connect('motion_notify_event', self.on_mouseover)
+        self.timer.Start(150)
+
+    def leave_axes(self, event):
+        self.in_axes = False
+        self.canvas.mpl_disconnect(self.cid)
+        self.timer.Stop()
+        self.statusbar.SetStatusText(" ");
+        self.beating_image.set_array(self.beatingdata.data)
+        self.canvas.draw()
+
+    def callback(self, event):
+        if self.in_axes and (self.x != self.prevx or self.y != self.prevy):
+            x, y = self.x, self.y
+            value = self.beatingdata.data[y, x]
+            highlight_data = copy(self.beatingdata.data)
+            highlight_data[:, x] = highlight_data[:, x] * 0.7 + highlight_data.max() * 0.3
+            highlight_data[y, :] = highlight_data[y, :] * 0.7 + highlight_data.max() * 0.3
+            highlight_data[y, x] = value
+            self.beating_image.set_array(highlight_data)
+            self.canvas.draw()
+            self.prevx, self.prevy = x, y
 
 class beatingmode(wx.App):
 
