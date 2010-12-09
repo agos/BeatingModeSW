@@ -79,14 +79,15 @@ class MainFrame(wx.Frame):
             style=wx.ALIGN_RIGHT)
         self.Bind(wx.EVT_CHECKBOX, self.on_cb_grid, self.cb_grid)
         self.slider_label = wx.StaticText(self.panel, -1,
-            "Bar width (%): ")
-        self.slider_width = wx.Slider(self.panel, -1,
-            value=20,
+            "Crosshair opacity (%): ")
+        self.slider_alpha = wx.Slider(self.panel, -1,
+            value=30,
             minValue=1,
             maxValue=100,
             style=wx.SL_AUTOTICKS | wx.SL_LABELS)
-        self.slider_width.SetTickFreq(10, 1)
-        #self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK, self.on_slider_width, self.slider_width)
+        self.alpha = 0.3
+        self.slider_alpha.SetTickFreq(5, 1)
+        self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK, self.on_slider_alpha, self.slider_alpha)
         # Create the navigation toolbar, tied to the canvas
         self.toolbar = NavigationToolbar(self.canvas)
         #
@@ -103,7 +104,7 @@ class MainFrame(wx.Frame):
         self.hbox.Add(self.cb_grid, 0, border=3, flag=flags)
         self.hbox.AddSpacer(30)
         self.hbox.Add(self.slider_label, 0, flag=flags)
-        self.hbox.Add(self.slider_width, 0, border=3, flag=flags)
+        self.hbox.Add(self.slider_alpha, 0, border=3, flag=flags)
         self.vbox.Add(self.hbox, 0, flag = wx.ALIGN_LEFT | wx.TOP)
         self.panel.SetSizer(self.vbox)
         self.vbox.Fit(self)
@@ -152,12 +153,15 @@ class MainFrame(wx.Frame):
             x, y = self.x, self.y
             value = self.beatingdata.data[y, x]
             highlight_data = copy(self.beatingdata.data)
-            highlight_data[:, x] = highlight_data[:, x] * 0.7 + highlight_data.max() * 0.3
-            highlight_data[y, :] = highlight_data[y, :] * 0.7 + highlight_data.max() * 0.3
+            highlight_data[:, x] = highlight_data[:, x] * (1.0 - self.alpha) + highlight_data.max() * self.alpha
+            highlight_data[y, :] = highlight_data[y, :] * (1.0 - self.alpha) + highlight_data.max() * self.alpha
             highlight_data[y, x] = value
             self.beating_image.set_array(highlight_data)
             self.canvas.draw()
             self.prevx, self.prevy = x, y
+
+    def on_slider_alpha(self, event):
+        self.alpha = self.slider_alpha.GetValue() / 100.0
 
 
 class beatingmode(wx.App):
