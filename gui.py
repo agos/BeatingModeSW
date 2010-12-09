@@ -67,13 +67,6 @@ class MainFrame(wx.Frame):
         self.in_axes = False
         self.canvas.mpl_connect('axes_enter_event', self.enter_axes)
         self.canvas.mpl_connect('axes_leave_event', self.leave_axes)
-        self.textbox = wx.TextCtrl(
-            self.panel,
-            size=(200, -1),
-            style=wx.TE_PROCESS_ENTER)
-        #self.Bind(wx.EVT_TEXT_ENTER, self.on_text_enter, self.textbox)
-        self.drawbutton = wx.Button(self.panel, -1, "Draw!")
-        #self.Bind(wx.EVT_BUTTON, self.on_draw_button, self.drawbutton)
         self.cb_grid = wx.CheckBox(self.panel, -1,
             "Show Grid",
             style=wx.ALIGN_RIGHT)
@@ -99,8 +92,6 @@ class MainFrame(wx.Frame):
         self.vbox.AddSpacer(10)
         self.hbox = wx.BoxSizer(wx.HORIZONTAL)
         flags = wx.ALIGN_LEFT | wx.ALL | wx.ALIGN_CENTER_VERTICAL
-        self.hbox.Add(self.textbox, 0, border=3, flag=flags)
-        self.hbox.Add(self.drawbutton, 0, border=3, flag=flags)
         self.hbox.Add(self.cb_grid, 0, border=3, flag=flags)
         self.hbox.AddSpacer(30)
         self.hbox.Add(self.slider_label, 0, flag=flags)
