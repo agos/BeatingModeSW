@@ -24,6 +24,7 @@ class BeatingData(object):
         self.pixel_frequency = pixel_frequency
         self.shutter_frequency = shutter_frequency
         self.data = genfromtxt(path)
+        self.data = self.data[:, 1:]
 
 if __name__ == '__main__':
 
