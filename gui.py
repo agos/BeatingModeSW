@@ -138,7 +138,7 @@ class MainFrame(wx.Frame):
     def enter_axes(self, event):
         self.in_axes = True
         self.cid = self.canvas.mpl_connect('motion_notify_event', self.on_mouseover)
-        self.timer.Start(150)
+        self.timer.Start(80)
 
     def leave_axes(self, event):
         self.in_axes = False
