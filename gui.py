@@ -57,7 +57,7 @@ class MainFrame(wx.Frame):
         # Create the mpl Figure and FigCanvas objects.
         # 5x4 inches, 100 dots-per-inch
         self.dpi = 100
-        self.fig = Figure((5.0, 4.0), dpi=self.dpi)
+        self.fig = Figure((9.0, 7.0), dpi=self.dpi)
         self.canvas = FigCanvas(self.panel, -1, self.fig)
         # Since we have only one plot, we can use add_axes
         # instead of add_subplot, but then the subplot
