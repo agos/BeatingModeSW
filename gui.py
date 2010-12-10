@@ -148,6 +148,8 @@ class MainFrame(wx.Frame):
         self.statusbar.SetStatusText(" ")
         self.beating_image.set_array(self.beatingdata.data)
         self.canvas.draw()
+        self.axes_det_h.clear()
+        self.axes_det_v.clear()
         self.detailcanvas.draw()
 
     def callback(self, event):
@@ -160,6 +162,13 @@ class MainFrame(wx.Frame):
             highlight_data[y, x] = value
             self.beating_image.set_array(highlight_data)
             self.canvas.draw()
+            self.axes_det_h.clear()
+            self.axes_det_v.clear()
+            self.axes_det_h.plot(self.beatingdata.data[:, x])
+            self.axes_det_v.plot(self.beatingdata.data[y, :])
+            # Sarebbe bello fare come descritto qui alla voce animating
+            # selected plot elements
+            # http://www.scipy.org/Cookbook/Matplotlib/Animations
             self.detailcanvas.draw()
             self.prevx, self.prevy = x, y
 
