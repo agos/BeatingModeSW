@@ -91,7 +91,11 @@ class MainFrame(wx.Frame):
         # Layout with box sizers
         #
         self.vbox = wx.BoxSizer(wx.VERTICAL)
-        self.vbox.Add(self.canvas, 1, wx.LEFT | wx.TOP | wx.GROW)
+        self.graphbox = wx.BoxSizer(wx.HORIZONTAL)
+        flags = wx.ALIGN_LEFT | wx.ALL | wx.ALIGN_CENTER_VERTICAL
+        self.graphbox.Add(self.canvas, 2, flag=flags| wx.GROW)
+        self.graphbox.Add(self.detailcanvas, 1, flag=flags | wx.GROW)
+        self.vbox.Add(self.graphbox, 1, wx.LEFT | wx.TOP | wx.GROW)
         self.vbox.Add(self.toolbar, 0, wx.EXPAND)
         self.vbox.AddSpacer(10)
         self.hbox = wx.BoxSizer(wx.HORIZONTAL)
