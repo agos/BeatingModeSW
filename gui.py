@@ -107,7 +107,8 @@ class MainFrame(wx.Frame):
         """ Redraws the figure
         """
         self.axes.clear()
-        self.axes.grid(self.cb_grid.IsChecked())
+        if self.cb_grid.IsChecked():
+            self.axes.grid(b=True, color="#ffffff", alpha=0.8)
         self.beating_image = self.axes.imshow(self.beatingdata.data, cmap=my_color_map)
         self.beating_image.set_interpolation('nearest')
         self.canvas.draw()
