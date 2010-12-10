@@ -35,6 +35,16 @@ class MainFrame(wx.Frame):
         self.create_main_panel()
         self.Centre()
         self.beatingdata = BeatingData(path="dati/dati.dat", pixel_frequency=100.0, shutter_frequency=9.78 / 2)
+        self.line_det_h, = self.axes_det_h.plot(
+            arange(self.beatingdata.image_width),
+            zeros_like(arange(self.beatingdata.image_width)),
+            animated=True)
+        self.axes_det_h.set_ylim(self.beatingdata.data.min(), self.beatingdata.data.max())
+        self.line_det_v, = self.axes_det_v.plot(
+            arange(self.beatingdata.image_height),
+            zeros_like(arange(self.beatingdata.image_height)),
+            animated=True)
+        self.axes_det_v.set_ylim(self.beatingdata.data.min(), self.beatingdata.data.max())
         self.draw_figure()
 
     def create_menu(self):
@@ -121,6 +131,9 @@ class MainFrame(wx.Frame):
         self.beating_image.set_interpolation('nearest')
         self.canvas.draw()
         self.detailcanvas.draw()
+        self.background_h = self.detailcanvas.copy_from_bbox(self.axes_det_h.bbox)
+        self.background_v = self.detailcanvas.copy_from_bbox(self.axes_det_v.bbox)
+
 
     def on_cb_grid(self, event):
         self.draw_figure()
@@ -162,14 +175,15 @@ class MainFrame(wx.Frame):
             highlight_data[y, x] = value
             self.beating_image.set_array(highlight_data)
             self.canvas.draw()
-            self.axes_det_h.clear()
-            self.axes_det_v.clear()
-            self.axes_det_h.plot(self.beatingdata.data[:, x])
-            self.axes_det_v.plot(self.beatingdata.data[y, :])
-            # Sarebbe bello fare come descritto qui alla voce animating
-            # selected plot elements
-            # http://www.scipy.org/Cookbook/Matplotlib/Animations
-            self.detailcanvas.draw()
+            # Aggiorno i dettagli
+            self.detailcanvas.restore_region(self.background_h)
+            self.detailcanvas.restore_region(self.background_v)
+            self.line_det_h.set_ydata(self.beatingdata.data[y, :])
+            self.line_det_v.set_ydata(self.beatingdata.data[:, x])
+            self.axes_det_h.draw_artist(self.line_det_h)
+            self.axes_det_v.draw_artist(self.line_det_v)
+            self.detailcanvas.blit(self.axes_det_h.bbox)
+            self.detailcanvas.blit(self.axes_det_v.bbox)
             self.prevx, self.prevy = x, y
 
     def on_slider_alpha(self, event):
