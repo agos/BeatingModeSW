@@ -25,6 +25,8 @@ class BeatingData(object):
         self.shutter_frequency = shutter_frequency
         self.data = genfromtxt(path)
         self.data = self.data[:, 1:]
+        self.image_height, self.image_width = self.data.shape
+        self.image_size = (self.image_width, self.image_height)
 
 if __name__ == '__main__':
 
