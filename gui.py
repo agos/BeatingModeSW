@@ -59,11 +59,15 @@ class MainFrame(wx.Frame):
         self.dpi = 100
         self.fig = Figure((9.0, 7.0), dpi=self.dpi)
         self.canvas = FigCanvas(self.panel, -1, self.fig)
+        self.detailfig = Figure((1.0, 7.0), dpi=self.dpi)
+        self.detailcanvas = FigCanvas(self.panel, -1, self.detailfig)
         # Since we have only one plot, we can use add_axes
         # instead of add_subplot, but then the subplot
         # configuration tool in the navigation toolbar wouldn't
         # work.
         self.axes = self.fig.add_subplot(111)
+        self.axes_det_h = self.detailfig.add_subplot(211)
+        self.axes_det_v = self.detailfig.add_subplot(212)
         self.in_axes = False
         self.canvas.mpl_connect('axes_enter_event', self.enter_axes)
         self.canvas.mpl_connect('axes_leave_event', self.leave_axes)
@@ -112,6 +116,7 @@ class MainFrame(wx.Frame):
         self.beating_image = self.axes.imshow(self.beatingdata.data, cmap=my_color_map)
         self.beating_image.set_interpolation('nearest')
         self.canvas.draw()
+        self.detailcanvas.draw()
 
     def on_cb_grid(self, event):
         self.draw_figure()
@@ -139,6 +144,7 @@ class MainFrame(wx.Frame):
         self.statusbar.SetStatusText(" ")
         self.beating_image.set_array(self.beatingdata.data)
         self.canvas.draw()
+        self.detailcanvas.draw()
 
     def callback(self, event):
         if self.in_axes and (self.x != self.prevx or self.y != self.prevy):
@@ -150,6 +156,7 @@ class MainFrame(wx.Frame):
             highlight_data[y, x] = value
             self.beating_image.set_array(highlight_data)
             self.canvas.draw()
+            self.detailcanvas.draw()
             self.prevx, self.prevy = x, y
 
     def on_slider_alpha(self, event):
