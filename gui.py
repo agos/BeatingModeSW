@@ -96,7 +96,7 @@ class MainFrame(wx.Frame):
         self.hbox.AddSpacer(30)
         self.hbox.Add(self.slider_label, 0, flag=flags)
         self.hbox.Add(self.slider_alpha, 0, border=3, flag=flags)
-        self.vbox.Add(self.hbox, 0, flag = wx.ALIGN_LEFT | wx.TOP)
+        self.vbox.Add(self.hbox, 0, flag = wx.ALIGN_CENTER | wx.TOP)
         self.panel.SetSizer(self.vbox)
         self.vbox.Fit(self)
         self.timer = wx.Timer(self)
