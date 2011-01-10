@@ -30,6 +30,7 @@ class BeatingData(object):
         self.image_height, self.image_width = self.data.shape
         self.image_size = (self.image_width, self.image_height)
         self.__unbleached_data = None
+        self.__beating_mask = None
 
     @property
     def unbleached_data(self):
@@ -37,6 +38,13 @@ class BeatingData(object):
             return self.__unbleached_data
         else:
             return self.__unbleached_data
+
+    @property
+    def beating_mask(self):
+        if not self.__beating_mask:
+            return self.__beating_mask
+        else:
+            return self.__beating_mask
 
 if __name__ == '__main__':
 
