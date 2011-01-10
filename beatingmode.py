@@ -46,10 +46,12 @@ class BeatingData(object):
             # Stima iniziale
             for (position, value) in ndenumerate(self.data):
                 probe_estimate[position] = value > self.data[position[0], :].mean()
+
             def build_row_square(l, phi):
                 x = arange(l)
                 r = square((2 * pi) * ((self.shutter_frequency * x * 1/self.pixel_frequency) + phi))/2 + 0.5
                 return r > 0.5
+
             def find_phase(row):
                 r = 50
                 c = 99
@@ -100,37 +102,22 @@ if __name__ == '__main__':
     PIXEL_F = 100.0
     TAU_P = 1 / PIXEL_F
 
-
     def phi_pixel(x, phi0):
         r = modf((x * TAU_P + phi0 * 1.0 / SHUTTER_F) / (1.0 / SHUTTER_F))
         return r[0]
 
-
     def probe(x, phi0):
         return phi_pixel(x, phi0) < 0.5
-
 
     def build_row(l, phi):
         x = arange(l)
         r = modf((x * TAU_P + phi / SHUTTER_F) / (1.0 / SHUTTER_F))
         return r[0]
 
-
     def build_row_square(l, phi):
         x = arange(l)
         r = square((2 * pi) * ((SHUTTER_F * x * TAU_P) + phi))/2 + 0.5
         return r > 0.5
-
-    # Costruisco l'istogramma
-    # TODO provare con bincount o addirittura histogram
-    #distribution = {}
-    #for value in image_data.flat:
-        #    curr_count = distribution.setdefault(value, 0)
-        #    distribution[value] += 1
-    # Plotting
-    # keys = distribution.keys()
-    # keys.sort()
-    # values = [distribution[key] for key in keys]
 
     def swap((x, y)):
         return (y, x)
