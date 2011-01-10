@@ -35,6 +35,7 @@ class MainFrame(wx.Frame):
         self.create_main_panel()
         self.Centre()
         self.beatingdata = BeatingData(path="dati/dati.dat", pixel_frequency=100.0, shutter_frequency=9.78 / 2)
+        self.drawingdata = self.beatingdata.data
         self.line_det_h, = self.axes_det_h.plot(
             arange(self.beatingdata.image_width),
             zeros_like(arange(self.beatingdata.image_width)),
@@ -85,6 +86,10 @@ class MainFrame(wx.Frame):
             "Show Grid",
             style=wx.ALIGN_RIGHT)
         self.Bind(wx.EVT_CHECKBOX, self.on_cb_grid, self.cb_grid)
+        self.cb_unbleach = wx.CheckBox(self.panel, -1,
+            "Correct for bleaching",
+            style=wx.ALIGN_RIGHT)
+        self.Bind(wx.EVT_CHECKBOX, self.on_cb_unbleach, self.cb_unbleach)
         self.slider_label = wx.StaticText(self.panel, -1,
             "Crosshair opacity (%): ")
         self.slider_alpha = wx.Slider(self.panel, -1,
@@ -110,6 +115,7 @@ class MainFrame(wx.Frame):
         self.vbox.AddSpacer(10)
         self.hbox = wx.BoxSizer(wx.HORIZONTAL)
         flags = wx.ALIGN_LEFT | wx.ALL | wx.ALIGN_CENTER_VERTICAL
+        self.hbox.Add(self.cb_unbleach, 0, border=3, flag=flags)
         self.hbox.Add(self.cb_grid, 0, border=3, flag=flags)
         self.hbox.AddSpacer(30)
         self.hbox.Add(self.slider_label, 0, flag=flags)
@@ -127,7 +133,11 @@ class MainFrame(wx.Frame):
         self.axes.clear()
         if self.cb_grid.IsChecked():
             self.axes.grid(b=True, color="#ffffff", alpha=0.8)
-        self.beating_image = self.axes.imshow(self.beatingdata.data, cmap=my_color_map)
+        if self.cb_unbleach.IsChecked():
+            self.drawingdata = self.beatingdata.unbleached_data
+        else:
+            self.drawingdata = self.beatingdata.data
+        self.beating_image = self.axes.imshow(self.drawingdata, cmap=my_color_map)
         self.beating_image.set_interpolation('nearest')
         self.canvas.draw()
         self.detailcanvas.draw()
@@ -138,6 +148,9 @@ class MainFrame(wx.Frame):
     def on_cb_grid(self, event):
         self.draw_figure()
 
+    def on_cb_unbleach(self, event):
+        self.draw_figure()
+
     def OnCloseMe(self, event):
         self.Close(True)
 
@@ -145,7 +158,7 @@ class MainFrame(wx.Frame):
         if event.inaxes == self.axes:
             x, y = int(floor(event.xdata)), int(floor(event.ydata))
             self.x, self.y = x, y
-            value = self.beatingdata.data[y, x]
+            value = self.drawingdata[y, x]
             msg = "Coordinate: {0}, {1} Valore: {2}".format(x, y, value)
             self.statusbar.SetStatusText(msg)
 
@@ -159,7 +172,7 @@ class MainFrame(wx.Frame):
         self.canvas.mpl_disconnect(self.cid)
         self.timer.Stop()
         self.statusbar.SetStatusText(" ")
-        self.beating_image.set_array(self.beatingdata.data)
+        self.beating_image.set_array(self.drawingdata)
         self.canvas.draw()
         self.axes_det_h.clear()
         self.axes_det_v.clear()
@@ -168,8 +181,8 @@ class MainFrame(wx.Frame):
     def callback(self, event):
         if self.in_axes and (self.x != self.prevx or self.y != self.prevy):
             x, y = self.x, self.y
-            value = self.beatingdata.data[y, x]
-            highlight_data = copy(self.beatingdata.data)
+            value = self.drawingdata[y, x]
+            highlight_data = copy(self.drawingdata)
             highlight_data[:, x] = highlight_data[:, x] * (1.0 - self.alpha) + highlight_data.max() * self.alpha
             highlight_data[y, :] = highlight_data[y, :] * (1.0 - self.alpha) + highlight_data.max() * self.alpha
             highlight_data[y, x] = value
@@ -178,8 +191,8 @@ class MainFrame(wx.Frame):
             # Aggiorno i dettagli
             self.detailcanvas.restore_region(self.background_h)
             self.detailcanvas.restore_region(self.background_v)
-            self.line_det_h.set_ydata(self.beatingdata.data[y, :])
-            self.line_det_v.set_ydata(self.beatingdata.data[:, x])
+            self.line_det_h.set_ydata(self.drawingdata[y, :])
+            self.line_det_v.set_ydata(self.drawingdata[:, x])
             self.axes_det_h.draw_artist(self.line_det_h)
             self.axes_det_v.draw_artist(self.line_det_v)
             self.detailcanvas.blit(self.axes_det_h.bbox)
