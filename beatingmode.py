@@ -16,8 +16,10 @@ from itertools import product
 
 DEBUG_COLUMNS_FIT = False
 
+
 class BeatingData(object):
     """docstring for BeatingData"""
+
     def __init__(self, path, pixel_frequency=100.0, shutter_frequency=5.0):
         super(BeatingData, self).__init__()
         self.path = path
@@ -108,7 +110,6 @@ if __name__ == '__main__':
     estimate_plot.set_interpolation('nearest')
     pylab.title('Stima ON/OFF media')
 
-
     def fit_row(row):
         r = 50
         c = 99
@@ -120,7 +121,6 @@ if __name__ == '__main__':
         errors = apply_along_axis(sum, 1, error_matrix)
         e = argmin(errors)
         return result_matrix[e]
-
 
     def find_phase(row):
         r = 50
@@ -165,7 +165,6 @@ if __name__ == '__main__':
     print "fatto!"
 
     # Ora produco altre due matrici simili per prendere solo la parte CENTRALE degli on e degli off
-
     def build_row_square_subset(l, phi, on):
         x = arange(l)
         duty_cycle = 0.1
@@ -187,16 +186,12 @@ if __name__ == '__main__':
     imgplot2 = pylab.imshow(better_estimate, cmap=pylab.get_cmap("gray"))
     imgplot2.set_interpolation('nearest')
 
-
     # Sezione fit esponenziale
-
     def fitting_function(x, a, b, c):
         return  a * (exp(-1.0 * x / b)) + c
 
-
     def exponential(x, p):
         return fitting_function(x, p[0], p[1], p[2])
-
 
     def compensate(measurement, p, column_length):
         x = measurement[0]
@@ -205,7 +200,6 @@ if __name__ == '__main__':
         return [x, y - (exponential(x, p) - low)]
 
     masked_image = dstack((image_data, better_estimate))
-
 
     def compensate_column_parameters(c):
         column = c[:, 0]
@@ -233,7 +227,6 @@ if __name__ == '__main__':
         c = c[:, 1]
         ind = i.argsort(axis=0)
         return (c[ind], parameters_on, parameters_off)
-
 
     def compensate_column(c):
         r = compensate_column_parameters(c)
