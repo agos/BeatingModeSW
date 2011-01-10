@@ -42,6 +42,48 @@ class BeatingData(object):
     @property
     def beating_mask(self):
         if not self.__beating_mask:
+            probe_estimate = empty(self.data.shape, bool)
+            # Stima iniziale
+            for (position, value) in ndenumerate(self.data):
+                probe_estimate[position] = value > self.data[position[0], :].mean()
+            def build_row_square(l, phi):
+                x = arange(l)
+                r = square((2 * pi) * ((self.shutter_frequency * x * 1/self.pixel_frequency) + phi))/2 + 0.5
+                return r > 0.5
+            def find_phase(row):
+                r = 50
+                c = 99
+                result_matrix = empty((r, c), float)
+                for i in range(r):
+                    result_matrix[i] = build_row_square(c, i/float(r))
+                repeated_row = tile(row, (r, 1))
+                error_matrix = abs(result_matrix - repeated_row)
+                errors = apply_along_axis(sum, 1, error_matrix)
+                e = argmin(errors)
+                return e/float(r)
+            # Miglioro la stima
+            phases = apply_along_axis(find_phase, 1, probe_estimate)
+            # Tolgo la ciclicità dalle fasi
+            new_phases = empty_like(phases)
+            for n, p in enumerate(phases):
+                if n == 0:
+                    new_phases[n] = phases[n]
+                else:
+                    a = phases[n]
+                    while abs(a - new_phases[n-1]) >= 0.5:
+                        if a > new_phases[n-1]:
+                            a -= 1
+                        else:
+                            a += 1
+                    new_phases[n] = a
+            # Fit sul progredire delle fasi
+            m, b = polyfit(arange(new_phases.shape[0]), new_phases, 1)
+            line = arange(new_phases.shape[0])* m + b
+            # Costruiamo finalmente la stima definitiva
+            self.__beating_mask = empty_like(probe_estimate)
+            l = self.__beating_mask.shape[1]
+            for i, phi in enumerate(line):
+                self.__beating_mask[i] = build_row_square(l, phi)
             return self.__beating_mask
         else:
             return self.__beating_mask
