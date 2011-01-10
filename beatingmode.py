@@ -34,7 +34,7 @@ class BeatingData(object):
 
     @property
     def unbleached_data(self):
-        if not self.__unbleached_data:
+        if self.__unbleached_data is None:
 
             # Sezione fit esponenziale
             def fitting_function(x, a, b, c):
@@ -90,7 +90,7 @@ class BeatingData(object):
 
     @property
     def beating_mask(self):
-        if not self.__beating_mask:
+        if self.__beating_mask is None:
             probe_estimate = empty(self.data.shape, bool)
             # Stima iniziale
             for (position, value) in ndenumerate(self.data):
