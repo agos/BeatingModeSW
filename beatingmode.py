@@ -35,6 +35,55 @@ class BeatingData(object):
     @property
     def unbleached_data(self):
         if not self.__unbleached_data:
+
+            # Sezione fit esponenziale
+            def fitting_function(x, a, b, c):
+                return  a * (exp(-1.0 * x / b)) + c
+
+            def exponential(x, p):
+                return fitting_function(x, p[0], p[1], p[2])
+
+            def compensate(measurement, p, column_length):
+                x = measurement[0]
+                y = measurement[1]
+                low = exponential(column_length, p)
+                return [x, y - (exponential(x, p) - low)]
+            
+            print self.data.shape
+            print self.beating_mask.shape
+            masked_image = dstack((self.data, self.__beating_mask))
+
+            def compensate_column_parameters(c):
+                column = c[:, 0]
+                mask = c[:, 1]
+
+                column_on = array([[position, element] for position, element in enumerate(column) if mask[position]])
+                column_off = array([[position, element] for position, element in enumerate(column) if not mask[position]])
+                # Trovo parametri bright
+                positions = column_on[:, 0]
+                samples = column_on[:, 1]
+                p0 = [samples.max() - samples.min(), 50, samples.min()]
+                result = optimize.curve_fit(fitting_function, positions, samples, p0)
+                parameters_on = result[0]
+                # Trovo parametri dark
+                positions = column_off[:, 0]
+                samples = column_off[:, 1]
+                p0 = [samples.max()- samples.min(), 50, samples.min()]
+                result = optimize.curve_fit(fitting_function, positions, samples, p0)
+                parameters_off = result[0]
+                # Compenso
+                compensated_off = array([compensate(item, parameters_off, column.shape[0]) for item in column_off])
+                compensated_on = array([compensate(item, parameters_on, column.shape[0]) for item in column_on])
+                c = concatenate((compensated_on, compensated_off))
+                i = c[:, 0]
+                c = c[:, 1]
+                ind = i.argsort(axis=0)
+                return (c[ind], parameters_on, parameters_off)
+
+            def compensate_column(c):
+                r = compensate_column_parameters(c)
+                return r[0]
+            self.__unbleached_data = array(map(compensate_column, masked_image.swapaxes(0, 1))).swapaxes(0, 1)
             return self.__unbleached_data
         else:
             return self.__unbleached_data
