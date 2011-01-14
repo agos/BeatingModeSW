@@ -180,19 +180,19 @@ class MainFrame(wx.Frame):
     def activate_mouseover(self):
         self.cid = self.canvas.mpl_connect('motion_notify_event',
             self.on_mouseover)
+        self.timer.Start(80)
 
     def deactivate_mouseover(self):
         self.canvas.mpl_disconnect(self.cid)
+        self.timer.Stop()
 
     def enter_axes(self, event):
         self.in_axes = True
         if not self.crosshair_lock:
             self.activate_mouseover()
-        self.timer.Start(80)
 
     def leave_axes(self, event):
         self.in_axes = False
-        self.timer.Stop()
         if not self.crosshair_lock:
             self.deactivate_mouseover()
             self.statusbar.SetStatusText(" ")
