@@ -168,13 +168,11 @@ class MainFrame(wx.Frame):
                 self.deactivate_mouseover()
                 x, y = int(floor(event.xdata)), int(floor(event.ydata))
                 self.x, self.y = x, y
-                print ("Lock su: {0}, {1}".format(x, y))
             else:
                 self.crosshair_lock = False
                 x, y = int(floor(event.xdata)), int(floor(event.ydata))
                 self.x, self.y = x, y
                 self.activate_mouseover()
-                print ("Unlock")
 
     def activate_mouseover(self):
         self.cid = self.canvas.mpl_connect('motion_notify_event',
