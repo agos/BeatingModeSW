@@ -160,9 +160,6 @@ class MainFrame(wx.Frame):
         if event.inaxes == self.axes:
             x, y = int(floor(event.xdata)), int(floor(event.ydata))
             self.x, self.y = x, y
-            value = self.drawingdata[y, x]
-            msg = "Coordinate: {0}, {1} Valore: {2}".format(x, y, value)
-            self.statusbar.SetStatusText(msg)
 
     def on_mouseclick(self, event):
         if event.inaxes == self.axes:
@@ -208,6 +205,8 @@ class MainFrame(wx.Frame):
         if self.in_axes and (self.x != self.prevx or self.y != self.prevy):
             x, y = self.x, self.y
             value = self.drawingdata[y, x]
+            msg = "Coordinate: {0}, {1} Valore: {2}".format(x, y, value)
+            self.statusbar.SetStatusText(msg)
             highlight_data = copy(self.drawingdata)
             highlight_data[:, x] = highlight_data[:, x] * (1.0 - self.alpha) + highlight_data.max() * self.alpha
             highlight_data[y, :] = highlight_data[y, :] * (1.0 - self.alpha) + highlight_data.max() * self.alpha
