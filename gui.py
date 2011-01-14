@@ -36,16 +36,16 @@ class MainFrame(wx.Frame):
         self.Centre()
         self.beatingdata = BeatingData(path="dati/dati.dat", pixel_frequency=100.0, shutter_frequency=9.78 / 2)
         self.drawingdata = self.beatingdata.data
-        self.line_det_h, = self.axes_det_h.plot(
+        self.line_det_h, = self.axes_det1.plot(
             arange(self.beatingdata.image_width),
             zeros_like(arange(self.beatingdata.image_width)),
             animated=True)
-        self.axes_det_h.set_ylim(self.beatingdata.data.min(), self.beatingdata.data.max())
-        self.line_det_v, = self.axes_det_v.plot(
+        self.axes_det1.set_ylim(self.beatingdata.data.min(), self.beatingdata.data.max())
+        self.line_det_v, = self.axes_det2.plot(
             arange(self.beatingdata.image_height),
             zeros_like(arange(self.beatingdata.image_height)),
             animated=True)
-        self.axes_det_v.set_ylim(self.beatingdata.data.min(), self.beatingdata.data.max())
+        self.axes_det2.set_ylim(self.beatingdata.data.min(), self.beatingdata.data.max())
         self.crosshair_lock = False
         self.draw_figure()
 
@@ -79,8 +79,8 @@ class MainFrame(wx.Frame):
         # configuration tool in the navigation toolbar wouldn't
         # work.
         self.axes = self.fig.add_subplot(111)
-        self.axes_det_h = self.detailfig.add_subplot(211)
-        self.axes_det_v = self.detailfig.add_subplot(212)
+        self.axes_det1 = self.detailfig.add_subplot(211)
+        self.axes_det2 = self.detailfig.add_subplot(212)
         self.in_axes = False
         self.canvas.mpl_connect('axes_enter_event', self.enter_axes)
         self.canvas.mpl_connect('axes_leave_event', self.leave_axes)
@@ -148,8 +148,8 @@ class MainFrame(wx.Frame):
         self.beating_image.set_interpolation('nearest')
         self.canvas.draw()
         self.detailcanvas.draw()
-        self.background_h = self.detailcanvas.copy_from_bbox(self.axes_det_h.bbox)
-        self.background_v = self.detailcanvas.copy_from_bbox(self.axes_det_v.bbox)
+        self.background_h = self.detailcanvas.copy_from_bbox(self.axes_det1.bbox)
+        self.background_v = self.detailcanvas.copy_from_bbox(self.axes_det2.bbox)
 
 
     def on_cb_grid(self, event):
@@ -207,8 +207,8 @@ class MainFrame(wx.Frame):
             self.statusbar.SetStatusText(" ")
             self.beating_image.set_array(self.drawingdata)
             self.canvas.draw()
-            self.axes_det_h.clear()
-            self.axes_det_v.clear()
+            self.axes_det1.clear()
+            self.axes_det2.clear()
             self.detailcanvas.draw()
 
     def callback(self, event):
@@ -228,10 +228,10 @@ class MainFrame(wx.Frame):
             self.detailcanvas.restore_region(self.background_v)
             self.line_det_h.set_ydata(self.drawingdata[y, :])
             self.line_det_v.set_ydata(self.drawingdata[:, x])
-            self.axes_det_h.draw_artist(self.line_det_h)
-            self.axes_det_v.draw_artist(self.line_det_v)
-            self.detailcanvas.blit(self.axes_det_h.bbox)
-            self.detailcanvas.blit(self.axes_det_v.bbox)
+            self.axes_det1.draw_artist(self.line_det_h)
+            self.axes_det2.draw_artist(self.line_det_v)
+            self.detailcanvas.blit(self.axes_det1.bbox)
+            self.detailcanvas.blit(self.axes_det2.bbox)
             self.prevx, self.prevy = x, y
 
     def on_slider_alpha(self, event):
