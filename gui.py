@@ -92,6 +92,9 @@ class MainFrame(wx.Frame):
             "Correct for bleaching",
             style=wx.ALIGN_RIGHT)
         self.Bind(wx.EVT_CHECKBOX, self.on_cb_unbleach, self.cb_unbleach)
+        self.cb_ratiograph = wx.CheckBox(self.panel, -1,
+            "Show enhancement ratio data")
+        self.cb_ratiograph.Enable(False)
         self.slider_label = wx.StaticText(self.panel, -1,
             "Crosshair opacity (%): ")
         self.slider_alpha = wx.Slider(self.panel, -1,
@@ -118,6 +121,7 @@ class MainFrame(wx.Frame):
         self.hbox = wx.BoxSizer(wx.HORIZONTAL)
         flags = wx.ALIGN_LEFT | wx.ALL | wx.ALIGN_CENTER_VERTICAL
         self.hbox.Add(self.cb_unbleach, 0, border=3, flag=flags)
+        self.hbox.Add(self.cb_ratiograph, 0, border=3, flag=flags)
         self.hbox.Add(self.cb_grid, 0, border=3, flag=flags)
         self.hbox.AddSpacer(30)
         self.hbox.Add(self.slider_label, 0, flag=flags)
@@ -151,6 +155,10 @@ class MainFrame(wx.Frame):
         self.draw_figure()
 
     def on_cb_unbleach(self, event):
+        if self.cb_unbleach.IsChecked():
+            self.cb_ratiograph.Enable(True)
+        else:
+            self.cb_ratiograph.Enable(False)
         self.draw_figure()
 
     def OnCloseMe(self, event):
