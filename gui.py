@@ -46,6 +46,7 @@ class MainFrame(wx.Frame):
             zeros_like(arange(self.beatingdata.image_height)),
             animated=True)
         self.axes_det_v.set_ylim(self.beatingdata.data.min(), self.beatingdata.data.max())
+        self.crosshair_lock = False
         self.draw_figure()
 
     def create_menu(self):
@@ -70,6 +71,7 @@ class MainFrame(wx.Frame):
         self.dpi = 100
         self.fig = Figure((9.0, 7.0), dpi=self.dpi)
         self.canvas = FigCanvas(self.panel, -1, self.fig)
+        self.onclick_cid = self.canvas.mpl_connect('button_press_event', self.on_mouseclick)
         self.detailfig = Figure((1.0, 7.0), dpi=self.dpi)
         self.detailcanvas = FigCanvas(self.panel, -1, self.detailfig)
         # Since we have only one plot, we can use add_axes
@@ -162,21 +164,43 @@ class MainFrame(wx.Frame):
             msg = "Coordinate: {0}, {1} Valore: {2}".format(x, y, value)
             self.statusbar.SetStatusText(msg)
 
+    def on_mouseclick(self, event):
+        if event.inaxes == self.axes:
+            if not self.crosshair_lock:
+                self.crosshair_lock = True
+                self.deactivate_mouseover()
+                x, y = int(floor(event.xdata)), int(floor(event.ydata))
+                self.x, self.y = x, y
+                print ("Lock su: {0}, {1}".format(x, y))
+            else:
+                self.crosshair_lock = False
+                self.activate_mouseover()
+                print ("Unlock")
+
+    def activate_mouseover(self):
+        self.cid = self.canvas.mpl_connect('motion_notify_event',
+            self.on_mouseover)
+
+    def deactivate_mouseover(self):
+        self.canvas.mpl_disconnect(self.cid)
+
     def enter_axes(self, event):
         self.in_axes = True
-        self.cid = self.canvas.mpl_connect('motion_notify_event', self.on_mouseover)
+        if not self.crosshair_lock:
+            self.activate_mouseover()
         self.timer.Start(80)
 
     def leave_axes(self, event):
         self.in_axes = False
-        self.canvas.mpl_disconnect(self.cid)
         self.timer.Stop()
-        self.statusbar.SetStatusText(" ")
-        self.beating_image.set_array(self.drawingdata)
-        self.canvas.draw()
-        self.axes_det_h.clear()
-        self.axes_det_v.clear()
-        self.detailcanvas.draw()
+        if not self.crosshair_lock:
+            self.deactivate_mouseover()
+            self.statusbar.SetStatusText(" ")
+            self.beating_image.set_array(self.drawingdata)
+            self.canvas.draw()
+            self.axes_det_h.clear()
+            self.axes_det_v.clear()
+            self.detailcanvas.draw()
 
     def callback(self, event):
         if self.in_axes and (self.x != self.prevx or self.y != self.prevy):
