@@ -31,6 +31,7 @@ class BeatingData(object):
         self.image_size = (self.image_width, self.image_height)
         self.__unbleached_data = None
         self.__beating_mask = None
+        self.__phases = None
 
     @property
     def unbleached_data(self):
@@ -135,9 +136,35 @@ class BeatingData(object):
             l = self.__beating_mask.shape[1]
             for i, phi in enumerate(line):
                 self.__beating_mask[i] = build_row_square(l, phi)
+            self.__phases = line
             return self.__beating_mask
         else:
             return self.__beating_mask
+
+    # Ora produco altre due matrici simili per prendere solo la parte CENTRALE degli on e degli off
+    def build_row_square_subset(l, phi, on):
+        x = arange(l)
+        duty_cycle = 0.1
+        r = square((2 * pi) * ((SHUTTER_F * x * TAU_P) + phi - (0.5 - duty_cycle)/2 + 0.5 * (not on)), duty_cycle)/2 + 0.5
+        return r >= 0.5
+
+    @property
+    def central_part_on(self):
+        if self.central_part_on is None:
+            self.central_part_on = empty_like(self.__phases)
+            l = self.central_part_on.shape[1]
+            for i, phi in enumerate(self.__phases):
+                self.central_part_on[i] = build_row_square_subset(l, phi, True)
+        return central_part_on
+
+    @property
+    def central_part_off(self):
+        if self.central_part_off is None:
+            self.central_part_off = empty_like(self.__phases)
+            l = self.central_part_off.shape[1]
+            for i, phi in enumerate(self.__phases):
+                self.central_part_off[i] = build_row_square_subset(l, phi, False)
+        return self.central_part_off
 
 if __name__ == '__main__':
 
