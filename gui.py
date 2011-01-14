@@ -174,6 +174,8 @@ class MainFrame(wx.Frame):
                 print ("Lock su: {0}, {1}".format(x, y))
             else:
                 self.crosshair_lock = False
+                x, y = int(floor(event.xdata)), int(floor(event.ydata))
+                self.x, self.y = x, y
                 self.activate_mouseover()
                 print ("Unlock")
 
