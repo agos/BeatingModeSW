@@ -95,6 +95,7 @@ class MainFrame(wx.Frame):
         self.cb_ratiograph = wx.CheckBox(self.panel, -1,
             "Show enhancement ratio data")
         self.cb_ratiograph.Enable(False)
+        self.Bind(wx.EVT_CHECKBOX, self.on_cb_ratiograph, self.cb_ratiograph)
         self.slider_label = wx.StaticText(self.panel, -1,
             "Crosshair opacity (%): ")
         self.slider_alpha = wx.Slider(self.panel, -1,
@@ -160,6 +161,9 @@ class MainFrame(wx.Frame):
         else:
             self.cb_ratiograph.Enable(False)
         self.draw_figure()
+
+    def on_cb_ratiograph(self,event):
+        pass
 
     def OnCloseMe(self, event):
         self.Close(True)
