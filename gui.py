@@ -163,7 +163,11 @@ class MainFrame(wx.Frame):
         self.draw_figure()
 
     def on_cb_ratiograph(self,event):
-        pass
+        width = self.drawingdata.shape[1]
+        self.min_max_graph, = self.axes_det2.plot(
+            arange(width),
+            self.beatingdata.reconstructed_off)
+        self.detailcanvas.draw()
 
     def OnCloseMe(self, event):
         self.Close(True)
