@@ -32,6 +32,9 @@ class BeatingData(object):
         self.__unbleached_data = None
         self.__beating_mask = None
         self.__phases = None
+        self.__central_part_off = None
+        self.__reconstructed_off = None
+        self.__reconstructed_on = None
 
     @property
     def unbleached_data(self):
@@ -142,10 +145,10 @@ class BeatingData(object):
             return self.__beating_mask
 
     # Ora produco altre due matrici simili per prendere solo la parte CENTRALE degli on e degli off
-    def build_row_square_subset(l, phi, on):
+    def build_row_square_subset(self, l, phi, on):
         x = arange(l)
         duty_cycle = 0.1
-        r = square((2 * pi) * ((SHUTTER_F * x * TAU_P) + phi - (0.5 - duty_cycle)/2 + 0.5 * (not on)), duty_cycle)/2 + 0.5
+        r = square((2 * pi) * ((self.shutter_frequency * x / self.pixel_frequency) + phi - (0.5 - duty_cycle)/2 + 0.5 * (not on)), duty_cycle)/2 + 0.5
         return r >= 0.5
 
     @property
@@ -154,17 +157,29 @@ class BeatingData(object):
             self.central_part_on = empty_like(self.__phases)
             l = self.central_part_on.shape[1]
             for i, phi in enumerate(self.__phases):
-                self.central_part_on[i] = build_row_square_subset(l, phi, True)
+                self.central_part_on[i] = self.build_row_square_subset(l, phi, True)
         return central_part_on
 
     @property
     def central_part_off(self):
-        if self.central_part_off is None:
-            self.central_part_off = empty_like(self.__phases)
-            l = self.central_part_off.shape[1]
+        if self.__central_part_off is None:
+            self.__central_part_off = empty_like(self.beating_mask)
+            l = self.__central_part_off.shape[1]
             for i, phi in enumerate(self.__phases):
-                self.central_part_off[i] = build_row_square_subset(l, phi, False)
-        return self.central_part_off
+                self.__central_part_off[i] = self.build_row_square_subset(l, phi, False)
+        return self.__central_part_off
+
+    @property
+    def reconstructed_off(self):
+        if self.__reconstructed_off is None:
+            width = self.data.shape[1]
+            self.__reconstructed_off = empty((width, ), float)
+            ratio = empty((width, ), float)
+            for i in range(width):
+                comp_off = array([item for pos, item in enumerate(self.unbleached_data[:, i]) if self.central_part_off[pos, i]])
+                self.__reconstructed_off[i] = comp_off.mean()
+        return self.__reconstructed_off
+
 
 if __name__ == '__main__':
 
