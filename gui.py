@@ -148,8 +148,9 @@ class MainFrame(wx.Frame):
         self.beating_image.set_interpolation('nearest')
         self.canvas.draw()
         self.detailcanvas.draw()
-        self.background_h = self.detailcanvas.copy_from_bbox(self.axes_det1.bbox)
-        self.background_v = self.detailcanvas.copy_from_bbox(self.axes_det2.bbox)
+        if not self.cb_ratiograph.IsChecked():
+            self.background_h = self.detailcanvas.copy_from_bbox(self.axes_det1.bbox)
+            self.background_v = self.detailcanvas.copy_from_bbox(self.axes_det2.bbox)
 
 
     def on_cb_grid(self, event):
@@ -163,11 +164,39 @@ class MainFrame(wx.Frame):
         self.draw_figure()
 
     def on_cb_ratiograph(self,event):
-        width = self.drawingdata.shape[1]
-        self.min_max_graph, = self.axes_det2.plot(
-            arange(width),
-            self.beatingdata.reconstructed_off)
-        self.detailcanvas.draw()
+        if self.cb_ratiograph.IsChecked():
+            self.axes_det1.clear()
+            width = self.drawingdata.shape[1]
+            self.er_graph, = self.axes_det1.plot(
+                arange(width),
+                self.beatingdata.enhancement_ratios)
+            self.axes_det2.clear()
+            self.min_graph, = self.axes_det2.plot(
+                arange(width),
+                self.beatingdata.reconstructed_off)
+            self.max_graph, = self.axes_det2.plot(
+                arange(width),
+                self.beatingdata.reconstructed_on)
+            self.detailcanvas.draw()
+            self.axes_det1.autoscale()
+            self.axes_det2.autoscale()
+        else:
+            # Riattivare il vecchio grafico!
+            self.axes_det1.cla()
+            self.axes_det2.cla()
+            self.line_det_h, = self.axes_det1.plot(
+                arange(self.beatingdata.image_width),
+                zeros_like(arange(self.beatingdata.image_width)),
+                animated=True)
+            self.axes_det1.set_ylim(self.beatingdata.data.min(), self.beatingdata.data.max())
+            self.line_det_v, = self.axes_det2.plot(
+                arange(self.beatingdata.image_height),
+                zeros_like(arange(self.beatingdata.image_height)),
+                animated=True)
+            self.axes_det2.set_ylim(self.beatingdata.data.min(), self.beatingdata.data.max())
+            self.detailcanvas.draw()
+            self.background_h = self.detailcanvas.copy_from_bbox(self.axes_det1.bbox)
+            self.background_v = self.detailcanvas.copy_from_bbox(self.axes_det2.bbox)
 
     def OnCloseMe(self, event):
         self.Close(True)
@@ -211,9 +240,10 @@ class MainFrame(wx.Frame):
             self.statusbar.SetStatusText(" ")
             self.beating_image.set_array(self.drawingdata)
             self.canvas.draw()
-            self.axes_det1.clear()
-            self.axes_det2.clear()
-            self.detailcanvas.draw()
+            if not self.cb_ratiograph.IsChecked():
+                self.axes_det1.clear()
+                self.axes_det2.clear()
+                self.detailcanvas.draw()
 
     def callback(self, event):
         if self.in_axes and (self.x != self.prevx or self.y != self.prevy):
@@ -228,15 +258,16 @@ class MainFrame(wx.Frame):
             self.beating_image.set_array(highlight_data)
             self.canvas.draw()
             # Aggiorno i dettagli
-            self.detailcanvas.restore_region(self.background_h)
-            self.detailcanvas.restore_region(self.background_v)
-            self.line_det_h.set_ydata(self.drawingdata[y, :])
-            self.line_det_v.set_ydata(self.drawingdata[:, x])
-            self.axes_det1.draw_artist(self.line_det_h)
-            self.axes_det2.draw_artist(self.line_det_v)
-            self.detailcanvas.blit(self.axes_det1.bbox)
-            self.detailcanvas.blit(self.axes_det2.bbox)
-            self.prevx, self.prevy = x, y
+            if not self.cb_ratiograph.IsChecked():
+                self.detailcanvas.restore_region(self.background_h)
+                self.detailcanvas.restore_region(self.background_v)
+                self.line_det_h.set_ydata(self.drawingdata[y, :])
+                self.line_det_v.set_ydata(self.drawingdata[:, x])
+                self.axes_det1.draw_artist(self.line_det_h)
+                self.axes_det2.draw_artist(self.line_det_v)
+                self.detailcanvas.blit(self.axes_det1.bbox)
+                self.detailcanvas.blit(self.axes_det2.bbox)
+                self.prevx, self.prevy = x, y
 
     def on_slider_alpha(self, event):
         self.alpha = self.slider_alpha.GetValue() / 100.0
