@@ -32,9 +32,11 @@ class BeatingData(object):
         self.__unbleached_data = None
         self.__beating_mask = None
         self.__phases = None
+        self.__central_part_on = None
         self.__central_part_off = None
-        self.__reconstructed_off = None
         self.__reconstructed_on = None
+        self.__reconstructed_off = None
+        self.__enhancement_ratios = None
 
     @property
     def unbleached_data(self):
@@ -153,12 +155,12 @@ class BeatingData(object):
 
     @property
     def central_part_on(self):
-        if self.central_part_on is None:
-            self.central_part_on = empty_like(self.__phases)
-            l = self.central_part_on.shape[1]
+        if self.__central_part_on is None:
+            self.__central_part_on = empty_like(self.beating_mask)
+            l = self.__central_part_on.shape[1]
             for i, phi in enumerate(self.__phases):
-                self.central_part_on[i] = self.build_row_square_subset(l, phi, True)
-        return central_part_on
+                self.__central_part_on[i] = self.build_row_square_subset(l, phi, True)
+        return self.__central_part_on
 
     @property
     def central_part_off(self):
@@ -168,6 +170,17 @@ class BeatingData(object):
             for i, phi in enumerate(self.__phases):
                 self.__central_part_off[i] = self.build_row_square_subset(l, phi, False)
         return self.__central_part_off
+
+    @property
+    def reconstructed_on(self):
+        if self.__reconstructed_on is None:
+            width = self.data.shape[1]
+            self.__reconstructed_on = empty((width, ), float)
+            ratio = empty((width, ), float)
+            for i in range(width):
+                comp_on = array([item for pos, item in enumerate(self.unbleached_data[:, i]) if self.central_part_on[pos, i]])
+                self.__reconstructed_on[i] = comp_on.mean()
+        return self.__reconstructed_on
 
     @property
     def reconstructed_off(self):
@@ -180,6 +193,11 @@ class BeatingData(object):
                 self.__reconstructed_off[i] = comp_off.mean()
         return self.__reconstructed_off
 
+    @property
+    def enhancement_ratios(self):
+        if self.__enhancement_ratios is None:
+            self.__enhancement_ratios = self.reconstructed_on / self.reconstructed_off
+        return self.__enhancement_ratios
 
 if __name__ == '__main__':
 
