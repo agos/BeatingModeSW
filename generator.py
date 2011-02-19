@@ -12,10 +12,13 @@ SHUTTER_T = 1.0 / (SHUTTER_F * 2.0)
 
 # TODO: cambiare con lettura da file
 # TODO: preparare per multiriga
-input_data = ones(LINE_LENGTH, dtype=float).repeat(REPETITIONS)
+
+# input_data = ones(LINE_LENGTH, dtype=float).repeat(REPETITIONS)
+input_data = tile(genfromtxt("dati/NonUniformeSteveRate", delimiter=";"), REPETITIONS)
 # TODO: aggiungere bleaching
 # TODO: aggiungere rumore
-er_data = ones(LINE_LENGTH, dtype=float).repeat(REPETITIONS) * 2
+# er_data = ones(LINE_LENGTH, dtype=float).repeat(REPETITIONS) * 2
+er_data = tile(genfromtxt("dati/NonUniformeSteveRatio", delimiter=";"), REPETITIONS)
 
 
 def build_row_square(l, phi):
