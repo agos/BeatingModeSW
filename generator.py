@@ -15,7 +15,7 @@ SHUTTER_T = 1.0 / (SHUTTER_F * 2.0)
 input_data = ones(LINE_LENGTH, dtype=float).repeat(REPETITIONS)
 # TODO: aggiungere bleaching
 # TODO: aggiungere rumore
-enhancement_ratio_data = ones(LINE_LENGTH, dtype=float).repeat(REPETITIONS) * 2
+er_data = ones(LINE_LENGTH, dtype=float).repeat(REPETITIONS) * 2
 
 
 def build_row_square(l, phi):
@@ -42,7 +42,7 @@ for (pos, val) in ndenumerate(input_data):
     if start // SHUTTER_T == end // SHUTTER_T:
         # TODO: per capire on/off mi baso sul modulo due. Non è il massimo!
         if (start // SHUTTER_T) % 2:
-            enhanced_data[pos] = val * enhancement_ratio_data[pos]
+            enhanced_data[pos] = val * er_data[pos]
         else:
             enhanced_data[pos] = val
     # Transizione
@@ -55,11 +55,11 @@ for (pos, val) in ndenumerate(input_data):
         phase_after = phase_start
         # Acceso -> spento
         if (start // SHUTTER_T) % 2:
-            enhanced_data[pos] = phase_before * val * enhancement_ratio_data[pos] + \
+            enhanced_data[pos] = phase_before * val * er_data[pos] + \
                                  phase_after * val
         else:
             enhanced_data[pos] = phase_before * val + \
-                phase_after * val * enhancement_ratio_data[pos]
+                phase_after * val * er_data[pos]
 enhanced_data = enhanced_data.reshape(REPETITIONS, LINE_LENGTH)
 print enhanced_data.shape
 savetxt("out/generated.dat", enhanced_data, fmt="%3.4f0")
