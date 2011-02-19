@@ -61,5 +61,4 @@ for (pos, val) in ndenumerate(input_data):
             enhanced_data[pos] = phase_before * val + \
                 phase_after * val * er_data[pos]
 enhanced_data = enhanced_data.reshape(REPETITIONS, LINE_LENGTH)
-print enhanced_data.shape
 savetxt("out/generated.dat", enhanced_data, fmt="%3.4f0")
