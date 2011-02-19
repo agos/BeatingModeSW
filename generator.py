@@ -57,7 +57,6 @@ for (pos, val) in ndenumerate(input_data):
         else: 
             enhanced_data[pos] = phase_before * val + \
                                  phase_after * val * enhancement_ratio_data[pos]
-        print phase_before, phase_after
 enhanced_data = enhanced_data.reshape(REPETITIONS,LINE_LENGTH)
 print enhanced_data.shape
 savetxt("out/generated.dat", enhanced_data, fmt="%3.4f0")
