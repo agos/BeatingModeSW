@@ -60,4 +60,4 @@ for (pos, val) in ndenumerate(input_data):
         print phase_before, phase_after
 enhanced_data = enhanced_data.reshape(REPETITIONS,LINE_LENGTH)
 print enhanced_data.shape
-savetxt("generated.dat", enhanced_data, fmt="%3.4f0")
+savetxt("out/generated.dat", enhanced_data, fmt="%3.4f0")
