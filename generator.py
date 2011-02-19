@@ -55,10 +55,10 @@ for (pos, val) in ndenumerate(input_data):
         phase_after = phase_start
         # Acceso -> spento
         if (start // SHUTTER_T) % 2:
-            enhanced_data[pos] = phase_before * val * er_data[pos] + \
-                                 phase_after * val
+            enhanced_data[pos] = phase_before / total_phase * val * er_data[pos] + \
+                                 phase_after / total_phase * val
         else:
-            enhanced_data[pos] = phase_before * val + \
-                phase_after * val * er_data[pos]
+            enhanced_data[pos] = phase_before / total_phase * val + \
+                phase_after / total_phase * val * er_data[pos]
 enhanced_data = enhanced_data.reshape(REPETITIONS, LINE_LENGTH)
 savetxt("out/generated.dat", enhanced_data, fmt="%3.4f0")
