@@ -205,6 +205,17 @@ def BeatingImageRowFromPath(path, pixel_frequency=100.0, shutter_frequency=5.0):
     return BeatingImageRow(data, pixel_frequency, shutter_frequency)
 
 
+class BeatingImage(object):
+    """docstring for BeatingImage"""
+    def __init__(self, path, pixel_frequency=100.0, shutter_frequency=5.856, repetitions):
+        super(BeatingImage, self).__init__()
+        self.path = path
+        self.pixel_frequency = pixel_frequency
+        self.shutter_frequency = shutter_frequency
+        data = genfromtxt(path)
+        print data.shape
+
+
 if __name__ == '__main__':
 
     image_data = genfromtxt("dati/dati.dat")
