@@ -53,7 +53,7 @@ class BeatingImageRow(object):
                 y = measurement[1]
                 low = exponential(column_length, p)
                 return [x, y - (exponential(x, p) - low)]
-            
+
             print self.data.shape
             print self.beating_mask.shape
             masked_image = dstack((self.data, self.__beating_mask))
@@ -197,6 +197,7 @@ class BeatingImageRow(object):
         if self.__enhancement_ratios is None:
             self.__enhancement_ratios = self.reconstructed_on / self.reconstructed_off
         return self.__enhancement_ratios
+
 
 def BeatingImageRowFromPath(path, pixel_frequency=100.0, shutter_frequency=5.0):
     data = genfromtxt(path)
