@@ -17,8 +17,9 @@ from itertools import product
 DEBUG_COLUMNS_FIT = False
 
 
-class BeatingData(object):
-    """docstring for BeatingData"""
+class BeatingImageRow(object):
+    """Class for a single logical row of a beating image.
+        Multiple repetitions are present"""
 
     def __init__(self, path, pixel_frequency=100.0, shutter_frequency=5.0):
         super(BeatingData, self).__init__()
