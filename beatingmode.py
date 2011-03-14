@@ -21,13 +21,11 @@ class BeatingImageRow(object):
     """Class for a single logical row of a beating image.
         Multiple repetitions are present"""
 
-    def __init__(self, path, pixel_frequency=100.0, shutter_frequency=5.0):
-        super(BeatingData, self).__init__()
-        self.path = path
+    def __init__(self, data, pixel_frequency=100.0, shutter_frequency=5.0):
+        super(BeatingImageRow, self).__init__()
         self.pixel_frequency = pixel_frequency
         self.shutter_frequency = shutter_frequency
-        self.data = genfromtxt(path)
-        self.data = self.data[:, 1:]
+        self.data = data
         self.image_height, self.image_width = self.data.shape
         self.image_size = (self.image_width, self.image_height)
         self.__unbleached_data = None
@@ -199,6 +197,12 @@ class BeatingImageRow(object):
         if self.__enhancement_ratios is None:
             self.__enhancement_ratios = self.reconstructed_on / self.reconstructed_off
         return self.__enhancement_ratios
+
+def BeatingImageRowFromPath(path, pixel_frequency=100.0, shutter_frequency=5.0):
+    data = genfromtxt(path)
+    data = data[:, 1:]
+    return BeatingImageRow(data, pixel_frequency, shutter_frequency)
+
 
 if __name__ == '__main__':
 

@@ -10,7 +10,7 @@ from matplotlib.backends.backend_wxagg import \
     FigureCanvasWxAgg as FigCanvas, \
     NavigationToolbar2WxAgg as NavigationToolbar
 from matplotlib.colors import LinearSegmentedColormap
-from beatingmode import BeatingImageRow
+from beatingmode import BeatingImageRowFromPath
 
 
 my_color_map = LinearSegmentedColormap("stdGreen",
@@ -34,7 +34,7 @@ class MainFrame(wx.Frame):
         self.statusbar = self.CreateStatusBar()
         self.create_main_panel()
         self.Centre()
-        self.beatingdata = BeatingImageRow(path="dati/dati.dat", pixel_frequency=100.0, shutter_frequency=9.78 / 2)
+        self.beatingdata = BeatingImageRowFromPath(path="dati/dati.dat", pixel_frequency=100.0, shutter_frequency=9.78 / 2)
         self.drawingdata = self.beatingdata.data
         self.line_det_h, = self.axes_det1.plot(
             arange(self.beatingdata.image_width),
