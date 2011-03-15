@@ -65,13 +65,21 @@ class BeatingImageRow(object):
                 positions = column_on[:, 0]
                 samples = column_on[:, 1]
                 p0 = [samples.max() - samples.min(), 50, samples.min()]
-                result = optimize.curve_fit(fitting_function, positions, samples, p0)
+                try:
+                    result = optimize.curve_fit(fitting_function, positions, samples, p0)
+                except Exception, e:
+                    print e
+                    result = (p0,)
                 parameters_on = result[0]
                 # Trovo parametri dark
                 positions = column_off[:, 0]
                 samples = column_off[:, 1]
                 p0 = [samples.max()- samples.min(), 50, samples.min()]
-                result = optimize.curve_fit(fitting_function, positions, samples, p0)
+                try:
+                    result = optimize.curve_fit(fitting_function, positions, samples, p0)
+                except Exception, e:
+                    print e
+                    result = (p0,)
                 parameters_off = result[0]
                 # Compenso
                 compensated_off = array([compensate(item, parameters_off, column.shape[0]) for item in column_off])
