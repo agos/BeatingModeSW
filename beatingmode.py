@@ -54,8 +54,6 @@ class BeatingImageRow(object):
                 low = exponential(column_length, p)
                 return [x, y - (exponential(x, p) - low)]
 
-            print self.data.shape
-            print self.beating_mask.shape
             masked_image = dstack((self.data, self.__beating_mask))
 
             def compensate_column_parameters(c):
