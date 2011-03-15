@@ -108,7 +108,7 @@ class BeatingImageRow(object):
 
             def find_phase(row):
                 r = 50
-                c = 99
+                c = row.shape[0]
                 result_matrix = empty((r, c), float)
                 for i in range(r):
                     result_matrix[i] = build_row_square(c, i/float(r))
