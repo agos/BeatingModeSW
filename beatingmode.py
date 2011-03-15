@@ -213,10 +213,21 @@ class BeatingImage(object):
         self.pixel_frequency = pixel_frequency
         self.shutter_frequency = shutter_frequency
         self.data = genfromtxt(path)
-        width = self.data.shape[1]
-        self.data = self.data.reshape(-1,repetitions, width)
+        self.width = self.data.shape[1]
+        self.data = self.data.reshape(-1,repetitions, self.width)
+        self.rows = self.data.shape[0]
         print self.data.shape
+        self.__reconstructed_on = None
+        self.__reconstructed_off = None
 
+    @property
+    def reconstructed_on(self):
+        if self.__reconstructed_on is None:
+            for row in xrange(self.rows):
+                print "Creo riga {0}".format(row)
+                beatingrow = BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency)
+                self.__reconstructed_on[row_n] = beatingrow.reconstructed_on
+        return self.__reconstructed_on
 
 if __name__ == '__main__':
 
