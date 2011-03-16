@@ -139,6 +139,7 @@ class BeatingImageRow(object):
                     new_phases[n] = a
             # Fit sul progredire delle fasi
             m, b = polyfit(arange(new_phases.shape[0]), new_phases, 1)
+            print "Parametri sfasamento: {0}, {1}".format(m, b)
             line = arange(new_phases.shape[0])* m + b
             # Costruiamo finalmente la stima definitiva
             self.__beating_mask = empty_like(probe_estimate)
