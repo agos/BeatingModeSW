@@ -239,8 +239,13 @@ class BeatingImage(object):
 
 if __name__ == '__main__':
 
-    beatingrow = BeatingImageRowFromPath("dati/dati.dat", shutter_frequency=9.78/2)
+    # beatingrow = BeatingImageRowFromPath("dati/dati.dat", shutter_frequency=9.78/2)
     # beatingrow = BeatingImageRowFromPath("dati/misura03.dat", shutter_frequency=5.856/2)
+    # beatingimage = BeatingImage(path="dati/generated.dat", repetitions=15, shutter_frequency=9.78/2)
+
+    beatingimage = BeatingImage(path="dati/samp6.dat", repetitions=90, shutter_frequency=5.865/2)
+    beatingrow = BeatingImageRow(data=beatingimage.data[3,:,:], pixel_frequency=100.0, shutter_frequency=5.865 / 2)
+
 
     my_color_map = LinearSegmentedColormap("stdGreen",
                     {
