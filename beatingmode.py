@@ -104,7 +104,7 @@ class BeatingImageRow(object):
             probe_estimate = empty(self.data.shape, bool)
             # Stima iniziale
             for (position, value) in ndenumerate(self.data):
-                probe_estimate[position] = value > self.data[position[0], :].mean()
+                probe_estimate[position] = value > self.data[:, position[1]].mean()
 
             def build_row_square(l, phi):
                 x = arange(l)
