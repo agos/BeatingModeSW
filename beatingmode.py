@@ -53,10 +53,7 @@ class BeatingImageRow(object):
                 y = measurement[1]
                 low = exponential(column_length, p)
                 return [x, y - (exponential(x, p) - low)]
-
-            print self.data.shape
-            print self.beating_mask.shape
-            masked_image = dstack((self.data, self.__beating_mask))
+            masked_image = dstack((self.data, self.beating_mask))
 
             def compensate_column_parameters(c):
                 column = c[:, 0]
@@ -68,13 +65,21 @@ class BeatingImageRow(object):
                 positions = column_on[:, 0]
                 samples = column_on[:, 1]
                 p0 = [samples.max() - samples.min(), 50, samples.min()]
-                result = optimize.curve_fit(fitting_function, positions, samples, p0)
+                try:
+                    result = optimize.curve_fit(fitting_function, positions, samples, p0)
+                except Exception, e:
+                    print e
+                    result = (p0,)
                 parameters_on = result[0]
                 # Trovo parametri dark
                 positions = column_off[:, 0]
                 samples = column_off[:, 1]
                 p0 = [samples.max()- samples.min(), 50, samples.min()]
-                result = optimize.curve_fit(fitting_function, positions, samples, p0)
+                try:
+                    result = optimize.curve_fit(fitting_function, positions, samples, p0)
+                except Exception, e:
+                    print e
+                    result = (p0,)
                 parameters_off = result[0]
                 # Compenso
                 compensated_off = array([compensate(item, parameters_off, column.shape[0]) for item in column_off])
@@ -99,7 +104,7 @@ class BeatingImageRow(object):
             probe_estimate = empty(self.data.shape, bool)
             # Stima iniziale
             for (position, value) in ndenumerate(self.data):
-                probe_estimate[position] = value > self.data[position[0], :].mean()
+                probe_estimate[position] = value > self.data[:, position[1]].mean()
 
             def build_row_square(l, phi):
                 x = arange(l)
@@ -108,7 +113,7 @@ class BeatingImageRow(object):
 
             def find_phase(row):
                 r = 50
-                c = 99
+                c = row.shape[0]
                 result_matrix = empty((r, c), float)
                 for i in range(r):
                     result_matrix[i] = build_row_square(c, i/float(r))
@@ -134,6 +139,7 @@ class BeatingImageRow(object):
                     new_phases[n] = a
             # Fit sul progredire delle fasi
             m, b = polyfit(arange(new_phases.shape[0]), new_phases, 1)
+            print "Parametri sfasamento: {0}, {1}".format(m, b)
             line = arange(new_phases.shape[0])* m + b
             # Costruiamo finalmente la stima definitiva
             self.__beating_mask = empty_like(probe_estimate)
@@ -213,15 +219,33 @@ class BeatingImage(object):
         self.pixel_frequency = pixel_frequency
         self.shutter_frequency = shutter_frequency
         self.data = genfromtxt(path)
-        width = self.data.shape[1]
-        self.data = self.data.reshape(-1,repetitions, width)
+        self.data = self.data[:, 1:]
+        self.width = self.data.shape[1]
+        self.data = self.data.reshape(-1,repetitions, self.width)
+        self.rows = self.data.shape[0]
         print self.data.shape
+        self.__reconstructed_on = None
+        self.__reconstructed_off = None
 
+    @property
+    def reconstructed_on(self):
+        if self.__reconstructed_on is None:
+            self.__reconstructed_on = empty((self.rows, self.width), float)
+            for row in xrange(self.rows):
+                print "Creo riga {0}".format(row)
+                beatingrow = BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency)
+                self.__reconstructed_on[row] = beatingrow.reconstructed_on
+        return self.__reconstructed_on
 
 if __name__ == '__main__':
 
-    beatingrow = BeatingImageRowFromPath("dati/dati.dat", shutter_frequency=9.78/2)
+    # beatingrow = BeatingImageRowFromPath("dati/dati.dat", shutter_frequency=9.78/2)
     # beatingrow = BeatingImageRowFromPath("dati/misura03.dat", shutter_frequency=5.856/2)
+    # beatingimage = BeatingImage(path="dati/generated.dat", repetitions=15, shutter_frequency=9.78/2)
+
+    beatingimage = BeatingImage(path="dati/samp6.dat", repetitions=90, shutter_frequency=5.865/2)
+    beatingrow = BeatingImageRow(data=beatingimage.data[3,:,:], pixel_frequency=100.0, shutter_frequency=5.865 / 2)
+
 
     my_color_map = LinearSegmentedColormap("stdGreen",
                     {
