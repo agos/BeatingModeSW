@@ -222,7 +222,7 @@ class BeatingImage(object):
         self.data = self.data[:, 1:]
         self.width = self.data.shape[1]
         self.data = self.data.reshape(-1,repetitions, self.width)
-        self.rows = self.data.shape[0]
+        self.height = self.data.shape[0]
         print self.data.shape
         self.__reconstructed_on = None
         self.__reconstructed_off = None
@@ -231,8 +231,8 @@ class BeatingImage(object):
     @property
     def reconstructed_on(self):
         if self.__reconstructed_on is None:
-            self.__reconstructed_on = empty((self.rows, self.width), float)
-            for row in xrange(self.rows):
+            self.__reconstructed_on = empty((self.height, self.width), float)
+            for row in xrange(self.height):
                 print "Creo riga {0} on".format(row)
                 beatingrow = BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency)
                 self.__reconstructed_on[row] = beatingrow.reconstructed_on
@@ -241,8 +241,8 @@ class BeatingImage(object):
     @property
     def reconstructed_off(self):
         if self.__reconstructed_off is None:
-            self.__reconstructed_off = empty((self.rows, self.width), float)
-            for row in xrange(self.rows):
+            self.__reconstructed_off = empty((self.height, self.width), float)
+            for row in xrange(self.height):
                 print "Creo riga {0} off".format(row)
                 beatingrow = BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency)
                 self.__reconstructed_off[row] = beatingrow.reconstructed_off
@@ -251,8 +251,8 @@ class BeatingImage(object):
     @property
     def ratios(self):
         if self.__ratios is None:
-            self.__ratios = empty((self.rows, self.width), float)
-            for row in xrange(self.rows):
+            self.__ratios = empty((self.height, self.width), float)
+            for row in xrange(self.height):
                     print "Creo riga enhancement {0}".format(row)
                     beatingrow = BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency)
                     self.__ratios[row] = beatingrow.enhancement_ratios
