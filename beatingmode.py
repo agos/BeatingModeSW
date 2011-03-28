@@ -232,7 +232,7 @@ class BeatingImage(object):
         if self.__reconstructed_on is None:
             self.__reconstructed_on = empty((self.rows, self.width), float)
             for row in xrange(self.rows):
-                print "Creo riga {0}".format(row)
+                print "Creo riga {0} on".format(row)
                 beatingrow = BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency)
                 self.__reconstructed_on[row] = beatingrow.reconstructed_on
         return self.__reconstructed_on
