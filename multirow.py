@@ -16,17 +16,6 @@ my_color_map = LinearSegmentedColormap("stdGreen",
                         (1.0, 0.0, 0.0)],
                 })
 
-heat_color_map = LinearSegmentedColormap("stdGreen",
-                {
-                'red': [(0.0, 0.0, 0.0),
-                       (1.0, 1.0, 1.0)],
-               'green': [(0.0, 1.0, 1.0),
-                         (1.0, 0.0, 0.0)],
-               'blue': [(0.0, 0.0, 0.0),
-                        (1.0, 0.0, 0.0)],
-                })
-
-
 beatingimage = BeatingImage(path="dati/samp6.dat", repetitions=90, shutter_frequency=5.856/2)
 
 print beatingimage.reconstructed_on.shape
@@ -44,7 +33,8 @@ reconstructed_off_image = pylab.imshow(beatingimage.reconstructed_off, cmap=my_c
 reconstructed_off_image.set_interpolation('nearest')
 
 pylab.subplot(2,2,3)
-enhancement_ratios_image = pylab.imshow(beatingimage.ratios, cmap=heat_color_map)
+enhancement_ratios_image = pylab.imshow(beatingimage.ratios, cmap="jet")
+pylab.colorbar()
 enhancement_ratios_image.set_interpolation('nearest')
 
 pylab.show()
