@@ -238,30 +238,27 @@ class BeatingImage(object):
     def reconstructed_on(self):
         if self.__reconstructed_on is None:
             self.__reconstructed_on = empty((self.height, self.width), float)
-            for row in xrange(self.height):
-                print "Creo riga {0} on".format(row)
-                beatingrow = BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency)
-                self.__reconstructed_on[row] = beatingrow.reconstructed_on
+            for index, row in enumerate(self.rows):
+                print "Creo riga {0} on".format(index)
+                self.__reconstructed_on[index] = row.reconstructed_on
         return self.__reconstructed_on
 
     @property
     def reconstructed_off(self):
         if self.__reconstructed_off is None:
             self.__reconstructed_off = empty((self.height, self.width), float)
-            for row in xrange(self.height):
-                print "Creo riga {0} off".format(row)
-                beatingrow = BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency)
-                self.__reconstructed_off[row] = beatingrow.reconstructed_off
+            for index, row in enumerate(self.rows):
+                print "Creo riga {0} off".format(index)
+                self.__reconstructed_off[index] = row.reconstructed_off
         return self.__reconstructed_off
 
     @property
     def ratios(self):
         if self.__ratios is None:
             self.__ratios = empty((self.height, self.width), float)
-            for row in xrange(self.height):
-                    print "Creo riga enhancement {0}".format(row)
-                    beatingrow = BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency)
-                    self.__ratios[row] = beatingrow.enhancement_ratios
+            for index, row in enumerate(self.rows):
+                print "Creo riga enhancement {0}".format(index)
+                self.__ratios[index] = row.enhancement_ratios
         return self.__ratios
 
 if __name__ == '__main__':
