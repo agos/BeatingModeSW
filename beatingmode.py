@@ -237,6 +237,16 @@ class BeatingImage(object):
                 self.__reconstructed_on[row] = beatingrow.reconstructed_on
         return self.__reconstructed_on
 
+    @property
+    def reconstructed_off(self):
+        if self.__reconstructed_off is None:
+            self.__reconstructed_off = empty((self.rows, self.width), float)
+            for row in xrange(self.rows):
+                print "Creo riga {0} off".format(row)
+                beatingrow = BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency)
+                self.__reconstructed_off[row] = beatingrow.reconstructed_off
+        return self.__reconstructed_off
+
 if __name__ == '__main__':
 
     # beatingrow = BeatingImageRowFromPath("dati/dati.dat", shutter_frequency=9.78/2)
