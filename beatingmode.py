@@ -227,6 +227,12 @@ class BeatingImage(object):
         self.__reconstructed_on = None
         self.__reconstructed_off = None
         self.__ratios = None
+        self.rows = []
+        for row in xrange(self.height):
+            # TODO: non si riesce ad usare un iteratore?
+            # Dovrei usare una list comprehension!
+            print("Costruisco riga {0}".format(row))
+            self.rows[row] = BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency)
 
     @property
     def reconstructed_on(self):
