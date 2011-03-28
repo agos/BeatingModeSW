@@ -226,6 +226,7 @@ class BeatingImage(object):
         print self.data.shape
         self.__reconstructed_on = None
         self.__reconstructed_off = None
+        self.__ratios = None
 
     @property
     def reconstructed_on(self):
@@ -246,6 +247,16 @@ class BeatingImage(object):
                 beatingrow = BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency)
                 self.__reconstructed_off[row] = beatingrow.reconstructed_off
         return self.__reconstructed_off
+
+    @property
+    def ratios(self):
+        if self.__ratios is None:
+            self.__ratios = empty((self.rows, self.width), float)
+            for row in xrange(self.rows):
+                    print "Creo riga enhancement {0}".format(row)
+                    beatingrow = BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency)
+                    self.__ratios[row] = beatingrow.enhancement_ratios
+        return self.__ratios
 
 if __name__ == '__main__':
 
