@@ -112,16 +112,17 @@ class BeatingImageRow(object):
                 return r > 0.5
 
             def find_phase(row):
-                r = 50
-                c = row.shape[0]
-                result_matrix = empty((r, c), float)
-                for i in range(r):
-                    result_matrix[i] = build_row_square(c, i/float(r))
                 repeated_row = tile(row, (r, 1))
                 error_matrix = abs(result_matrix - repeated_row)
                 errors = apply_along_axis(sum, 1, error_matrix)
                 e = argmin(errors)
                 return e/float(r)
+
+            r = 50
+            c = probe_estimate.shape[1]
+            result_matrix = empty((r, c), float)
+            for i in range(r):
+                result_matrix[i] = build_row_square(c, i/float(r))
             # Miglioro la stima
             phases = apply_along_axis(find_phase, 1, probe_estimate)
             # Tolgo la ciclicità dalle fasi
