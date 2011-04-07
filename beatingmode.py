@@ -13,8 +13,12 @@ from matplotlib.colors import LinearSegmentedColormap
 from matplotlib import cbook
 import functools
 from itertools import product
+import multiprocessing
 
 DEBUG_COLUMNS_FIT = False
+_ncpus = 1
+_ncpus = multiprocessing.cpu_count()
+print("CPU rilevate: {0}".format(_ncpus))
 
 
 class BeatingImageRow(object):
