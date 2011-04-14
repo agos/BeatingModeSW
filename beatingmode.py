@@ -263,6 +263,7 @@ class BeatingImage(object):
                 self.__ratios[index] = row.enhancement_ratios
         return self.__ratios
 
+
 if __name__ == '__main__':
 
     # beatingrow = BeatingImageRowFromPath("dati/dati.dat", shutter_frequency=9.78/2)
@@ -271,7 +272,6 @@ if __name__ == '__main__':
 
     beatingimage = BeatingImage(path="dati/samp6.dat", repetitions=90, shutter_frequency=5.865/2)
     beatingrow = BeatingImageRow(data=beatingimage.data[3,:,:], pixel_frequency=100.0, shutter_frequency=5.865 / 2)
-
 
     my_color_map = LinearSegmentedColormap("stdGreen",
                     {
