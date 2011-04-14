@@ -99,4 +99,8 @@ for (row_n, row) in enumerate(input_data):
                     phase_after / total_phase * val * er_row[pos]
     enhanced_data[row_n] = enhanced_row.reshape(shape)
 enhanced_data = enhanced_data.reshape(rows * REPETITIONS, LINE_LENGTH)
+
+pylab.imshow(enhanced_data)
+pylab.show()
+
 savetxt("out/generated.dat", enhanced_data, fmt="%3.4f0")
