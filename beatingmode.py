@@ -218,6 +218,7 @@ def BeatingImageRowFromPath(path, pixel_frequency=100.0, shutter_frequency=5.0):
 
 class BeatingImage(object):
     """docstring for BeatingImage"""
+
     def __init__(self, path, repetitions, pixel_frequency=100.0, shutter_frequency=5.856):
         super(BeatingImage, self).__init__()
         self.path = path
