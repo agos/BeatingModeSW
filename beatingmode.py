@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pylab
+import time
 import itertools
 import sys
 from math import pi
@@ -13,8 +14,24 @@ from matplotlib.colors import LinearSegmentedColormap
 from matplotlib import cbook
 import functools
 from itertools import product
+import multiprocessing
 
 DEBUG_COLUMNS_FIT = False
+_ncpus = 1
+_ncpus = multiprocessing.cpu_count()
+print("CPU rilevate: {0}".format(_ncpus))
+
+
+def reconstruct(row):
+    width = row.data.shape[1]
+    reconstructed_on = empty((width, ), float)
+    reconstructed_off = empty((width, ), float)
+    for i in range(width):
+        comp_on = array([item for pos, item in enumerate(row.unbleached_data[:, i]) if row.central_part_on[pos, i]])
+        reconstructed_on[i] = comp_on.mean()
+        comp_off = array([item for pos, item in enumerate(row.unbleached_data[:, i]) if row.central_part_off[pos, i]])
+        reconstructed_off[i] = comp_off.mean()
+    return (reconstructed_on, reconstructed_off)
 
 
 class BeatingImageRow(object):
@@ -177,34 +194,6 @@ class BeatingImageRow(object):
                 self.__central_part_off[i] = self.build_row_square_subset(l, phi, False)
         return self.__central_part_off
 
-    @property
-    def reconstructed_on(self):
-        if self.__reconstructed_on is None:
-            width = self.data.shape[1]
-            self.__reconstructed_on = empty((width, ), float)
-            ratio = empty((width, ), float)
-            for i in range(width):
-                comp_on = array([item for pos, item in enumerate(self.unbleached_data[:, i]) if self.central_part_on[pos, i]])
-                self.__reconstructed_on[i] = comp_on.mean()
-        return self.__reconstructed_on
-
-    @property
-    def reconstructed_off(self):
-        if self.__reconstructed_off is None:
-            width = self.data.shape[1]
-            self.__reconstructed_off = empty((width, ), float)
-            ratio = empty((width, ), float)
-            for i in range(width):
-                comp_off = array([item for pos, item in enumerate(self.unbleached_data[:, i]) if self.central_part_off[pos, i]])
-                self.__reconstructed_off[i] = comp_off.mean()
-        return self.__reconstructed_off
-
-    @property
-    def enhancement_ratios(self):
-        if self.__enhancement_ratios is None:
-            self.__enhancement_ratios = self.reconstructed_on / self.reconstructed_off
-        return self.__enhancement_ratios
-
 
 def BeatingImageRowFromPath(path, pixel_frequency=100.0, shutter_frequency=5.0):
     data = genfromtxt(path)
@@ -214,6 +203,7 @@ def BeatingImageRowFromPath(path, pixel_frequency=100.0, shutter_frequency=5.0):
 
 class BeatingImage(object):
     """docstring for BeatingImage"""
+
     def __init__(self, path, repetitions, pixel_frequency=100.0, shutter_frequency=5.856):
         super(BeatingImage, self).__init__()
         self.path = path
@@ -231,22 +221,28 @@ class BeatingImage(object):
         self.rows = []
         self.rows = [BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency) for row in xrange(self.height)]
 
+    def _reconstruct_rows(self):
+        self.__reconstructed_on = empty((self.height, self.width), float)
+        self.__reconstructed_off = empty((self.height, self.width), float)
+        # start = time.time()
+        pool = multiprocessing.Pool(processes=_ncpus)
+        reconstructed = pool.map(reconstruct, self.rows)
+        for index, row in enumerate(reconstructed):
+            (self.__reconstructed_on[index], self.__reconstructed_off[index]) = reconstructed[index]
+        pool.close()
+        pool.join()
+        # print("Tempo impiegato: {0}".format(time.time()- start))
+
     @property
     def reconstructed_on(self):
         if self.__reconstructed_on is None:
-            self.__reconstructed_on = empty((self.height, self.width), float)
-            for index, row in enumerate(self.rows):
-                print "Creo riga {0} on".format(index)
-                self.__reconstructed_on[index] = row.reconstructed_on
+            self._reconstruct_rows()
         return self.__reconstructed_on
 
     @property
     def reconstructed_off(self):
         if self.__reconstructed_off is None:
-            self.__reconstructed_off = empty((self.height, self.width), float)
-            for index, row in enumerate(self.rows):
-                print "Creo riga {0} off".format(index)
-                self.__reconstructed_off[index] = row.reconstructed_off
+            self._reconstruct_rows()
         return self.__reconstructed_off
 
     @property
@@ -255,8 +251,9 @@ class BeatingImage(object):
             self.__ratios = empty((self.height, self.width), float)
             for index, row in enumerate(self.rows):
                 print "Creo riga enhancement {0}".format(index)
-                self.__ratios[index] = row.enhancement_ratios
+                self.__ratios[index] = self.__reconstructed_on[index] / self.__reconstructed_off[index]
         return self.__ratios
+
 
 if __name__ == '__main__':
 
@@ -266,7 +263,6 @@ if __name__ == '__main__':
 
     beatingimage = BeatingImage(path="dati/samp6.dat", repetitions=90, shutter_frequency=5.865/2)
     beatingrow = BeatingImageRow(data=beatingimage.data[3,:,:], pixel_frequency=100.0, shutter_frequency=5.865 / 2)
-
 
     my_color_map = LinearSegmentedColormap("stdGreen",
                     {
