@@ -82,7 +82,7 @@ for (row_n, row) in enumerate(input_data):
             if (start // SHUTTER_T) % 2:
                 enhanced_row[pos] = val * er_row[pos]
             else:
-                enhanced_row[pos] = val
+                enhanced_row[pos] = val + random.normal(10, 2)
         # Transizione
         else:
             phase_start = start % (SHUTTER_T)
