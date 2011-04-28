@@ -101,6 +101,8 @@ for (row_n, row) in enumerate(input_data):
         s = sqrt(abs(enhanced_row[pos]))
         enhanced_row[pos] += random.uniform(-s, s)
         enhanced_row[pos] += noise[pos]
+        if enhanced_row[pos] < 0:
+            enhanced_row[pos] = 0
     enhanced_data[row_n] = enhanced_row.reshape(shape)
 enhanced_data = enhanced_data.reshape(rows * REPETITIONS, LINE_LENGTH)
 
