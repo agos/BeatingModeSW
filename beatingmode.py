@@ -21,6 +21,7 @@ _ncpus = 1
 _ncpus = multiprocessing.cpu_count()
 print("CPU rilevate: {0}".format(_ncpus))
 
+SETTING_CENTRAL_CROP = False
 
 def reconstruct(row):
     width = row.data.shape[1]
@@ -170,28 +171,35 @@ class BeatingImageRow(object):
             return self.__beating_mask
 
     # Ora produco altre due matrici simili per prendere solo la parte CENTRALE degli on e degli off
-    def build_row_square_subset(self, l, phi, on):
+    def build_row_square_subset(self, l, phi, on, duty_cycle):
         x = arange(l)
-        duty_cycle = 0.1
         r = square((2 * pi) * ((self.shutter_frequency * x / self.pixel_frequency) + phi - (0.5 - duty_cycle)/2 + 0.5 * (not on)), duty_cycle)/2 + 0.5
         return r >= 0.5
 
     @property
     def central_part_on(self):
         if self.__central_part_on is None:
+            if SETTING_CENTRAL_CROP:
+                duty_cycle = 0.1
+            else:
+                duty_cycle = 0.5
             self.__central_part_on = empty_like(self.beating_mask)
             l = self.__central_part_on.shape[1]
             for i, phi in enumerate(self.__phases):
-                self.__central_part_on[i] = self.build_row_square_subset(l, phi, True)
+                self.__central_part_on[i] = self.build_row_square_subset(l, phi, True, duty_cycle)
         return self.__central_part_on
 
     @property
     def central_part_off(self):
         if self.__central_part_off is None:
+            if SETTING_CENTRAL_CROP:
+                duty_cycle = 0.1
+            else:
+                duty_cycle = 0.5
             self.__central_part_off = empty_like(self.beating_mask)
             l = self.__central_part_off.shape[1]
             for i, phi in enumerate(self.__phases):
-                self.__central_part_off[i] = self.build_row_square_subset(l, phi, False)
+                self.__central_part_off[i] = self.build_row_square_subset(l, phi, False, duty_cycle)
         return self.__central_part_off
 
 
