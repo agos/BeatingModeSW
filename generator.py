@@ -70,7 +70,7 @@ for (row_n, row) in enumerate(input_data):
     shape = row.shape
     row = row.flat
     enhanced_row = empty_like(row)
-    noise = random.normal(0.3, 0.1, shape[0]*shape[1])
+    noise = random.normal(5, 1, shape[0]*shape[1])
     er_row = er_data[row_n].flat
     for (pos, val) in ndenumerate(row):
         pos = pos[0]
