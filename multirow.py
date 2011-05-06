@@ -18,7 +18,7 @@ my_color_map = LinearSegmentedColormap("stdGreen",
 
 beatingimage = BeatingImage(path="dati/samp6.dat", repetitions=90, shutter_frequency=5.856/2)
 
-print beatingimage.reconstructed_on.shape
+print("Immagine ricostruita: {0}".format(beatingimage.reconstructed_on.shape))
 
 savetxt("out/reconstructed_on.dat", beatingimage.reconstructed_on, fmt="%3.4f0")
 savetxt("out/reconstructed_off.dat", beatingimage.reconstructed_off, fmt="%3.4f0")
