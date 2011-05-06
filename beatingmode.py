@@ -84,25 +84,42 @@ class BeatingImageRow(object):
                 positions = column_on[:, 0]
                 samples = column_on[:, 1]
                 p0 = [samples.max() - samples.min(), 50, samples.min()]
+                failed = False
                 try:
                     result = optimize.curve_fit(fitting_function, positions, samples, p0)
                 except Exception, e:
-                    print e
-                    result = (p0,)
-                parameters_on = result[0]
+                    # print e
+                    failed = True
+                if not failed:
+                    parameters_on = result[0]
+                    if any(parameters_on > 1000) or parameters_on[0] < 0 or parameters_on[2] < 0 or parameters_on[0] < parameters_on[2]:
+                        failed = True
+                if not failed:
+                    # print("Compenso con parametri {0}".format(parameters_on))
+                    compensated_on = array([compensate(item, parameters_on, column.shape[0]) for item in column_on])
+                else:
+                    parameters_on = (p0,)
+                    compensated_on = column_on
                 # Trovo parametri dark
                 positions = column_off[:, 0]
                 samples = column_off[:, 1]
                 p0 = [samples.max()- samples.min(), 50, samples.min()]
+                failed = False
                 try:
                     result = optimize.curve_fit(fitting_function, positions, samples, p0)
                 except Exception, e:
-                    print e
-                    result = (p0,)
-                parameters_off = result[0]
-                # Compenso
-                compensated_off = array([compensate(item, parameters_off, column.shape[0]) for item in column_off])
-                compensated_on = array([compensate(item, parameters_on, column.shape[0]) for item in column_on])
+                    # print e
+                    failed = True
+                if not failed:
+                    parameters_off = result[0]
+                    if any(parameters_off > 1000) or parameters_off[0] < 0 or parameters_off[2] < 0 or parameters_off[0] < parameters_off[2]:
+                        failed = True
+                if not failed:
+                    # print("Compenso con parametri {0}".format(parameters_off))
+                    compensated_off = array([compensate(item, parameters_off, column.shape[0]) for item in column_off])
+                else:
+                    parameters_off = (p0,)
+                    compensated_off = column_off
                 c = concatenate((compensated_on, compensated_off))
                 i = c[:, 0]
                 c = c[:, 1]
