@@ -9,6 +9,7 @@ from math import pi
 import csv
 from numpy import *
 from scipy import optimize
+from scipy import stats
 from scipy.signal import square
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib import cbook
@@ -179,8 +180,7 @@ class BeatingImageRow(object):
                             a += 1
                     new_phases[n] = a
             # Fit sul progredire delle fasi
-            # TODO: Cambiare con stats.linregress
-            m, b = polyfit(arange(new_phases.shape[0]), new_phases, 1)
+            (m, b, fit_r_value, fit_p_value, fit_stderr) = stats.linregress(arange(new_phases.shape[0]), new_phases)
             # print "Parametri sfasamento: {0}, {1}".format(m, b)
             line = arange(new_phases.shape[0])* m + b
             # Costruiamo finalmente la stima definitiva
