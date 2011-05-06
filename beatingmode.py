@@ -22,6 +22,7 @@ _ncpus = multiprocessing.cpu_count()
 print("CPU rilevate: {0}".format(_ncpus))
 
 SETTING_CENTRAL_CROP = False
+SETTING_PARALLEL_PROCESSING = True
 
 def reconstruct(row):
     width = row.data.shape[1]
@@ -232,14 +233,17 @@ class BeatingImage(object):
     def _reconstruct_rows(self):
         self.__reconstructed_on = empty((self.height, self.width), float)
         self.__reconstructed_off = empty((self.height, self.width), float)
-        # start = time.time()
-        pool = multiprocessing.Pool(processes=_ncpus)
-        reconstructed = pool.map(reconstruct, self.rows)
+        start = time.time()
+        if SETTING_PARALLEL_PROCESSING:
+            pool = multiprocessing.Pool(processes=_ncpus)
+            reconstructed = pool.map(reconstruct, self.rows)
+            pool.close()
+            pool.join()
+        else:
+            reconstructed = map(reconstruct, self.rows)
         for index, row in enumerate(reconstructed):
             (self.__reconstructed_on[index], self.__reconstructed_off[index]) = reconstructed[index]
-        pool.close()
-        pool.join()
-        # print("Tempo impiegato: {0}".format(time.time()- start))
+        print("Tempo impiegato: {0}".format(time.time()- start))
 
     @property
     def reconstructed_on(self):
