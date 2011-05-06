@@ -159,7 +159,7 @@ class BeatingImageRow(object):
                     new_phases[n] = a
             # Fit sul progredire delle fasi
             m, b = polyfit(arange(new_phases.shape[0]), new_phases, 1)
-            print "Parametri sfasamento: {0}, {1}".format(m, b)
+            # print "Parametri sfasamento: {0}, {1}".format(m, b)
             line = arange(new_phases.shape[0])* m + b
             # Costruiamo finalmente la stima definitiva
             self.__beating_mask = empty_like(probe_estimate)
@@ -262,7 +262,6 @@ class BeatingImage(object):
         if self.__ratios is None:
             self.__ratios = empty((self.height, self.width), float)
             for index, row in enumerate(self.rows):
-                print "Creo riga enhancement {0}".format(index)
                 self.__ratios[index] = self.__reconstructed_on[index] / self.__reconstructed_off[index]
         return self.__ratios
 
