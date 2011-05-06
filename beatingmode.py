@@ -32,7 +32,6 @@ def reconstruct(row):
     reconstructed_on = empty((width, ), float)
     reconstructed_off = empty((width, ), float)
     for i in range(width):
-        # TODO: usare i masked array?
         comp_on = array([item for pos, item in enumerate(row.unbleached_data[:, i]) if row.central_part_on[pos, i]])
         reconstructed_on[i] = comp_on.mean()
         comp_off = array([item for pos, item in enumerate(row.unbleached_data[:, i]) if row.central_part_off[pos, i]])
@@ -82,7 +81,6 @@ class BeatingImageRow(object):
             def compensate_column_parameters(c):
                 column = c[:, 0]
                 mask = c[:, 1]
-                # TODO usare le mask?
                 column_on = array([[position, element] for position, element in enumerate(column) if mask[position]])
                 column_off = array([[position, element] for position, element in enumerate(column) if not mask[position]])
                 # Trovo parametri bright
