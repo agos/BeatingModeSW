@@ -23,12 +23,15 @@ print("CPU rilevate: {0}".format(_ncpus))
 
 SETTING_CENTRAL_CROP = False
 SETTING_PARALLEL_PROCESSING = True
+seterr(over='ignore')
+
 
 def reconstruct(row):
     width = row.data.shape[1]
     reconstructed_on = empty((width, ), float)
     reconstructed_off = empty((width, ), float)
     for i in range(width):
+        # TODO: usare i masked array?
         comp_on = array([item for pos, item in enumerate(row.unbleached_data[:, i]) if row.central_part_on[pos, i]])
         reconstructed_on[i] = comp_on.mean()
         comp_off = array([item for pos, item in enumerate(row.unbleached_data[:, i]) if row.central_part_off[pos, i]])
@@ -40,6 +43,7 @@ class BeatingImageRow(object):
     """Class for a single logical row of a beating image.
         Multiple repetitions are present"""
 
+    # TODO cambiare i __ con _
     def __init__(self, data, pixel_frequency=100.0, shutter_frequency=5.0):
         super(BeatingImageRow, self).__init__()
         self.pixel_frequency = pixel_frequency
@@ -77,7 +81,7 @@ class BeatingImageRow(object):
             def compensate_column_parameters(c):
                 column = c[:, 0]
                 mask = c[:, 1]
-
+                # TODO usare le mask?
                 column_on = array([[position, element] for position, element in enumerate(column) if mask[position]])
                 column_off = array([[position, element] for position, element in enumerate(column) if not mask[position]])
                 # Trovo parametri bright
@@ -175,6 +179,7 @@ class BeatingImageRow(object):
                             a += 1
                     new_phases[n] = a
             # Fit sul progredire delle fasi
+            # TODO: Cambiare con stats.linregress
             m, b = polyfit(arange(new_phases.shape[0]), new_phases, 1)
             # print "Parametri sfasamento: {0}, {1}".format(m, b)
             line = arange(new_phases.shape[0])* m + b
