@@ -246,7 +246,7 @@ class BeatingImage(object):
         print self.data.shape
         self.__reconstructed_on = None
         self.__reconstructed_off = None
-        self.__ratios = None
+        self._ratios = None
         self.rows = []
         self.rows = [BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency) for row in xrange(self.height)]
 
@@ -279,11 +279,13 @@ class BeatingImage(object):
 
     @property
     def ratios(self):
-        if self.__ratios is None:
-            self.__ratios = empty((self.height, self.width), float)
+        if self._ratios is None:
+            # self._ratios = empty((self.height, self.width), float)
+            self._ratios = ma.masked_less(self.__reconstructed_on, 20.0)
+            self._ratios.harden_mask()
             for index, row in enumerate(self.rows):
-                self.__ratios[index] = self.__reconstructed_on[index] / self.__reconstructed_off[index]
-        return self.__ratios
+                self._ratios[index] = self.__reconstructed_on[index] / self.__reconstructed_off[index]
+        return self._ratios.filled(float('NaN'))
 
 
 if __name__ == '__main__':
