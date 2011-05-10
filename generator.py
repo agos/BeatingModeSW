@@ -46,7 +46,7 @@ er_data = genfromtxt("dati/NonUniformeRatio.csv", delimiter=";")
 er_data = er_data.reshape(-1, LINE_LENGTH)
 er_data = er_data.repeat(REPETITIONS, 0)
 er_data = er_data.reshape(rows, REPETITIONS, LINE_LENGTH)
-
+er_data = er_data + 1.5
 
 def build_row_square(l, phi):
     x = arange(l)
