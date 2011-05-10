@@ -6,7 +6,7 @@ import pylab
 from matplotlib.colors import LinearSegmentedColormap
 
 LINE_LENGTH = 100
-REPETITIONS = 15
+REPETITIONS = 60
 PIXEL_F = 100.0
 PIXEL_T = 1.0 / PIXEL_F
 SHUTTER_F = 5.856
