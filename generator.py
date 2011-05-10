@@ -76,13 +76,14 @@ for (row_n, row) in enumerate(input_data):
         pos = pos[0]
         start = pixel_start(pos)
         end = pixel_end(pos)
+        val += noise[pos]
         # Se non c'è transizione
         if start // SHUTTER_T == end // SHUTTER_T:
             # TODO: per capire on/off mi baso sul modulo due. Non è il massimo!
             if (start // SHUTTER_T) % 2:
                 enhanced_row[pos] = val * er_row[pos]
             else:
-                enhanced_row[pos] = val + random.normal(10, 2)
+                enhanced_row[pos] = val
         # Transizione
         else:
             phase_start = start % (SHUTTER_T)
@@ -100,7 +101,6 @@ for (row_n, row) in enumerate(input_data):
                     phase_after / total_phase * val * er_row[pos]
         s = sqrt(abs(enhanced_row[pos]))
         enhanced_row[pos] += random.uniform(-s, s)
-        enhanced_row[pos] += noise[pos]
         if enhanced_row[pos] < 0:
             enhanced_row[pos] = 0
     enhanced_data[row_n] = enhanced_row.reshape(shape)
