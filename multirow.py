@@ -3,6 +3,7 @@
 
 from numpy import *
 import pylab
+import matplotlib
 from matplotlib.colors import LinearSegmentedColormap
 from beatingmode import BeatingImageRow, BeatingImage
 
@@ -17,6 +18,8 @@ my_color_map = LinearSegmentedColormap("stdGreen",
                 })
 
 beatingimage = BeatingImage(path="dati/samp6.dat", repetitions=90, shutter_frequency=5.856/2)
+ratio_color_map = matplotlib.cm.jet
+ratio_color_map.set_bad('k',1.)
 
 print("Immagine ricostruita: {0}".format(beatingimage.reconstructed_on.shape))
 
@@ -33,7 +36,7 @@ reconstructed_off_image = pylab.imshow(beatingimage.reconstructed_off, cmap=my_c
 reconstructed_off_image.set_interpolation('nearest')
 
 pylab.subplot(2,2,3)
-enhancement_ratios_image = pylab.imshow(beatingimage.ratios, cmap="jet")
+enhancement_ratios_image = pylab.imshow(beatingimage.ratios, cmap=ratio_color_map)
 pylab.colorbar()
 enhancement_ratios_image.set_interpolation('nearest')
 
