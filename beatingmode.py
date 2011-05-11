@@ -238,7 +238,7 @@ class BeatingImage(object):
         self.path = path
         self.pixel_frequency = pixel_frequency
         self.shutter_frequency = shutter_frequency
-        self.data = genfromtxt(path)
+        self.data = loadtxt(path)
         self.data = self.data[:, 1:]
         self.width = self.data.shape[1]
         self.data = self.data.reshape(-1,repetitions, self.width)
