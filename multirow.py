@@ -17,9 +17,11 @@ my_color_map = LinearSegmentedColormap("stdGreen",
                         (1.0, 0.0, 0.0)],
                 })
 
-beatingimage = BeatingImage(path="dati/samp6.dat", repetitions=90, shutter_frequency=5.856/2)
 ratio_color_map = matplotlib.cm.jet
 ratio_color_map.set_bad('k',1.)
+
+beatingimage = BeatingImage(path="out/generated.dat", repetitions=60, shutter_frequency=5.856)
+# beatingimage = BeatingImage(path="dati/samp6.dat", repetitions=90, shutter_frequency=5.856/2)
 
 print("Immagine ricostruita: {0}".format(beatingimage.reconstructed_on.shape))
 

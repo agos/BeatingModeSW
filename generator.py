@@ -109,4 +109,4 @@ enhanced_data = enhanced_data.reshape(rows * REPETITIONS, LINE_LENGTH)
 pylab.imshow(enhanced_data)
 pylab.show()
 
-savetxt("out/generated.dat", enhanced_data, fmt="%3.4f0", delimiter="\t")
+savetxt("out/generated.dat", enhanced_data, fmt="%3.4f0")
