@@ -280,11 +280,8 @@ class BeatingImage(object):
     @property
     def ratios(self):
         if self._ratios is None:
-            self._ratios = empty((self.height, self.width), float)
-            # self._ratios = ma.masked_less(self.__reconstructed_on, 20.0)
-            # self._ratios.harden_mask()
-            for index, row in enumerate(self.rows):
-                self._ratios[index] = self.__reconstructed_on[index] / self.__reconstructed_off[index]
+            to_mask = logical_or(less(self.__reconstructed_on, 20.0), less(self.__reconstructed_off, 20.0))
+            self._ratios = ma.array(self.__reconstructed_on / self.__reconstructed_off, mask=to_mask)
         return self._ratios
 
 
