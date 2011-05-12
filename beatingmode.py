@@ -239,14 +239,15 @@ class BeatingImage(object):
         self.path = path
         input = open(path, 'r').read().split('---')
         y = yaml.load(input[0])
-        repetitions = y['repetitions']
-        shutter_frequency = y['shutter_frequency']
-        pixel_frequency = y['pixel_frequency']
+        print y
+        self.repetitions = y['repetitions']
+        self.shutter_frequency = y['shutter_frequency']
+        self.pixel_frequency = y['pixel_frequency']
         header_length = len(input[0].split('\n'))
         self.data = loadtxt(path, skiprows=header_length)
         self.data = self.data[:, 1:]
         self.width = self.data.shape[1]
-        self.data = self.data.reshape(-1,repetitions, self.width)
+        self.data = self.data.reshape(-1, self.repetitions, self.width)
         self.height = self.data.shape[0]
         print self.data.shape
         self.__reconstructed_on = None
