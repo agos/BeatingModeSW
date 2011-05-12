@@ -293,50 +293,26 @@ class BeatingImage(object):
 
 
 if __name__ == '__main__':
+    beatingimage = BeatingImage(path="dati/generated.dat")
+    # beatingimage = BeatingImage(path="dati/samp6.dat")
 
-    # beatingrow = BeatingImageRowFromPath("dati/dati.dat")
-    # beatingrow = BeatingImageRowFromPath("dati/misura03.dat")
-    # beatingimage = BeatingImage(path="dati/generated.dat")
+    print("Immagine ricostruita: {0}".format(beatingimage.reconstructed_on.shape))
 
-    beatingimage = BeatingImage(path="dati/samp6.dat")
-    beatingrow = BeatingImageRow(data=beatingimage.data[3,:,:], pixel_frequency=100.0, shutter_frequency=5.865 / 2)
+    savetxt("out/reconstructed_on.dat", beatingimage.reconstructed_on, fmt="%3.4f0")
+    savetxt("out/reconstructed_off.dat", beatingimage.reconstructed_off, fmt="%3.4f0")
+    savetxt("out/enhancement_ratios.dat", beatingimage.ratios, fmt="%3.4f0")
 
+    pylab.subplot(2, 2, 1)
+    reconstructed_on_image = pylab.imshow(beatingimage.reconstructed_on, cmap=rate_color_map)
+    reconstructed_on_image.set_interpolation('nearest')
 
-    print "Dimensioni immagine (lxh): ", beatingrow.image_size
-    print "Max: ", beatingrow.data.max()
-    print "Min: ", beatingrow.data.min()
+    pylab.subplot(2, 2, 2)
+    reconstructed_off_image = pylab.imshow(beatingimage.reconstructed_off, cmap=rate_color_map)
+    reconstructed_off_image.set_interpolation('nearest')
 
-    pylab.figure(1)
-    h, w = 3, 3
-    pylab.subplot(h, w, 1)
-    first_image = pylab.imshow(beatingrow.data, cmap=rate_color_map)
-    first_image.set_interpolation('nearest')
-    pylab.title('Immagine originale')
-
-    pylab.subplot(h, w, 2)
-    estimate_plot = pylab.imshow(beatingrow.beating_mask, cmap=gray_color_map)
-    estimate_plot.set_interpolation('nearest')
-    pylab.title('Stima ON/OFF media')
-
-    pylab.subplot(h, w, 4)
-    pylab.title('Sample verticale')
-    pylab.xlabel('Distanza')
-    pylab.ylabel('Valore')
-
-    col_n = 50
-    pylab.plot(beatingrow.data[:,col_n])
-    pylab.plot(beatingrow.unbleached_data[:, col_n])
-
-    pylab.subplot(h, w, 6)
-    corrected_image = pylab.imshow(beatingrow.unbleached_data, rate_color_map)
-    corrected_image.set_interpolation('nearest')
-    pylab.title('Immagine corretta per il bleaching')
-
-    pylab.subplot(h, w, 7)
-    pylab.plot(beatingrow.reconstructed_on)
-    pylab.plot(beatingrow.reconstructed_off)
-
-    pylab.subplot(h, w, 8)
-    pylab.plot(beatingrow.enhancement_ratios)
+    pylab.subplot(2, 2, 3)
+    enhancement_ratios_image = pylab.imshow(beatingimage.ratios, cmap=ratio_color_map)
+    pylab.colorbar()
+    enhancement_ratios_image.set_interpolation('nearest')
 
     pylab.show()
