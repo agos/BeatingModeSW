@@ -240,7 +240,6 @@ class BeatingImage(object):
         self.path = path
         input = open(path, 'r').read().split('---')
         y = yaml.load(input[0])
-        print y
         self.repetitions = y['repetitions']
         self.shutter_frequency = y['shutter_frequency']
         self.pixel_frequency = y['pixel_frequency']
@@ -250,7 +249,7 @@ class BeatingImage(object):
         self.width = self.data.shape[1]
         self.data = self.data.reshape(-1, self.repetitions, self.width)
         self.height = self.data.shape[0]
-        print self.data.shape
+        print("Righe, ripetizioni, colonne: {0}".format(self.data.shape))
         self.__reconstructed_on = None
         self.__reconstructed_off = None
         self._ratios = None
@@ -293,50 +292,25 @@ class BeatingImage(object):
 
 
 if __name__ == '__main__':
+    bimg = BeatingImage(path="dati/generated.dat")
+    # bimg = BeatingImage(path="dati/samp6.dat")
 
-    # beatingrow = BeatingImageRowFromPath("dati/dati.dat")
-    # beatingrow = BeatingImageRowFromPath("dati/misura03.dat")
-    # beatingimage = BeatingImage(path="dati/generated.dat")
+    rec_on = bimg.reconstructed_on
+    rec_off = bimg.reconstructed_off
+    ratios = bimg.ratios
 
-    beatingimage = BeatingImage(path="dati/samp6.dat")
-    beatingrow = BeatingImageRow(data=beatingimage.data[3,:,:], pixel_frequency=100.0, shutter_frequency=5.865 / 2)
+    print("Immagine ricostruita: {0}".format(rec_on.shape))
 
+    savetxt("out/reconstructed_on.dat", rec_on, fmt="%10.5f", delimiter="\t")
+    savetxt("out/reconstructed_off.dat", rec_off, fmt="%10.5f", delimiter="\t")
+    savetxt("out/enhancement_ratios.dat", ratios, fmt="%10.5f", delimiter="\t")
 
-    print "Dimensioni immagine (lxh): ", beatingrow.image_size
-    print "Max: ", beatingrow.data.max()
-    print "Min: ", beatingrow.data.min()
-
-    pylab.figure(1)
-    h, w = 3, 3
-    pylab.subplot(h, w, 1)
-    first_image = pylab.imshow(beatingrow.data, cmap=rate_color_map)
-    first_image.set_interpolation('nearest')
-    pylab.title('Immagine originale')
-
-    pylab.subplot(h, w, 2)
-    estimate_plot = pylab.imshow(beatingrow.beating_mask, cmap=gray_color_map)
-    estimate_plot.set_interpolation('nearest')
-    pylab.title('Stima ON/OFF media')
-
-    pylab.subplot(h, w, 4)
-    pylab.title('Sample verticale')
-    pylab.xlabel('Distanza')
-    pylab.ylabel('Valore')
-
-    col_n = 50
-    pylab.plot(beatingrow.data[:,col_n])
-    pylab.plot(beatingrow.unbleached_data[:, col_n])
-
-    pylab.subplot(h, w, 6)
-    corrected_image = pylab.imshow(beatingrow.unbleached_data, rate_color_map)
-    corrected_image.set_interpolation('nearest')
-    pylab.title('Immagine corretta per il bleaching')
-
-    pylab.subplot(h, w, 7)
-    pylab.plot(beatingrow.reconstructed_on)
-    pylab.plot(beatingrow.reconstructed_off)
-
-    pylab.subplot(h, w, 8)
-    pylab.plot(beatingrow.enhancement_ratios)
+    pylab.subplot(2, 2, 1)
+    pylab.imshow(rec_on, cmap=rate_color_map, interpolation='nearest')
+    pylab.subplot(2, 2, 2)
+    pylab.imshow(rec_off, cmap=rate_color_map, interpolation='nearest')
+    pylab.subplot(2, 2, 3)
+    pylab.imshow(ratios, cmap=ratio_color_map, interpolation='nearest')
+    pylab.colorbar()
 
     pylab.show()
