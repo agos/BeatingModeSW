@@ -16,6 +16,7 @@ from matplotlib import cbook
 import functools
 from itertools import product
 import multiprocessing
+import yaml
 
 DEBUG_COLUMNS_FIT = False
 _ncpus = 1
@@ -233,12 +234,16 @@ def BeatingImageRowFromPath(path, pixel_frequency=100.0, shutter_frequency=5.0):
 class BeatingImage(object):
     """docstring for BeatingImage"""
 
-    def __init__(self, path, repetitions, pixel_frequency=100.0, shutter_frequency=5.856):
+    def __init__(self, path):
         super(BeatingImage, self).__init__()
         self.path = path
-        self.pixel_frequency = pixel_frequency
-        self.shutter_frequency = shutter_frequency
-        self.data = loadtxt(path)
+        input = open(path, 'r').read().split('---')
+        y = yaml.load(input[0])
+        repetitions = y['repetitions']
+        shutter_frequency = y['shutter_frequency']
+        pixel_frequency = y['pixel_frequency']
+        header_length = len(input[0].split('\n'))
+        self.data = loadtxt(path, skiprows=header_length)
         self.data = self.data[:, 1:]
         self.width = self.data.shape[1]
         self.data = self.data.reshape(-1,repetitions, self.width)
