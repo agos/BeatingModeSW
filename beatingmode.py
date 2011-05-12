@@ -240,7 +240,6 @@ class BeatingImage(object):
         self.path = path
         input = open(path, 'r').read().split('---')
         y = yaml.load(input[0])
-        print y
         self.repetitions = y['repetitions']
         self.shutter_frequency = y['shutter_frequency']
         self.pixel_frequency = y['pixel_frequency']
@@ -250,7 +249,7 @@ class BeatingImage(object):
         self.width = self.data.shape[1]
         self.data = self.data.reshape(-1, self.repetitions, self.width)
         self.height = self.data.shape[0]
-        print self.data.shape
+        print("Righe, ripetizioni, colonne: {0}".format(self.data.shape))
         self.__reconstructed_on = None
         self.__reconstructed_off = None
         self._ratios = None
