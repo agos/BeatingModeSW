@@ -302,9 +302,9 @@ if __name__ == '__main__':
 
     print("Immagine ricostruita: {0}".format(rec_on.shape))
 
-    savetxt("out/reconstructed_on.dat", rec_on, fmt="%3.4f0")
-    savetxt("out/reconstructed_off.dat", rec_off, fmt="%3.4f0")
-    savetxt("out/enhancement_ratios.dat", ratios, fmt="%3.4f0")
+    savetxt("out/reconstructed_on.dat", rec_on, fmt="%10.5f", delimiter="\t")
+    savetxt("out/reconstructed_off.dat", rec_off, fmt="%10.5f", delimiter="\t")
+    savetxt("out/enhancement_ratios.dat", ratios, fmt="%10.5f", delimiter="\t")
 
     pylab.subplot(2, 2, 1)
     reconstructed_on_image = pylab.imshow(rec_on, cmap=rate_color_map)
