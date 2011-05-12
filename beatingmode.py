@@ -58,8 +58,8 @@ class BeatingImageRow(object):
         self.__phases = None
         self.__central_part_on = None
         self.__central_part_off = None
-        self.__reconstructed_on = None
-        self.__reconstructed_off = None
+        self._rec_on = None
+        self._rec_off = None
         self.__enhancement_ratios = None
 
     @property
@@ -250,15 +250,15 @@ class BeatingImage(object):
         self.data = self.data.reshape(-1, self.repetitions, self.width)
         self.height = self.data.shape[0]
         print("Righe, ripetizioni, colonne: {0}".format(self.data.shape))
-        self.__reconstructed_on = None
-        self.__reconstructed_off = None
+        self._rec_on = None
+        self._rec_off = None
         self._ratios = None
         self.rows = []
         self.rows = [BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency) for row in xrange(self.height)]
 
     def _reconstruct_rows(self):
-        self.__reconstructed_on = empty((self.height, self.width), float)
-        self.__reconstructed_off = empty((self.height, self.width), float)
+        self._rec_on = empty((self.height, self.width), float)
+        self._rec_off = empty((self.height, self.width), float)
         start = time.time()
         if SETTING_PARALLEL_PROCESSING:
             pool = multiprocessing.Pool(processes=_ncpus)
@@ -268,26 +268,26 @@ class BeatingImage(object):
         else:
             reconstructed = map(reconstruct, self.rows)
         for index, row in enumerate(reconstructed):
-            (self.__reconstructed_on[index], self.__reconstructed_off[index]) = reconstructed[index]
+            (self._rec_on[index], self._rec_off[index]) = reconstructed[index]
         print("Tempo impiegato: {0}".format(time.time()- start))
 
     @property
     def reconstructed_on(self):
-        if self.__reconstructed_on is None:
+        if self._rec_on is None:
             self._reconstruct_rows()
-        return self.__reconstructed_on
+        return self._rec_on
 
     @property
     def reconstructed_off(self):
-        if self.__reconstructed_off is None:
+        if self._rec_off is None:
             self._reconstruct_rows()
-        return self.__reconstructed_off
+        return self._rec_off
 
     @property
     def ratios(self):
         if self._ratios is None:
-            to_mask = logical_or(less(self.__reconstructed_on, 20.0), less(self.__reconstructed_off, 20.0))
-            self._ratios = ma.array(self.__reconstructed_on / self.__reconstructed_off, mask=to_mask)
+            to_mask = logical_or(less(self._rec_on, 20.0), less(self._rec_off, 20.0))
+            self._ratios = ma.array(self._rec_on / self._rec_off, mask=to_mask)
         return self._ratios
 
 
