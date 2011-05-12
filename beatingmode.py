@@ -18,6 +18,7 @@ from itertools import product
 import multiprocessing
 import yaml
 from colors import rate_color_map, ratio_color_map, gray_color_map
+import argparse
 
 DEBUG_COLUMNS_FIT = False
 _ncpus = 1
@@ -292,9 +293,13 @@ class BeatingImage(object):
 
 
 if __name__ == '__main__':
-    bimg = BeatingImage(path="dati/generated.dat")
-    # bimg = BeatingImage(path="dati/samp6.dat")
+    description = 'A tool to do multi-row beating mode images reconstruction'
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument('path', metavar='PATH', nargs=1,
+                            help='the path for the scan file')
+    args = parser.parse_args()
 
+    bimg = BeatingImage(path=args.path[0])
     rec_on = bimg.reconstructed_on
     rec_off = bimg.reconstructed_off
     ratios = bimg.ratios
