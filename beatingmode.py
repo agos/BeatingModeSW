@@ -17,6 +17,7 @@ import functools
 from itertools import product
 import multiprocessing
 import yaml
+from colors import rate_color_map, ratio_color_map, gray_color_map
 
 DEBUG_COLUMNS_FIT = False
 _ncpus = 1
@@ -57,8 +58,8 @@ class BeatingImageRow(object):
         self.__phases = None
         self.__central_part_on = None
         self.__central_part_off = None
-        self.__reconstructed_on = None
-        self.__reconstructed_off = None
+        self._rec_on = None
+        self._rec_off = None
         self.__enhancement_ratios = None
 
     @property
@@ -239,7 +240,6 @@ class BeatingImage(object):
         self.path = path
         input = open(path, 'r').read().split('---')
         y = yaml.load(input[0])
-        print y
         self.repetitions = y['repetitions']
         self.shutter_frequency = y['shutter_frequency']
         self.pixel_frequency = y['pixel_frequency']
@@ -249,16 +249,16 @@ class BeatingImage(object):
         self.width = self.data.shape[1]
         self.data = self.data.reshape(-1, self.repetitions, self.width)
         self.height = self.data.shape[0]
-        print self.data.shape
-        self.__reconstructed_on = None
-        self.__reconstructed_off = None
+        print("Righe, ripetizioni, colonne: {0}".format(self.data.shape))
+        self._rec_on = None
+        self._rec_off = None
         self._ratios = None
         self.rows = []
         self.rows = [BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency) for row in xrange(self.height)]
 
     def _reconstruct_rows(self):
-        self.__reconstructed_on = empty((self.height, self.width), float)
-        self.__reconstructed_off = empty((self.height, self.width), float)
+        self._rec_on = empty((self.height, self.width), float)
+        self._rec_off = empty((self.height, self.width), float)
         start = time.time()
         if SETTING_PARALLEL_PROCESSING:
             pool = multiprocessing.Pool(processes=_ncpus)
@@ -268,83 +268,49 @@ class BeatingImage(object):
         else:
             reconstructed = map(reconstruct, self.rows)
         for index, row in enumerate(reconstructed):
-            (self.__reconstructed_on[index], self.__reconstructed_off[index]) = reconstructed[index]
+            (self._rec_on[index], self._rec_off[index]) = reconstructed[index]
         print("Tempo impiegato: {0}".format(time.time()- start))
 
     @property
     def reconstructed_on(self):
-        if self.__reconstructed_on is None:
+        if self._rec_on is None:
             self._reconstruct_rows()
-        return self.__reconstructed_on
+        return self._rec_on
 
     @property
     def reconstructed_off(self):
-        if self.__reconstructed_off is None:
+        if self._rec_off is None:
             self._reconstruct_rows()
-        return self.__reconstructed_off
+        return self._rec_off
 
     @property
     def ratios(self):
         if self._ratios is None:
-            to_mask = logical_or(less(self.__reconstructed_on, 20.0), less(self.__reconstructed_off, 20.0))
-            self._ratios = ma.array(self.__reconstructed_on / self.__reconstructed_off, mask=to_mask)
+            to_mask = logical_or(less(self._rec_on, 20.0), less(self._rec_off, 20.0))
+            self._ratios = ma.array(self._rec_on / self._rec_off, mask=to_mask)
         return self._ratios
 
 
 if __name__ == '__main__':
+    bimg = BeatingImage(path="dati/generated.dat")
+    # bimg = BeatingImage(path="dati/samp6.dat")
 
-    # beatingrow = BeatingImageRowFromPath("dati/dati.dat")
-    # beatingrow = BeatingImageRowFromPath("dati/misura03.dat")
-    # beatingimage = BeatingImage(path="dati/generated.dat")
+    rec_on = bimg.reconstructed_on
+    rec_off = bimg.reconstructed_off
+    ratios = bimg.ratios
 
-    beatingimage = BeatingImage(path="dati/samp6.dat")
-    beatingrow = BeatingImageRow(data=beatingimage.data[3,:,:], pixel_frequency=100.0, shutter_frequency=5.865 / 2)
+    print("Immagine ricostruita: {0}".format(rec_on.shape))
 
-    my_color_map = LinearSegmentedColormap("stdGreen",
-                    {
-                    'red': [(0.0, 0.0, 0.0),
-                           (1.0, 0.0, 0.0)],
-                   'green': [(0.0, 0.0, 0.0),
-                             (1.0, 1.0, 1.0)],
-                   'blue': [(0.0, 0.0, 0.0),
-                            (1.0, 0.0, 0.0)],
-                    })
+    savetxt("out/reconstructed_on.dat", rec_on, fmt="%10.5f", delimiter="\t")
+    savetxt("out/reconstructed_off.dat", rec_off, fmt="%10.5f", delimiter="\t")
+    savetxt("out/enhancement_ratios.dat", ratios, fmt="%10.5f", delimiter="\t")
 
-    print "Dimensioni immagine (lxh): ", beatingrow.image_size
-    print "Max: ", beatingrow.data.max()
-    print "Min: ", beatingrow.data.min()
-
-    pylab.figure(1)
-    h, w = 3, 3
-    pylab.subplot(h, w, 1)
-    first_image = pylab.imshow(beatingrow.data, cmap=my_color_map)
-    first_image.set_interpolation('nearest')
-    pylab.title('Immagine originale')
-
-    pylab.subplot(h, w, 2)
-    estimate_plot = pylab.imshow(beatingrow.beating_mask, cmap=pylab.get_cmap("gray"))
-    estimate_plot.set_interpolation('nearest')
-    pylab.title('Stima ON/OFF media')
-
-    pylab.subplot(h, w, 4)
-    pylab.title('Sample verticale')
-    pylab.xlabel('Distanza')
-    pylab.ylabel('Valore')
-
-    col_n = 50
-    pylab.plot(beatingrow.data[:,col_n])
-    pylab.plot(beatingrow.unbleached_data[:, col_n])
-
-    pylab.subplot(h, w, 6)
-    corrected_image = pylab.imshow(beatingrow.unbleached_data, cmap=my_color_map)
-    corrected_image.set_interpolation('nearest')
-    pylab.title('Immagine corretta per il bleaching')
-
-    pylab.subplot(h, w, 7)
-    pylab.plot(beatingrow.reconstructed_on)
-    pylab.plot(beatingrow.reconstructed_off)
-
-    pylab.subplot(h, w, 8)
-    pylab.plot(beatingrow.enhancement_ratios)
+    pylab.subplot(2, 2, 1)
+    pylab.imshow(rec_on, cmap=rate_color_map, interpolation='nearest')
+    pylab.subplot(2, 2, 2)
+    pylab.imshow(rec_off, cmap=rate_color_map, interpolation='nearest')
+    pylab.subplot(2, 2, 3)
+    pylab.imshow(ratios, cmap=ratio_color_map, interpolation='nearest')
+    pylab.colorbar()
 
     pylab.show()

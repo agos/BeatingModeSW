@@ -36,7 +36,7 @@ class MainFrame(wx.Frame):
         self.Centre()
         # self.beatingimage = BeatingImage(path="dati/generated.dat", repetitions=15)
         # self.beatingdata = BeatingImageRow(data=self.beatingimage.data[24,:,:], pixel_frequency=100.0, shutter_frequency=5.856 / 2)
-        self.beatingimage = BeatingImage(path="dati/samp6.dat", repetitions=90, shutter_frequency=5.856/2)
+        self.beatingimage = BeatingImage(path="dati/samp6.dat")
         self.beatingdata = BeatingImageRow(data=self.beatingimage.data[1,:,:], pixel_frequency=100.0, shutter_frequency=5.865 / 2)
         self.drawingdata = self.beatingdata.data
         self.line_det_h, = self.axes_det1.plot(
