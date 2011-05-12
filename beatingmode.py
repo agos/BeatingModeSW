@@ -17,6 +17,7 @@ import functools
 from itertools import product
 import multiprocessing
 import yaml
+from colors import rate_color_map, ratio_color_map, gray_color_map
 
 DEBUG_COLUMNS_FIT = False
 _ncpus = 1
@@ -300,15 +301,6 @@ if __name__ == '__main__':
     beatingimage = BeatingImage(path="dati/samp6.dat")
     beatingrow = BeatingImageRow(data=beatingimage.data[3,:,:], pixel_frequency=100.0, shutter_frequency=5.865 / 2)
 
-    my_color_map = LinearSegmentedColormap("stdGreen",
-                    {
-                    'red': [(0.0, 0.0, 0.0),
-                           (1.0, 0.0, 0.0)],
-                   'green': [(0.0, 0.0, 0.0),
-                             (1.0, 1.0, 1.0)],
-                   'blue': [(0.0, 0.0, 0.0),
-                            (1.0, 0.0, 0.0)],
-                    })
 
     print "Dimensioni immagine (lxh): ", beatingrow.image_size
     print "Max: ", beatingrow.data.max()
@@ -317,12 +309,12 @@ if __name__ == '__main__':
     pylab.figure(1)
     h, w = 3, 3
     pylab.subplot(h, w, 1)
-    first_image = pylab.imshow(beatingrow.data, cmap=my_color_map)
+    first_image = pylab.imshow(beatingrow.data, cmap=rate_color_map)
     first_image.set_interpolation('nearest')
     pylab.title('Immagine originale')
 
     pylab.subplot(h, w, 2)
-    estimate_plot = pylab.imshow(beatingrow.beating_mask, cmap=pylab.get_cmap("gray"))
+    estimate_plot = pylab.imshow(beatingrow.beating_mask, cmap=gray_color_map)
     estimate_plot.set_interpolation('nearest')
     pylab.title('Stima ON/OFF media')
 
@@ -336,7 +328,7 @@ if __name__ == '__main__':
     pylab.plot(beatingrow.unbleached_data[:, col_n])
 
     pylab.subplot(h, w, 6)
-    corrected_image = pylab.imshow(beatingrow.unbleached_data, cmap=my_color_map)
+    corrected_image = pylab.imshow(beatingrow.unbleached_data, rate_color_map)
     corrected_image.set_interpolation('nearest')
     pylab.title('Immagine corretta per il bleaching')
 
