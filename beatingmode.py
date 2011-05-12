@@ -296,11 +296,11 @@ if __name__ == '__main__':
     bimg = BeatingImage(path="dati/generated.dat")
     # bimg = BeatingImage(path="dati/samp6.dat")
 
-    print("Immagine ricostruita: {0}".format(bimg.reconstructed_on.shape))
-
     rec_on = bimg.reconstructed_on
     rec_off = bimg.reconstructed_off
     ratios = bimg.ratios
+
+    print("Immagine ricostruita: {0}".format(rec_on.shape))
 
     savetxt("out/reconstructed_on.dat", rec_on, fmt="%3.4f0")
     savetxt("out/reconstructed_off.dat", rec_off, fmt="%3.4f0")
