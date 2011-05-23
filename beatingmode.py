@@ -303,17 +303,20 @@ if __name__ == '__main__':
     rec_on = bimg.reconstructed_on
     rec_off = bimg.reconstructed_off
     ratios = bimg.ratios
+    max_rate = max(rec_on.max(), rec_off.max())
 
     print("Immagine ricostruita: {0}".format(rec_on.shape))
+    print("Valore massimo: {0}".format(max_rate))
 
     savetxt("out/reconstructed_on.dat", rec_on, fmt="%10.5f", delimiter="\t")
     savetxt("out/reconstructed_off.dat", rec_off, fmt="%10.5f", delimiter="\t")
     savetxt("out/enhancement_ratios.dat", ratios, fmt="%10.5f", delimiter="\t")
 
     pylab.subplot(2, 2, 1)
-    pylab.imshow(rec_on, cmap=rate_color_map, interpolation='nearest')
+    pylab.imshow(rec_on, cmap=rate_color_map, interpolation='nearest', vmin=0.0, vmax=max_rate)
     pylab.subplot(2, 2, 2)
-    pylab.imshow(rec_off, cmap=rate_color_map, interpolation='nearest')
+    pylab.imshow(rec_off, cmap=rate_color_map, interpolation='nearest', vmin=0.0, vmax=max_rate)
+    pylab.colorbar()
     pylab.subplot(2, 2, 3)
     pylab.imshow(ratios, cmap=ratio_color_map, interpolation='nearest')
     pylab.colorbar()
