@@ -303,8 +303,10 @@ if __name__ == '__main__':
     rec_on = bimg.reconstructed_on
     rec_off = bimg.reconstructed_off
     ratios = bimg.ratios
+    max_rate = max(rec_on.max(), rec_off.max())
 
     print("Immagine ricostruita: {0}".format(rec_on.shape))
+    print("Valore massimo: {0}".format(max_rate))
 
     savetxt("out/reconstructed_on.dat", rec_on, fmt="%10.5f", delimiter="\t")
     savetxt("out/reconstructed_off.dat", rec_off, fmt="%10.5f", delimiter="\t")
