@@ -49,7 +49,7 @@ er_data = genfromtxt("dati/NonUniformeRatio.csv", delimiter=";")
 er_data = er_data.reshape(-1, LINE_LENGTH)
 er_data = er_data.repeat(REPETITIONS, 0)
 er_data = er_data.reshape(rows, REPETITIONS, LINE_LENGTH)
-er_data = er_data + 1.5
+er_data = er_data + 1
 
 def build_row_square(l, phi):
     x = arange(l)
@@ -84,7 +84,7 @@ for (row_n, row) in enumerate(input_data):
         if start // SHUTTER_T == end // SHUTTER_T:
             # TODO: per capire on/off mi baso sul modulo due. Non è il massimo!
             if (start // SHUTTER_T) % 2:
-                enhanced_row[pos] = val * er_row[pos]
+                enhanced_row[pos] = val * er_row[pos] + random.normal(5, 1)
             else:
                 enhanced_row[pos] = val
         # Transizione
@@ -97,11 +97,11 @@ for (row_n, row) in enumerate(input_data):
             phase_after = phase_start
             # Acceso -> spento
             if (start // SHUTTER_T) % 2:
-                enhanced_row[pos] = phase_before / total_phase * val * er_row[pos] + \
+                enhanced_row[pos] = phase_before / total_phase * (val * er_row[pos] + random.normal(5, 1)) + \
                                      phase_after / total_phase * val
             else:
                 enhanced_row[pos] = phase_before / total_phase * val + \
-                    phase_after / total_phase * val * er_row[pos]
+                    phase_after / total_phase * (val * er_row[pos] + random.normal(5, 1) )
         s = sqrt(abs(enhanced_row[pos]))
         enhanced_row[pos] += random.uniform(-s, s)
         if enhanced_row[pos] < 0:
