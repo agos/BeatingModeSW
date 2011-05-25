@@ -21,6 +21,13 @@ class MainFrame(wx.Frame):
         hGrid.Add(self.panelGeneral, 1, flag=wx.EXPAND|wx.ALL|wx.ALIGN_CENTRE, border=4)
         mainGrid.Add(hGrid, 1, flag=wx.EXPAND|wx.ALL|wx.ALIGN_CENTRE)
 
+        self.SetSizer(mainGrid)
+        self.Layout()
+
+        #Set the Minumum size
+        self.SetMinSize((900, 700))
+        self.Centre(wx.BOTH)
+
 class bmgui(wx.App):
 
     def OnInit(self):
