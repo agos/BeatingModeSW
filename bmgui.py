@@ -9,6 +9,17 @@ class MainFrame(wx.Frame):
         wx.Frame.__init__(self, parent, id, title, pos=wx.DefaultPosition,
             size=(900, 700), style=wx.DEFAULT_FRAME_STYLE)
 
+        # set up resource file and config file
+        self.res = res
+
+        # Load the main panel for the program
+        self.panelGeneral = self.res.LoadPanel(self, 'panelGeneral')
+
+        # Setup the layout for the frame
+        mainGrid = wx.BoxSizer(wx.VERTICAL)
+        hGrid = wx.BoxSizer(wx.HORIZONTAL)
+        hGrid.Add(self.panelGeneral, 1, flag=wx.EXPAND|wx.ALL|wx.ALIGN_CENTRE, border=4)
+        mainGrid.Add(hGrid, 1, flag=wx.EXPAND|wx.ALL|wx.ALIGN_CENTRE)
 
 class bmgui(wx.App):
 
