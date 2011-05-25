@@ -24,6 +24,12 @@ class MainFrame(wx.Frame):
         hGrid.Add(self.panelGeneral, 1, flag=wx.EXPAND|wx.ALL|wx.ALIGN_CENTRE, border=4)
         mainGrid.Add(hGrid, 1, flag=wx.EXPAND|wx.ALL|wx.ALIGN_CENTRE)
 
+        # Load the menu for the frame
+        menuMain = self.res.LoadMenuBar('menuMain')
+
+        # Set the menu as the default menu for this frame
+        self.SetMenuBar(menuMain)
+
         self.SetSizer(mainGrid)
         self.Layout()
 

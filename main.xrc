@@ -146,4 +146,18 @@
       </object>
     </object>
   </object>
+  <object class="wxMenuBar" name="menuMain">
+    <object class="wxMenu">
+      <label>&amp;File</label>
+      <object class="wxMenuItem" name="menuOpen">
+        <label>&amp;Open...</label>
+        <accel>Ctrl-O</accel>
+      </object>
+      <object class="separator"/>
+      <object class="wxMenuItem" name="menuExit">
+        <label>E&amp;xit</label>
+        <accel>Alt+F4</accel>
+      </object>
+    </object>
+  </object>
 </resource>
