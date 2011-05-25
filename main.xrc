@@ -74,7 +74,7 @@
                   </object>
                   <vgap>5</vgap>
                   <hgap>5</hgap>
-                  <growablecols>-1</growablecols>
+                  <growablecols>1,3,5,7</growablecols>
                 </object>
                 <option>1</option>
                 <flag>wxALL|wxEXPAND</flag>
