@@ -27,6 +27,9 @@ class MainFrame(wx.Frame):
         # Load the menu for the frame
         menuMain = self.res.LoadMenuBar('menuMain')
 
+        # Bind menu events to the proper methods
+        wx.EVT_MENU(self, XRCID('menuExit'), self.OnClose)
+
         # Set the menu as the default menu for this frame
         self.SetMenuBar(menuMain)
 
@@ -40,6 +43,9 @@ class MainFrame(wx.Frame):
         # Initialize the welcome notebook tab
         panelWelcome = self.res.LoadPanel(self.notebook, 'panelWelcome')
         self.notebook.AddPage(panelWelcome, 'Welcome')
+
+    def OnClose(self, _):
+        self.Destroy()
 
 
 class bmgui(wx.App):
