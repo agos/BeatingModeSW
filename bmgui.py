@@ -15,6 +15,9 @@ class MainFrame(wx.Frame):
         # Load the main panel for the program
         self.panelGeneral = self.res.LoadPanel(self, 'panelGeneral')
 
+        # Initialize the General panel controls
+        self.notebook = XRCCTRL(self, 'notebook')
+
         # Setup the layout for the frame
         mainGrid = wx.BoxSizer(wx.VERTICAL)
         hGrid = wx.BoxSizer(wx.HORIZONTAL)
@@ -27,6 +30,11 @@ class MainFrame(wx.Frame):
         #Set the Minumum size
         self.SetMinSize((900, 700))
         self.Centre(wx.BOTH)
+
+        # Initialize the welcome notebook tab
+        panelWelcome = self.res.LoadPanel(self.notebook, 'panelWelcome')
+        self.notebook.AddPage(panelWelcome, 'Welcome')
+
 
 class bmgui(wx.App):
 
