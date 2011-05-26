@@ -1,6 +1,8 @@
 import wx
 from wx.xrc import *
 import os
+import wxmpl
+from numpy import *
 
 
 class MainFrame(wx.Frame):
@@ -76,7 +78,21 @@ class PanelReconstruct(wx.Panel):
         self.PostCreate(pre)
 
     def Init(self, res):
-        pass
+        self.guiRebuild = GuiRebuild(self)
+        res.AttachUnknownControl('panelReconstructed', self.guiRebuild.panelOnOff, self)
+
+
+class GuiRebuild:
+    """Displays and updates the rebuilt on/off state."""
+
+    def __init__(self, parent):
+        self.panelOnOff = wxmpl.PlotPanel(parent, -1, size=(6,4.50), dpi=68,
+            crosshairs=True, autoscaleUnzoom=False)
+        self.Replot()
+    
+    def Replot(self):
+        fig = self.panelOnOff.get_figure()
+        fig.set_edgecolor('white')
 
 
 class bmgui(wx.App):
