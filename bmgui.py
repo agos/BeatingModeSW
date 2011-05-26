@@ -106,10 +106,10 @@ class bmgui(wx.App):
         # Load the XRC file for our gui resources
         self.res = XmlResource('main.xrc')
 
-        dicompylerFrame = MainFrame(None, -1, "bmgui", self.res)
-        self.SetTopWindow(dicompylerFrame)
-        dicompylerFrame.Centre()
-        dicompylerFrame.Show()
+        bmFrame = MainFrame(None, -1, "bmgui", self.res)
+        self.SetTopWindow(bmFrame)
+        bmFrame.Centre()
+        bmFrame.Show()
         return 1
 
 
