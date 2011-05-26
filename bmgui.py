@@ -63,14 +63,17 @@ class MainFrame(wx.Frame):
             dialog.Destroy()
 
     def loadData(self, path):
+        # Initialize the panel
         self.notebook.DeleteAllPages()
         self.panelReconstruct = self.res.LoadPanel(self.notebook,
             'panelReconstruct')
         self.panelReconstruct.Init(self.res)
         self.notebook.AddPage(self.panelReconstruct, "Rate")
+        self.panelReconstruct.Update()
+        # Do the actual data loading
         self.bimg = BeatingImage(path=path)
+        # Let's reconstruct the image
         self.rec_on = self.bimg.reconstructed_on
-        
         # Paint it!
         self.panelReconstruct.guiRebuild.Replot(rec_on=self.rec_on,
             max_rate=self.rec_on.max())
@@ -90,6 +93,7 @@ class PanelReconstruct(wx.Panel):
         self.guiRebuild = GuiRebuild(self)
         res.AttachUnknownControl('panelReconstructed',
             self.guiRebuild.panelOnOff, self)
+        self.guiRebuild.Replot()
 
 
 class GuiRebuild:
@@ -109,6 +113,8 @@ class GuiRebuild:
         if rec_on is not None:
             axes.imshow(rec_on, cmap=rate_color_map,
             interpolation='nearest', vmin=0.0, vmax=max_rate)
+        self.panelOnOff.draw()
+
 
 class bmgui(wx.App):
 
