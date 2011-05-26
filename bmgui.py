@@ -108,9 +108,9 @@ class GuiRebuild:
         fig = self.panelOnOff.get_figure()
         fig.set_edgecolor('white')
         # clear the axes and replot everything
-        axes = fig.gca()
-        axes.cla()
         if rec_on is not None:
+            axes = fig.gca()
+            axes.cla()
             axes.imshow(rec_on, cmap=rate_color_map,
             interpolation='nearest', vmin=0.0, vmax=max_rate)
         self.panelOnOff.draw()
