@@ -3,6 +3,8 @@ from wx.xrc import *
 import os
 import wxmpl
 from numpy import *
+from beatingmode import BeatingImage
+from colors import rate_color_map, ratio_color_map, gray_color_map
 
 
 class MainFrame(wx.Frame):
@@ -62,10 +64,16 @@ class MainFrame(wx.Frame):
 
     def loadData(self, path):
         self.notebook.DeleteAllPages()
-        panelReconstruct = self.res.LoadPanel(self.notebook,
+        self.panelReconstruct = self.res.LoadPanel(self.notebook,
             'panelReconstruct')
-        panelReconstruct.Init(self.res)
-        self.notebook.AddPage(panelReconstruct, "Rate")
+        self.panelReconstruct.Init(self.res)
+        self.notebook.AddPage(self.panelReconstruct, "Rate")
+        self.bimg = BeatingImage(path=path)
+        self.rec_on = self.bimg.reconstructed_on
+        
+        # Paint it!
+        self.panelReconstruct.guiRebuild.Replot(rec_on=self.rec_on,
+            max_rate=self.rec_on.max())
 
     def OnClose(self, _):
         self.Destroy()
@@ -92,10 +100,15 @@ class GuiRebuild:
             crosshairs=True, autoscaleUnzoom=False)
         self.Replot()
     
-    def Replot(self):
+    def Replot(self, rec_on=None, max_rate=None):
         fig = self.panelOnOff.get_figure()
         fig.set_edgecolor('white')
-
+        # clear the axes and replot everything
+        axes = fig.gca()
+        axes.cla()
+        if rec_on is not None:
+            axes.imshow(rec_on, cmap=rate_color_map,
+            interpolation='nearest', vmin=0.0, vmax=max_rate)
 
 class bmgui(wx.App):
 
