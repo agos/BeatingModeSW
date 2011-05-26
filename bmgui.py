@@ -24,7 +24,8 @@ class MainFrame(wx.Frame):
         # Setup the layout for the frame
         mainGrid = wx.BoxSizer(wx.VERTICAL)
         hGrid = wx.BoxSizer(wx.HORIZONTAL)
-        hGrid.Add(self.panelGeneral, 1, flag=wx.EXPAND|wx.ALL|wx.ALIGN_CENTRE, border=4)
+        hGrid.Add(self.panelGeneral, 1, flag=wx.EXPAND|wx.ALL|wx.ALIGN_CENTRE,
+            border=4)
         mainGrid.Add(hGrid, 1, flag=wx.EXPAND|wx.ALL|wx.ALIGN_CENTRE)
 
         # Load the menu for the frame
@@ -79,7 +80,8 @@ class PanelReconstruct(wx.Panel):
 
     def Init(self, res):
         self.guiRebuild = GuiRebuild(self)
-        res.AttachUnknownControl('panelReconstructed', self.guiRebuild.panelOnOff, self)
+        res.AttachUnknownControl('panelReconstructed',
+            self.guiRebuild.panelOnOff, self)
 
 
 class GuiRebuild:
