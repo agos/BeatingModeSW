@@ -1,5 +1,6 @@
 import wx
 from wx.xrc import *
+import os
 
 
 class MainFrame(wx.Frame):
@@ -28,6 +29,7 @@ class MainFrame(wx.Frame):
         menuMain = self.res.LoadMenuBar('menuMain')
 
         # Bind menu events to the proper methods
+        wx.EVT_MENU(self, XRCID('menuOpen'), self.OnOpenMeasure)
         wx.EVT_MENU(self, XRCID('menuExit'), self.OnClose)
 
         # Set the menu as the default menu for this frame
@@ -43,6 +45,16 @@ class MainFrame(wx.Frame):
         # Initialize the welcome notebook tab
         panelWelcome = self.res.LoadPanel(self.notebook, 'panelWelcome')
         self.notebook.AddPage(panelWelcome, 'Welcome')
+
+    def OnOpenMeasure(selv, evt):
+        wildcard = "Data file (*.dat)|*.dat|" \
+            "Ago file (*.ago)|*.ago|" \
+            "All files (*.*)|*.*"
+        dialog = wx.FileDialog(None, "Choose a measure file", os.getcwd(),
+            "", wildcard, wx.OPEN)
+        if dialog.ShowModal() == wx.ID_OK:
+            print("Opening: {0}".format(dialog.GetPath()))
+            dialog.Destroy()
 
     def OnClose(self, _):
         self.Destroy()
