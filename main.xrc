@@ -202,7 +202,7 @@
                 <flag>wxALL|wxEXPAND|wxALIGN_LEFT</flag>
               </object>
               <object class="spacer">
-                <size>3,0</size>
+                <size>0,0</size>
               </object>
               <object class="sizeritem">
                 <object class="wxSpinCtrl">
@@ -211,11 +211,17 @@
                   <max>100</max>
                 </object>
               </object>
+              <object class="spacer">
+                <size>3,0</size>
+              </object>
               <object class="sizeritem">
                 <object class="wxStaticText">
                   <label>Hz</label>
                 </object>
                 <flag>wxALIGN_LEFT|wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="spacer">
+                <size>10,0</size>
               </object>
             </object>
             <option>2</option>
