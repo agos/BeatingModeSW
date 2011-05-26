@@ -46,7 +46,7 @@ class MainFrame(wx.Frame):
         panelWelcome = self.res.LoadPanel(self.notebook, 'panelWelcome')
         self.notebook.AddPage(panelWelcome, 'Welcome')
 
-    def OnOpenMeasure(selv, evt):
+    def OnOpenMeasure(self, evt):
         wildcard = "Data file (*.dat)|*.dat|" \
             "Ago file (*.ago)|*.ago|" \
             "All files (*.*)|*.*"
