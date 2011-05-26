@@ -160,7 +160,7 @@
       </object>
     </object>
   </object>
-  <object class="wxPanel" name="panelReconstruct">
+  <object class="wxPanel" name="panelReconstruct" subclass="bmgui.PanelReconstruct">
     <object class="wxBoxSizer">
       <orient>wxVERTICAL</orient>
       <object class="sizeritem">

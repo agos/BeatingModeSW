@@ -54,10 +54,29 @@ class MainFrame(wx.Frame):
             "", wildcard, wx.OPEN)
         if dialog.ShowModal() == wx.ID_OK:
             print("Opening: {0}".format(dialog.GetPath()))
+            self.loadData(dialog.GetPath())
             dialog.Destroy()
+
+    def loadData(self, path):
+        self.notebook.DeleteAllPages()
+        panelReconstruct = self.res.LoadPanel(self.notebook,
+            'panelReconstruct')
+        panelReconstruct.Init(self.res)
+        self.notebook.AddPage(panelReconstruct, "Rate")
 
     def OnClose(self, _):
         self.Destroy()
+
+
+class PanelReconstruct(wx.Panel):
+
+    def __init__(self):
+        pre = wx.PrePanel()
+        # the Create step is done by XRC.
+        self.PostCreate(pre)
+
+    def Init(self, res):
+        pass
 
 
 class bmgui(wx.App):
