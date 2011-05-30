@@ -100,10 +100,10 @@ class GuiRebuild:
     """Displays and updates the rebuilt on/off state."""
 
     def __init__(self, parent):
-        self.panelOnOff = wxmpl.PlotPanel(parent, -1, size=(6,4.50), dpi=68,
+        self.panelOnOff = wxmpl.PlotPanel(parent, -1, size=(6, 4.50), dpi=68,
             crosshairs=True, autoscaleUnzoom=False)
         self.Replot()
-    
+
     def Replot(self, rec_on=None, max_rate=None):
         fig = self.panelOnOff.get_figure()
         fig.set_edgecolor('white')
