@@ -42,6 +42,25 @@ def reconstruct(row):
     return (reconstructed_on, reconstructed_off)
 
 
+def reconstruct_row_update(p):
+    # TODO unificare con il metodo di cui sopra?
+    row = p[0]
+    queue = p[1]
+    index = p[2]
+    width = row.data.shape[1]
+    reconstructed_on = empty((width, ), float)
+    reconstructed_off = empty((width, ), float)
+    for i in range(width):
+        comp_on = array([item for pos, item in enumerate(
+            row.unbleached_data[:, i]) if row.central_part_on[pos, i]])
+        reconstructed_on[i] = comp_on.mean()
+        comp_off = array([item for pos, item in enumerate(
+            row.unbleached_data[:, i]) if row.central_part_off[pos, i]])
+        reconstructed_off[i] = comp_off.mean()
+    queue.put((index, reconstructed_on, reconstructed_off))
+    return (index, reconstructed_on, reconstructed_off)
+
+
 class BeatingImageRow(object):
     """Class for a single logical row of a beating image.
         Multiple repetitions are present"""
@@ -270,7 +289,25 @@ class BeatingImage(object):
             reconstructed = map(reconstruct, self.rows)
         for index, row in enumerate(reconstructed):
             (self._rec_on[index], self._rec_off[index]) = reconstructed[index]
-        print("Tempo impiegato: {0}".format(time.time()- start))
+        print("Tempo impiegato: {0}".format(time.time() - start))
+
+    def reconstruct_with_update(self, queue, dialog):
+        self._rec_on = empty((self.height, self.width), float)
+        self._rec_off = empty((self.height, self.width), float)
+        start = time.time()
+        pool = multiprocessing.Pool(processes=_ncpus)
+        results = pool.map_async(reconstruct_row_update,
+            [(x,queue,i) for (i,x) in enumerate(self.rows)])
+        l = len(self.rows)
+        value = 0
+        for i in range(l):
+            result = queue.get()
+            i = result[0]
+            (self._rec_on[i], self._rec_off[i]) = (result[1], result[2])
+            value += 100.0/l
+            dialog.Update(value)
+        print("Tempo impiegato: {0}".format(time.time() - start))
+        return results
 
     @property
     def reconstructed_on(self):
