@@ -270,7 +270,7 @@ class BeatingImage(object):
             reconstructed = map(reconstruct, self.rows)
         for index, row in enumerate(reconstructed):
             (self._rec_on[index], self._rec_off[index]) = reconstructed[index]
-        print("Tempo impiegato: {0}".format(time.time()- start))
+        print("Tempo impiegato: {0}".format(time.time() - start))
 
     @property
     def reconstructed_on(self):
