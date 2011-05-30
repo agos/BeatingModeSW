@@ -291,6 +291,24 @@ class BeatingImage(object):
             (self._rec_on[index], self._rec_off[index]) = reconstructed[index]
         print("Tempo impiegato: {0}".format(time.time() - start))
 
+    def reconstruct_with_update(self, queue, dialog):
+        self._rec_on = empty((self.height, self.width), float)
+        self._rec_off = empty((self.height, self.width), float)
+        start = time.time()
+        pool = multiprocessing.Pool(processes=_ncpus)
+        results = pool.map_async(reconstruct_row_update,
+            [(x,queue,i) for (i,x) in enumerate(self.rows)])
+        l = len(self.rows)
+        value = 0
+        for i in range(l):
+            result = queue.get()
+            i = result[0]
+            (self._rec_on[i], self._rec_off[i]) = (result[1], result[2])
+            value += 100.0/l
+            dialog.Update(value)
+        print("Tempo impiegato: {0}".format(time.time() - start))
+        return results
+
     @property
     def reconstructed_on(self):
         if self._rec_on is None:
