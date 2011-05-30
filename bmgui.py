@@ -73,6 +73,8 @@ class MainFrame(wx.Frame):
         self.panelReconstruct.Update()
         dialog = wx.ProgressDialog("A progress box", "Loading", 100,
             style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_REMAINING_TIME)
+        dialog.SetSize((300,200))
+        dialog.Update(0)
         # Do the actual data loading
         self.bimg = BeatingImage(path=path)
         # Let's reconstruct the image
