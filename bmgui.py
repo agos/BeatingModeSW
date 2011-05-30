@@ -5,6 +5,7 @@ import wxmpl
 from numpy import *
 from beatingmode import BeatingImage
 from colors import rate_color_map, ratio_color_map, gray_color_map
+import multiprocessing
 
 
 class MainFrame(wx.Frame):
@@ -70,9 +71,15 @@ class MainFrame(wx.Frame):
         self.panelReconstruct.Init(self.res)
         self.notebook.AddPage(self.panelReconstruct, "Rate")
         self.panelReconstruct.Update()
+        dialog = wx.ProgressDialog("A progress box",
+            "Loading", 100)
         # Do the actual data loading
         self.bimg = BeatingImage(path=path)
         # Let's reconstruct the image
+        manager = multiprocessing.Manager()
+        queue = manager.Queue()
+        self.bimg.reconstruct_with_update(queue=queue, dialog=dialog)
+        dialog.Destroy()
         self.rec_on = self.bimg.reconstructed_on
         # Paint it!
         self.panelReconstruct.guiRebuild.Replot(rec_on=self.rec_on,
