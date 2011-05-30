@@ -42,6 +42,25 @@ def reconstruct(row):
     return (reconstructed_on, reconstructed_off)
 
 
+def reconstruct_row_update(p):
+    # TODO unificare con il metodo di cui sopra?
+    row = p[0]
+    queue = p[1]
+    index = p[2]
+    width = row.data.shape[1]
+    reconstructed_on = empty((width, ), float)
+    reconstructed_off = empty((width, ), float)
+    for i in range(width):
+        comp_on = array([item for pos, item in enumerate(
+            row.unbleached_data[:, i]) if row.central_part_on[pos, i]])
+        reconstructed_on[i] = comp_on.mean()
+        comp_off = array([item for pos, item in enumerate(
+            row.unbleached_data[:, i]) if row.central_part_off[pos, i]])
+        reconstructed_off[i] = comp_off.mean()
+    queue.put((index, reconstructed_on, reconstructed_off))
+    return (index, reconstructed_on, reconstructed_off)
+
+
 class BeatingImageRow(object):
     """Class for a single logical row of a beating image.
         Multiple repetitions are present"""
