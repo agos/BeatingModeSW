@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource>
+  <object class="wxPanel" name="panelGeneral">
+    <object class="wxBoxSizer">
+      <orient>wxHORIZONTAL</orient>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
+        </object>
+        <option>3</option>
+        <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+        <border>3</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticBoxSizer">
+              <label>Measure</label>
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <cols>4</cols>
+                  <rows>2</rows>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Acquired by:</label>
+                    </object>
+                    <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText" name="lblAcquiredBy">
+                      <label></label>
+                    </object>
+                    <option>1</option>
+                    <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>On:</label>
+                    </object>
+                    <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText" name="lblAcquiredOn">
+                      <label></label>
+                    </object>
+                    <option>1</option>
+                    <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Repetitions:</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText" name="lblRepetitions">
+                      <label></label>
+                    </object>
+                    <option>1</option>
+                    <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Frequency:</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText" name="lblFrequency">
+                      <label></label>
+                    </object>
+                    <option>1</option>
+                    <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+                  </object>
+                  <vgap>5</vgap>
+                  <hgap>5</hgap>
+                  <growablecols>1,3,5,7</growablecols>
+                </object>
+                <option>1</option>
+                <flag>wxALL|wxEXPAND</flag>
+              </object>
+            </object>
+            <option>0</option>
+            <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="spacer">
+                <size>0,2</size>
+                <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxNotebook" name="notebook"/>
+                <option>1</option>
+                <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+              </object>
+            </object>
+            <option>1</option>
+            <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+          </object>
+        </object>
+        <option>11</option>
+        <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+        <border>3</border>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="panelWelcome">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="spacer">
+            <option>1</option>
+            <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxHORIZONTAL</orient>
+              <object class="spacer">
+                <option>1</option>
+                <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="lblGetStarted">
+                  <label>Welcome to BMGui. To get started, open a measure file.</label>
+                </object>
+                <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+              </object>
+              <object class="spacer">
+                <option>1</option>
+                <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+              </object>
+            </object>
+            <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+          </object>
+          <object class="spacer">
+            <option>1</option>
+            <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxMenuBar" name="menuMain">
+    <object class="wxMenu">
+      <label>&amp;File</label>
+      <object class="wxMenuItem" name="menuOpen">
+        <label>&amp;Open...</label>
+        <accel>Ctrl-O</accel>
+      </object>
+      <object class="separator"/>
+      <object class="wxMenuItem" name="menuExit">
+        <label>E&amp;xit</label>
+        <accel>Alt+F4</accel>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="panelReconstruct" subclass="bmgui.PanelReconstruct">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="unknown" name="panelReconstructed"/>
+            <option>1</option>
+            <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <option>5</option>
+        <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticBoxSizer">
+              <label>Options</label>
+              <orient>wxHORIZONTAL</orient>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Treshold:</label>
+                </object>
+                <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="spacer">
+                <size>3,0</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxSlider">
+                  <value></value>
+                  <min></min>
+                  <max></max>
+                </object>
+                <option>5</option>
+                <flag>wxALL|wxEXPAND|wxALIGN_LEFT</flag>
+              </object>
+              <object class="spacer">
+                <size>0,0</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxSpinCtrl">
+                  <value>0</value>
+                  <min>0</min>
+                  <max>100</max>
+                </object>
+              </object>
+              <object class="spacer">
+                <size>3,0</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Hz</label>
+                </object>
+                <flag>wxALIGN_LEFT|wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="spacer">
+                <size>10,0</size>
+              </object>
+            </object>
+            <option>2</option>
+            <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+          </object>
+        </object>
+        <option>0</option>
+        <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+      </object>
+    </object>
+  </object>
+</resource>
