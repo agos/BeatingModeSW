@@ -23,6 +23,10 @@ class MainFrame(wx.Frame):
 
         # Initialize the General panel controls
         self.notebook = XRCCTRL(self, 'notebook')
+        self.lblAcquired = XRCCTRL(self, 'lblAcquired')
+        self.lblPixelFrequency = XRCCTRL(self, 'lblPixelFrequency')
+        self.lblRepetitions = XRCCTRL(self, 'lblRepetitions')
+        self.lblShutterFrequency = XRCCTRL(self, 'lblShutterFrequency')
 
         # Setup the layout for the frame
         mainGrid = wx.BoxSizer(wx.VERTICAL)
@@ -70,18 +74,30 @@ class MainFrame(wx.Frame):
             'panelReconstruct')
         self.panelOff = self.res.LoadPanel(self.notebook,
             'panelReconstruct')
+        self.panelRatios = self.res.LoadPanel(self.notebook,
+            'panelRatios')
         self.panelOn.Init(self.res)
         self.panelOff.Init(self.res)
+        self.panelRatios.Init(self.res)
         self.notebook.AddPage(self.panelOn, "Rate on")
         self.notebook.AddPage(self.panelOff, "Rate off")
+        self.notebook.AddPage(self.panelRatios, "Enhancement Ratios")
         self.panelOn.Update()
         self.panelOff.Update()
+        self.panelRatios.Update()
         dialog = wx.ProgressDialog("Data loading progress", "Loading...", 100,
             style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_REMAINING_TIME)
         dialog.SetSize((300, 200))
         dialog.Update(0, newmsg="Loading data from disk")
         # Do the actual data loading
         self.bimg = BeatingImage(path=path)
+        # Show metadata
+        self.lblAcquired.SetLabel(self.bimg.acquired)
+        str_pixel_f = "{0} Hz".format(self.bimg.pixel_frequency)
+        self.lblPixelFrequency.SetLabel(str_pixel_f)
+        str_shutter_f = "{0} Hz".format(self.bimg.shutter_frequency)
+        self.lblShutterFrequency.SetLabel(str_shutter_f)
+        self.lblRepetitions.SetLabel(str(self.bimg.repetitions))
         # Let's reconstruct the image
         manager = multiprocessing.Manager()
         queue = manager.Queue()
@@ -90,11 +106,13 @@ class MainFrame(wx.Frame):
         dialog.Destroy()
         self.rec_on = self.bimg.reconstructed_on
         self.rec_off = self.bimg.reconstructed_off
+        self.ratios = self.bimg.ratios
         # Paint it!
         self.panelOn.guiRebuild.Replot(data=self.rec_on,
             max_rate=self.rec_on.max())
         self.panelOff.guiRebuild.Replot(data=self.rec_off,
             max_rate=self.rec_on.max())
+        self.panelRatios.guiRatios.Replot(data=self.ratios)
 
     def OnClose(self, _):
         self.Destroy()
@@ -112,6 +130,20 @@ class PanelReconstruct(wx.Panel):
         res.AttachUnknownControl('panelReconstructed',
             self.guiRebuild.panelOnOff, self)
         self.guiRebuild.Replot()
+
+
+class PanelRatios(wx.Panel):
+
+    def __init__(self):
+        pre = wx.PrePanel()
+        # the Create step is done by XRC.
+        self.PostCreate(pre)
+
+    def Init(self, res):
+        self.guiRatios = GuiRatios(self)
+        res.AttachUnknownControl('panelRatios',
+            self.guiRatios.panelRatios, self)
+        self.guiRatios.Replot()
 
 
 class GuiRebuild:
@@ -132,6 +164,25 @@ class GuiRebuild:
             axes.imshow(data, cmap=rate_color_map,
             interpolation='nearest', vmin=0.0, vmax=max_rate)
         self.panelOnOff.draw()
+
+
+class GuiRatios:
+    """Displays and updates the enhancement ratio map."""
+
+    def __init__(self, parent):
+        self.panelRatios = wxmpl.PlotPanel(parent, -1, size=(6, 4.50), dpi=68,
+            crosshairs=True, autoscaleUnzoom=False)
+        self.Replot()
+
+    def Replot(self, data=None):
+        fig = self.panelRatios.get_figure()
+        fig.set_edgecolor('white')
+        # clear the axes and replot everything
+        if data is not None:
+            axes = fig.gca()
+            axes.cla()
+            axes.imshow(data, cmap=ratio_color_map, interpolation='nearest')
+        self.panelRatios.draw()
 
 
 class bmgui(wx.App):

@@ -29,7 +29,7 @@
                     <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
                   </object>
                   <object class="sizeritem">
-                    <object class="wxStaticText" name="lblAcquiredBy">
+                    <object class="wxStaticText" name="lblAcquired">
                       <label></label>
                     </object>
                     <option>1</option>
@@ -37,12 +37,12 @@
                   </object>
                   <object class="sizeritem">
                     <object class="wxStaticText">
-                      <label>On:</label>
+                      <label>Pixel frequency:</label>
                     </object>
                     <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
                   </object>
                   <object class="sizeritem">
-                    <object class="wxStaticText" name="lblAcquiredOn">
+                    <object class="wxStaticText" name="lblPixelFrequency">
                       <label></label>
                     </object>
                     <option>1</option>
@@ -62,11 +62,11 @@
                   </object>
                   <object class="sizeritem">
                     <object class="wxStaticText">
-                      <label>Frequency:</label>
+                      <label>Shutter frequency:</label>
                     </object>
                   </object>
                   <object class="sizeritem">
-                    <object class="wxStaticText" name="lblFrequency">
+                    <object class="wxStaticText" name="lblShutterFrequency">
                       <label></label>
                     </object>
                     <option>1</option>
@@ -223,6 +223,39 @@
               <object class="spacer">
                 <size>10,0</size>
               </object>
+            </object>
+            <option>2</option>
+            <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+          </object>
+        </object>
+        <option>0</option>
+        <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="panelRatios" subclass="bmgui.PanelRatios">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="unknown" name="panelRatios"/>
+            <option>1</option>
+            <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <option>5</option>
+        <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticBoxSizer">
+              <label>Options</label>
+              <orient>wxHORIZONTAL</orient>
             </object>
             <option>2</option>
             <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>

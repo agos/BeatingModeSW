@@ -23,7 +23,7 @@ import argparse
 DEBUG_COLUMNS_FIT = False
 _ncpus = 1
 _ncpus = multiprocessing.cpu_count()
-print("CPU rilevate: {0}".format(_ncpus))
+print("Detected {0} CPUs".format(_ncpus))
 
 SETTING_CENTRAL_CROP = False
 SETTING_PARALLEL_PROCESSING = True
@@ -278,6 +278,7 @@ class BeatingImage(object):
         self.path = path
         input = open(path, 'r').read().split('---')
         y = yaml.load(input[0])
+        self.acquired = y['acquired']
         self.repetitions = y['repetitions']
         self.shutter_frequency = y['shutter_frequency']
         self.pixel_frequency = y['pixel_frequency']
@@ -287,7 +288,7 @@ class BeatingImage(object):
         self.width = self.data.shape[1]
         self.data = self.data.reshape(-1, self.repetitions, self.width)
         self.height = self.data.shape[0]
-        print("Righe, ripetizioni, colonne: {0}".format(self.data.shape))
+        print("Rows, repetitions, columns: {0}".format(self.data.shape))
         self._rec_on = None
         self._rec_off = None
         self._ratios = None
@@ -310,7 +311,7 @@ class BeatingImage(object):
             reconstructed = map(reconstruct, self.rows)
         for index, row in enumerate(reconstructed):
             (self._rec_on[index], self._rec_off[index]) = reconstructed[index]
-        print("Tempo impiegato: {0}".format(time.time() - start))
+        print("Time to reconstruct: {0} s".format(time.time() - start))
 
     def reconstruct_with_update(self, queue, dialog):
         self._rec_on = empty((self.height, self.width), float)
@@ -329,7 +330,7 @@ class BeatingImage(object):
             value += 100.0/l
             dialog.Update(value,
                 newmsg="Reconstructing rows: {0}/{1}".format(n+1, l))
-        print("Tempo impiegato: {0}".format(time.time() - start))
+        print("Time to reconstruct: {0} s".format(time.time() - start))
         return results
 
     @property
