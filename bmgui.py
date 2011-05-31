@@ -114,6 +114,19 @@ class PanelReconstruct(wx.Panel):
         self.guiRebuild.Replot()
 
 
+class PanelRatios(wx.Panel):
+
+    def __init__(self):
+        pre = wx.PrePanel()
+        # the Create step is done by XRC.
+        self.PostCreate(pre)
+
+    def Init(self, res):
+        self.guiRatios = GuiRatios(self)
+        res.AttachUnknownControl('panelRatios',
+            self.guiRatios.panelRatios, self)
+        self.guiRatios.Replot()
+
 class GuiRebuild:
     """Displays and updates the rebuilt on/off state."""
 
