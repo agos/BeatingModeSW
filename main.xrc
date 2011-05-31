@@ -29,7 +29,7 @@
                     <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
                   </object>
                   <object class="sizeritem">
-                    <object class="wxStaticText" name="lblAcquiredBy">
+                    <object class="wxStaticText" name="lblAcquired">
                       <label></label>
                     </object>
                     <option>1</option>
