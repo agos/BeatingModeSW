@@ -352,9 +352,11 @@ if __name__ == '__main__':
     savetxt("out/enhancement_ratios.dat", ratios, fmt="%10.5f", delimiter="\t")
 
     pylab.subplot(2, 2, 1)
-    pylab.imshow(rec_on, cmap=rate_color_map, interpolation='nearest', vmin=0.0, vmax=max_rate)
+    pylab.imshow(rec_on, cmap=rate_color_map,
+        interpolation='nearest', vmin=0.0, vmax=max_rate)
     pylab.subplot(2, 2, 2)
-    pylab.imshow(rec_off, cmap=rate_color_map, interpolation='nearest', vmin=0.0, vmax=max_rate)
+    pylab.imshow(rec_off, cmap=rate_color_map,
+        interpolation='nearest', vmin=0.0, vmax=max_rate)
     pylab.colorbar()
     pylab.subplot(2, 2, 3)
     pylab.imshow(ratios, cmap=ratio_color_map, interpolation='nearest')
