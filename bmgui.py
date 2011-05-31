@@ -85,7 +85,7 @@ class MainFrame(wx.Frame):
         dialog.Destroy()
         self.rec_on = self.bimg.reconstructed_on
         # Paint it!
-        self.panelOn.guiRebuild.Replot(rec_on=self.rec_on,
+        self.panelOn.guiRebuild.Replot(data=self.rec_on,
             max_rate=self.rec_on.max())
 
     def OnClose(self, _):
@@ -114,14 +114,14 @@ class GuiRebuild:
             crosshairs=True, autoscaleUnzoom=False)
         self.Replot()
 
-    def Replot(self, rec_on=None, max_rate=None):
+    def Replot(self, data=None, max_rate=None):
         fig = self.panelOnOff.get_figure()
         fig.set_edgecolor('white')
         # clear the axes and replot everything
-        if rec_on is not None:
+        if data is not None:
             axes = fig.gca()
             axes.cla()
-            axes.imshow(rec_on, cmap=rate_color_map,
+            axes.imshow(data, cmap=rate_color_map,
             interpolation='nearest', vmin=0.0, vmax=max_rate)
         self.panelOnOff.draw()
 
