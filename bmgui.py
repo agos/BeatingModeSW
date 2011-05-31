@@ -66,11 +66,11 @@ class MainFrame(wx.Frame):
     def loadData(self, path):
         # Initialize the panel
         self.notebook.DeleteAllPages()
-        self.panelReconstruct = self.res.LoadPanel(self.notebook,
+        self.panelOn = self.res.LoadPanel(self.notebook,
             'panelReconstruct')
-        self.panelReconstruct.Init(self.res)
-        self.notebook.AddPage(self.panelReconstruct, "Rate")
-        self.panelReconstruct.Update()
+        self.panelOn.Init(self.res)
+        self.notebook.AddPage(self.panelOn, "Rate")
+        self.panelOn.Update()
         dialog = wx.ProgressDialog("Data loading progress", "Loading...", 100,
             style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_REMAINING_TIME)
         dialog.SetSize((300,200))
@@ -85,7 +85,7 @@ class MainFrame(wx.Frame):
         dialog.Destroy()
         self.rec_on = self.bimg.reconstructed_on
         # Paint it!
-        self.panelReconstruct.guiRebuild.Replot(rec_on=self.rec_on,
+        self.panelOn.guiRebuild.Replot(rec_on=self.rec_on,
             max_rate=self.rec_on.max())
 
     def OnClose(self, _):
