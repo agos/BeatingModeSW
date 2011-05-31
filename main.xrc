@@ -233,4 +233,37 @@
       </object>
     </object>
   </object>
+  <object class="wxPanel" name="panelRatios" subclass="bmgui.PanelRatios">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="unknown" name="panelReconstructed"/>
+            <option>1</option>
+            <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <option>5</option>
+        <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticBoxSizer">
+              <label>Options</label>
+              <orient>wxHORIZONTAL</orient>
+            </object>
+            <option>2</option>
+            <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+          </object>
+        </object>
+        <option>0</option>
+        <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+      </object>
+    </object>
+  </object>
 </resource>
