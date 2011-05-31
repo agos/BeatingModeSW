@@ -200,7 +200,8 @@ class BeatingImageRow(object):
                             a += 1
                     new_phases[n] = a
             # Fit sul progredire delle fasi
-            (m, b, fit_r_value, fit_p_value, fit_stderr) = stats.linregress(arange(new_phases.shape[0]), new_phases)
+            (m, b, fit_r_val, p_val, fit_stderr) = stats.linregress(
+                arange(new_phases.shape[0]), new_phases)
             # print "Parametri sfasamento: {0}, {1}".format(m, b)
             line = arange(new_phases.shape[0])* m + b
             # Costruiamo finalmente la stima definitiva
