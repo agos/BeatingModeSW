@@ -300,12 +300,14 @@ class BeatingImage(object):
             [(x,queue,i) for (i,x) in enumerate(self.rows)])
         l = len(self.rows)
         value = 0
-        for i in range(l):
+        dialog.Update(value, newmsg="Reconstructing rows: 0/{0}".format(l))
+        for n in range(l):
             result = queue.get()
             i = result[0]
             (self._rec_on[i], self._rec_off[i]) = (result[1], result[2])
             value += 100.0/l
-            dialog.Update(value)
+            dialog.Update(value,
+                newmsg="Reconstructing rows: {0}/{1}".format(n+1, l))
         print("Tempo impiegato: {0}".format(time.time() - start))
         return results
 
