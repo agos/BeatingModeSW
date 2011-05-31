@@ -214,7 +214,7 @@ class BeatingImageRow(object):
             return self.__beating_mask
 
     # Ora produco altre due matrici simili per prendere solo la parte CENTRALE degli on e degli off
-    def build_row_square_subset(self, l, phi, on, duty_cycle):
+    def row_subset(self, l, phi, on, duty_cycle):
         x = arange(l)
         r = square((2 * pi) * ((self.shutter_frequency * x / self.pixel_frequency) + phi - (0.5 - duty_cycle)/2 + 0.5 * (not on)), duty_cycle)/2 + 0.5
         return r >= 0.5
@@ -229,7 +229,8 @@ class BeatingImageRow(object):
             self.__central_part_on = empty_like(self.beating_mask)
             l = self.__central_part_on.shape[1]
             for i, phi in enumerate(self.__phases):
-                self.__central_part_on[i] = self.build_row_square_subset(l, phi, True, duty_cycle)
+                part = self.row_subset(l, phi, True, duty_cycle)
+                self.__central_part_on[i] = part
         return self.__central_part_on
 
     @property
@@ -242,7 +243,8 @@ class BeatingImageRow(object):
             self.__central_part_off = empty_like(self.beating_mask)
             l = self.__central_part_off.shape[1]
             for i, phi in enumerate(self.__phases):
-                self.__central_part_off[i] = self.build_row_square_subset(l, phi, False, duty_cycle)
+                part = self.row_subset(l, phi, False, duty_cycle)
+                self.__central_part_off[i] = part
         return self.__central_part_off
 
 
