@@ -81,6 +81,7 @@ class MainFrame(wx.Frame):
         manager = multiprocessing.Manager()
         queue = manager.Queue()
         self.bimg.reconstruct_with_update(queue=queue, dialog=dialog)
+        dialog.Update(100, newmsg="Complete")
         dialog.Destroy()
         self.rec_on = self.bimg.reconstructed_on
         # Paint it!
