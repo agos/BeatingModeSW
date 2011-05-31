@@ -246,12 +246,6 @@ class BeatingImageRow(object):
         return self.__central_part_off
 
 
-def BeatingImageRowFromPath(path, pixel_frequency=100.0, shutter_frequency=5.0):
-    data = genfromtxt(path)
-    data = data[:, 1:]
-    return BeatingImageRow(data, pixel_frequency, shutter_frequency)
-
-
 class BeatingImage(object):
     """docstring for BeatingImage"""
 
