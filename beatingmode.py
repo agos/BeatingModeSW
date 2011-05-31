@@ -129,7 +129,8 @@ class BeatingImageRow(object):
                         failed = True
                 if not failed:
                     # print("Compenso con parametri {0}".format(parameters_on))
-                    compensated_on = array([compensate(item, parameters_on, col.shape[0]) for item in col_on])
+                    compensated_on = array([compensate(
+                      item, parameters_on, col.shape[0]) for item in col_on])
                 else:
                     parameters_on = (p0,)
                     compensated_on = col_on
@@ -153,7 +154,8 @@ class BeatingImageRow(object):
                         failed = True
                 if not failed:
                     # print("Compenso con parametri {0}".format(parameters_off))
-                    compensated_off = array([compensate(item, parameters_off, col.shape[0]) for item in col_off])
+                    compensated_off = array([compensate(
+                      item, parameters_off, col.shape[0]) for item in col_off])
                 else:
                     parameters_off = (p0,)
                     compensated_off = col_off
