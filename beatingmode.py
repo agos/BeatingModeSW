@@ -101,13 +101,15 @@ class BeatingImageRow(object):
             masked_image = dstack((self.data, self.beating_mask))
 
             def compensate_column_parameters(c):
-                column = c[:, 0]
+                col = c[:, 0]
                 mask = c[:, 1]
-                column_on = array([[position, element] for position, element in enumerate(column) if mask[position]])
-                column_off = array([[position, element] for position, element in enumerate(column) if not mask[position]])
+                col_on = array([[pos, el] for pos, el in enumerate(col)
+                    if mask[pos]])
+                col_off = array([[pos, el] for pos, el in enumerate(col)
+                    if not mask[pos]])
                 # Trovo parametri bright
-                positions = column_on[:, 0]
-                samples = column_on[:, 1]
+                positions = col_on[:, 0]
+                samples = col_on[:, 1]
                 p0 = [samples.max() - samples.min(), 50, samples.min()]
                 failed = False
                 try:
@@ -124,13 +126,13 @@ class BeatingImageRow(object):
                         failed = True
                 if not failed:
                     # print("Compenso con parametri {0}".format(parameters_on))
-                    compensated_on = array([compensate(item, parameters_on, column.shape[0]) for item in column_on])
+                    compensated_on = array([compensate(item, parameters_on, col.shape[0]) for item in col_on])
                 else:
                     parameters_on = (p0,)
-                    compensated_on = column_on
+                    compensated_on = col_on
                 # Trovo parametri dark
-                positions = column_off[:, 0]
-                samples = column_off[:, 1]
+                positions = col_off[:, 0]
+                samples = col_off[:, 1]
                 p0 = [samples.max()- samples.min(), 50, samples.min()]
                 failed = False
                 try:
@@ -147,10 +149,10 @@ class BeatingImageRow(object):
                         failed = True
                 if not failed:
                     # print("Compenso con parametri {0}".format(parameters_off))
-                    compensated_off = array([compensate(item, parameters_off, column.shape[0]) for item in column_off])
+                    compensated_off = array([compensate(item, parameters_off, col.shape[0]) for item in col_off])
                 else:
                     parameters_off = (p0,)
-                    compensated_off = column_off
+                    compensated_off = col_off
                 c = concatenate((compensated_on, compensated_off))
                 i = c[:, 0]
                 c = c[:, 1]
