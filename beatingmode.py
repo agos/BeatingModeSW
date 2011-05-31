@@ -274,7 +274,10 @@ class BeatingImage(object):
         self._rec_off = None
         self._ratios = None
         self.rows = []
-        self.rows = [BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency) for row in xrange(self.height)]
+        self.rows = [BeatingImageRow(self.data[row,:,:],
+            pixel_frequency=self.pixel_frequency,
+            shutter_frequency=self.shutter_frequency)
+                for row in xrange(self.height)]
 
     def _reconstruct_rows(self):
         self._rec_on = empty((self.height, self.width), float)
