@@ -35,9 +35,11 @@ def reconstruct(row):
     reconstructed_on = empty((width, ), float)
     reconstructed_off = empty((width, ), float)
     for i in range(width):
-        comp_on = array([item for pos, item in enumerate(row.unbleached_data[:, i]) if row.central_part_on[pos, i]])
+        comp_on = array([item for pos, item in enumerate(
+            row.unbleached_data[:, i]) if row.central_part_on[pos, i]])
         reconstructed_on[i] = comp_on.mean()
-        comp_off = array([item for pos, item in enumerate(row.unbleached_data[:, i]) if row.central_part_off[pos, i]])
+        comp_off = array([item for pos, item in enumerate(
+            row.unbleached_data[:, i]) if row.central_part_off[pos, i]])
         reconstructed_off[i] = comp_off.mean()
     return (reconstructed_on, reconstructed_off)
 
