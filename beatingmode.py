@@ -137,7 +137,10 @@ class BeatingImageRow(object):
                     failed = True
                 if not failed:
                     parameters_off = result[0]
-                    if any(parameters_off > 1000) or parameters_off[0] < 0 or parameters_off[2] < 0 or parameters_off[0] < parameters_off[2]:
+                    if any(parameters_off > 1000) \
+                      or parameters_off[0] < 0 \
+                      or parameters_off[2] < 0 \
+                      or parameters_off[0] < parameters_off[2]:
                         failed = True
                 if not failed:
                     # print("Compenso con parametri {0}".format(parameters_off))
