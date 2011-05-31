@@ -240,7 +240,7 @@
         <object class="wxBoxSizer">
           <orient>wxVERTICAL</orient>
           <object class="sizeritem">
-            <object class="unknown" name="panelRatiosPlot"/>
+            <object class="unknown" name="panelRatios"/>
             <option>1</option>
             <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
             <border>4</border>
