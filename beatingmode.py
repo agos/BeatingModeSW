@@ -183,7 +183,7 @@ class BeatingImageRow(object):
             def build_row_square(l, phi):
                 x = arange(l)
                 shut_f = self.shutter_frequency
-                pix_f = pixel_frequency
+                pix_f = self.pixel_frequency
                 r = square((2 * pi) * ((shut_f * x * 1 / pix_f) + phi))/2 + 0.5
                 return r > 0.5
 
@@ -234,10 +234,10 @@ class BeatingImageRow(object):
     def row_subset(self, l, phi, on, duty_cycle):
         x = arange(l)
         shut_f = self.shutter_frequency
-        pix_f = self.pix_f
+        pix_f = self.pixel_frequency
         # TODO andrebbe riordinata, e magari unita con quella sopra
         r = square((2 * pi) *
-            ((self.shut_f * x / self.pix_f) +
+            ((shut_f * x / pix_f) +
             phi - (0.5 - duty_cycle)/2 + 0.5 * (not on)), duty_cycle)/2 + 0.5
         return r >= 0.5
 
@@ -349,7 +349,7 @@ class BeatingImage(object):
         if self._ratios is None:
             mask_on = less(self._rec_on, 20.0)
             mask_off = less(self._rec_off, 20.0)
-            to_mask = logical_or(mas_on, mask_off)
+            to_mask = logical_or(mask_on, mask_off)
             self._ratios = ma.array(self._rec_on / self._rec_off, mask=to_mask)
         return self._ratios
 
