@@ -115,7 +115,8 @@ class BeatingImageRow(object):
                 p0 = [samples.max() - samples.min(), 50, samples.min()]
                 failed = False
                 try:
-                    result = optimize.curve_fit(fitting_function, positions, samples, p0)
+                    result = optimize.curve_fit(
+                        fitting_function, positions, samples, p0)
                 except Exception, e:
                     # print e
                     failed = True
@@ -138,7 +139,8 @@ class BeatingImageRow(object):
                 p0 = [samples.max()- samples.min(), 50, samples.min()]
                 failed = False
                 try:
-                    result = optimize.curve_fit(fitting_function, positions, samples, p0)
+                    result = optimize.curve_fit(
+                        fitting_function, positions, samples, p0)
                 except Exception, e:
                     # print e
                     failed = True
