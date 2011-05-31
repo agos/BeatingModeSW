@@ -134,6 +134,7 @@ class PanelRatios(wx.Panel):
             self.guiRatios.panelRatios, self)
         self.guiRatios.Replot()
 
+
 class GuiRebuild:
     """Displays and updates the rebuilt on/off state."""
 
