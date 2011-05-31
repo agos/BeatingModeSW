@@ -78,7 +78,7 @@ class MainFrame(wx.Frame):
         self.panelOff.Update()
         dialog = wx.ProgressDialog("Data loading progress", "Loading...", 100,
             style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_REMAINING_TIME)
-        dialog.SetSize((300,200))
+        dialog.SetSize((300, 200))
         dialog.Update(0, newmsg="Loading data from disk")
         # Do the actual data loading
         self.bimg = BeatingImage(path=path)
