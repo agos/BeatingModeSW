@@ -237,7 +237,7 @@ class BeatingImageRow(object):
         pix_f = self.pix_f
         # TODO andrebbe riordinata, e magari unita con quella sopra
         r = square((2 * pi) *
-            ((self.shutter_frequency * x / self.pixel_frequency) +
+            ((self.shut_f * x / self.pix_f) +
             phi - (0.5 - duty_cycle)/2 + 0.5 * (not on)), duty_cycle)/2 + 0.5
         return r >= 0.5
 
