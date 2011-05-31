@@ -71,7 +71,7 @@ class MainFrame(wx.Frame):
         self.panelReconstruct.Init(self.res)
         self.notebook.AddPage(self.panelReconstruct, "Rate")
         self.panelReconstruct.Update()
-        dialog = wx.ProgressDialog("A progress box", "Loading", 100,
+        dialog = wx.ProgressDialog("Data loading progress", "Loading", 100,
             style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_REMAINING_TIME)
         dialog.SetSize((300,200))
         dialog.Update(0)
