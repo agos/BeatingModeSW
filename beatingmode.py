@@ -35,9 +35,11 @@ def reconstruct(row):
     reconstructed_on = empty((width, ), float)
     reconstructed_off = empty((width, ), float)
     for i in range(width):
-        comp_on = array([item for pos, item in enumerate(row.unbleached_data[:, i]) if row.central_part_on[pos, i]])
+        comp_on = array([item for pos, item in enumerate(
+            row.unbleached_data[:, i]) if row.central_part_on[pos, i]])
         reconstructed_on[i] = comp_on.mean()
-        comp_off = array([item for pos, item in enumerate(row.unbleached_data[:, i]) if row.central_part_off[pos, i]])
+        comp_off = array([item for pos, item in enumerate(
+            row.unbleached_data[:, i]) if row.central_part_off[pos, i]])
         reconstructed_off[i] = comp_off.mean()
     return (reconstructed_on, reconstructed_off)
 
@@ -101,50 +103,60 @@ class BeatingImageRow(object):
             masked_image = dstack((self.data, self.beating_mask))
 
             def compensate_column_parameters(c):
-                column = c[:, 0]
+                col = c[:, 0]
                 mask = c[:, 1]
-                column_on = array([[position, element] for position, element in enumerate(column) if mask[position]])
-                column_off = array([[position, element] for position, element in enumerate(column) if not mask[position]])
+                col_on = array([[pos, el] for pos, el in enumerate(col)
+                    if mask[pos]])
+                col_off = array([[pos, el] for pos, el in enumerate(col)
+                    if not mask[pos]])
                 # Trovo parametri bright
-                positions = column_on[:, 0]
-                samples = column_on[:, 1]
+                positions = col_on[:, 0]
+                samples = col_on[:, 1]
                 p0 = [samples.max() - samples.min(), 50, samples.min()]
                 failed = False
                 try:
-                    result = optimize.curve_fit(fitting_function, positions, samples, p0)
+                    result = optimize.curve_fit(
+                        fitting_function, positions, samples, p0)
                 except Exception, e:
                     # print e
                     failed = True
                 if not failed:
                     parameters_on = result[0]
-                    if any(parameters_on > 1000) or parameters_on[0] < 0 or parameters_on[2] < 0 or parameters_on[0] < parameters_on[2]:
+                    if any(parameters_on > 1000) \
+                      or parameters_on[0] < 0 \
+                      or parameters_on[2] < 0 \
+                      or parameters_on[0] < parameters_on[2]:
                         failed = True
                 if not failed:
-                    # print("Compenso con parametri {0}".format(parameters_on))
-                    compensated_on = array([compensate(item, parameters_on, column.shape[0]) for item in column_on])
+                    compensated_on = array([compensate(
+                      item, parameters_on, col.shape[0]) for item in col_on])
                 else:
                     parameters_on = (p0,)
-                    compensated_on = column_on
+                    compensated_on = col_on
                 # Trovo parametri dark
-                positions = column_off[:, 0]
-                samples = column_off[:, 1]
+                positions = col_off[:, 0]
+                samples = col_off[:, 1]
                 p0 = [samples.max()- samples.min(), 50, samples.min()]
                 failed = False
                 try:
-                    result = optimize.curve_fit(fitting_function, positions, samples, p0)
+                    result = optimize.curve_fit(
+                        fitting_function, positions, samples, p0)
                 except Exception, e:
                     # print e
                     failed = True
                 if not failed:
                     parameters_off = result[0]
-                    if any(parameters_off > 1000) or parameters_off[0] < 0 or parameters_off[2] < 0 or parameters_off[0] < parameters_off[2]:
+                    if any(parameters_off > 1000) \
+                      or parameters_off[0] < 0 \
+                      or parameters_off[2] < 0 \
+                      or parameters_off[0] < parameters_off[2]:
                         failed = True
                 if not failed:
-                    # print("Compenso con parametri {0}".format(parameters_off))
-                    compensated_off = array([compensate(item, parameters_off, column.shape[0]) for item in column_off])
+                    compensated_off = array([compensate(
+                      item, parameters_off, col.shape[0]) for item in col_off])
                 else:
                     parameters_off = (p0,)
-                    compensated_off = column_off
+                    compensated_off = col_off
                 c = concatenate((compensated_on, compensated_off))
                 i = c[:, 0]
                 c = c[:, 1]
@@ -154,7 +166,8 @@ class BeatingImageRow(object):
             def compensate_column(c):
                 r = compensate_column_parameters(c)
                 return r[0]
-            self.__unbleached_data = array(map(compensate_column, masked_image.swapaxes(0, 1))).swapaxes(0, 1)
+            self.__unbleached_data = array(map(
+                compensate_column, masked_image.swapaxes(0, 1))).swapaxes(0, 1)
             return self.__unbleached_data
         else:
             return self.__unbleached_data
@@ -164,12 +177,14 @@ class BeatingImageRow(object):
         if self.__beating_mask is None:
             probe_estimate = empty(self.data.shape, bool)
             # Stima iniziale
-            for (position, value) in ndenumerate(self.data):
-                probe_estimate[position] = value > self.data[:, position[1]].mean()
+            for (pos, val) in ndenumerate(self.data):
+                probe_estimate[pos] = val > self.data[:, pos[1]].mean()
 
             def build_row_square(l, phi):
                 x = arange(l)
-                r = square((2 * pi) * ((self.shutter_frequency * x * 1/self.pixel_frequency) + phi))/2 + 0.5
+                shut_f = self.shutter_frequency
+                pix_f = self.pixel_frequency
+                r = square((2 * pi) * ((shut_f * x * 1 / pix_f) + phi))/2 + 0.5
                 return r > 0.5
 
             def find_phase(row):
@@ -200,7 +215,8 @@ class BeatingImageRow(object):
                             a += 1
                     new_phases[n] = a
             # Fit sul progredire delle fasi
-            (m, b, fit_r_value, fit_p_value, fit_stderr) = stats.linregress(arange(new_phases.shape[0]), new_phases)
+            (m, b, fit_r_val, p_val, fit_stderr) = stats.linregress(
+                arange(new_phases.shape[0]), new_phases)
             # print "Parametri sfasamento: {0}, {1}".format(m, b)
             line = arange(new_phases.shape[0])* m + b
             # Costruiamo finalmente la stima definitiva
@@ -213,10 +229,16 @@ class BeatingImageRow(object):
         else:
             return self.__beating_mask
 
-    # Ora produco altre due matrici simili per prendere solo la parte CENTRALE degli on e degli off
-    def build_row_square_subset(self, l, phi, on, duty_cycle):
+    # Ora produco altre due matrici simili per prendere solo
+    # la parte CENTRALE degli on e degli off
+    def row_subset(self, l, phi, on, duty_cycle):
         x = arange(l)
-        r = square((2 * pi) * ((self.shutter_frequency * x / self.pixel_frequency) + phi - (0.5 - duty_cycle)/2 + 0.5 * (not on)), duty_cycle)/2 + 0.5
+        shut_f = self.shutter_frequency
+        pix_f = self.pixel_frequency
+        # TODO andrebbe riordinata, e magari unita con quella sopra
+        r = square((2 * pi) *
+            ((shut_f * x / pix_f) +
+            phi - (0.5 - duty_cycle)/2 + 0.5 * (not on)), duty_cycle)/2 + 0.5
         return r >= 0.5
 
     @property
@@ -229,7 +251,8 @@ class BeatingImageRow(object):
             self.__central_part_on = empty_like(self.beating_mask)
             l = self.__central_part_on.shape[1]
             for i, phi in enumerate(self.__phases):
-                self.__central_part_on[i] = self.build_row_square_subset(l, phi, True, duty_cycle)
+                part = self.row_subset(l, phi, True, duty_cycle)
+                self.__central_part_on[i] = part
         return self.__central_part_on
 
     @property
@@ -242,14 +265,9 @@ class BeatingImageRow(object):
             self.__central_part_off = empty_like(self.beating_mask)
             l = self.__central_part_off.shape[1]
             for i, phi in enumerate(self.__phases):
-                self.__central_part_off[i] = self.build_row_square_subset(l, phi, False, duty_cycle)
+                part = self.row_subset(l, phi, False, duty_cycle)
+                self.__central_part_off[i] = part
         return self.__central_part_off
-
-
-def BeatingImageRowFromPath(path, pixel_frequency=100.0, shutter_frequency=5.0):
-    data = genfromtxt(path)
-    data = data[:, 1:]
-    return BeatingImageRow(data, pixel_frequency, shutter_frequency)
 
 
 class BeatingImage(object):
@@ -274,7 +292,10 @@ class BeatingImage(object):
         self._rec_off = None
         self._ratios = None
         self.rows = []
-        self.rows = [BeatingImageRow(self.data[row,:,:], pixel_frequency=self.pixel_frequency, shutter_frequency=self.shutter_frequency) for row in xrange(self.height)]
+        self.rows = [BeatingImageRow(self.data[row,:,:],
+            pixel_frequency=self.pixel_frequency,
+            shutter_frequency=self.shutter_frequency)
+                for row in xrange(self.height)]
 
     def _reconstruct_rows(self):
         self._rec_on = empty((self.height, self.width), float)
@@ -300,12 +321,14 @@ class BeatingImage(object):
             [(x,queue,i) for (i,x) in enumerate(self.rows)])
         l = len(self.rows)
         value = 0
-        for i in range(l):
+        dialog.Update(value, newmsg="Reconstructing rows: 0/{0}".format(l))
+        for n in range(l):
             result = queue.get()
             i = result[0]
             (self._rec_on[i], self._rec_off[i]) = (result[1], result[2])
             value += 100.0/l
-            dialog.Update(value)
+            dialog.Update(value,
+                newmsg="Reconstructing rows: {0}/{1}".format(n+1, l))
         print("Tempo impiegato: {0}".format(time.time() - start))
         return results
 
@@ -324,7 +347,9 @@ class BeatingImage(object):
     @property
     def ratios(self):
         if self._ratios is None:
-            to_mask = logical_or(less(self._rec_on, 20.0), less(self._rec_off, 20.0))
+            mask_on = less(self._rec_on, 20.0)
+            mask_off = less(self._rec_off, 20.0)
+            to_mask = logical_or(mask_on, mask_off)
             self._ratios = ma.array(self._rec_on / self._rec_off, mask=to_mask)
         return self._ratios
 
@@ -350,9 +375,11 @@ if __name__ == '__main__':
     savetxt("out/enhancement_ratios.dat", ratios, fmt="%10.5f", delimiter="\t")
 
     pylab.subplot(2, 2, 1)
-    pylab.imshow(rec_on, cmap=rate_color_map, interpolation='nearest', vmin=0.0, vmax=max_rate)
+    pylab.imshow(rec_on, cmap=rate_color_map,
+        interpolation='nearest', vmin=0.0, vmax=max_rate)
     pylab.subplot(2, 2, 2)
-    pylab.imshow(rec_off, cmap=rate_color_map, interpolation='nearest', vmin=0.0, vmax=max_rate)
+    pylab.imshow(rec_off, cmap=rate_color_map,
+        interpolation='nearest', vmin=0.0, vmax=max_rate)
     pylab.colorbar()
     pylab.subplot(2, 2, 3)
     pylab.imshow(ratios, cmap=ratio_color_map, interpolation='nearest')

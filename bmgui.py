@@ -66,25 +66,34 @@ class MainFrame(wx.Frame):
     def loadData(self, path):
         # Initialize the panel
         self.notebook.DeleteAllPages()
-        self.panelReconstruct = self.res.LoadPanel(self.notebook,
+        self.panelOn = self.res.LoadPanel(self.notebook,
             'panelReconstruct')
-        self.panelReconstruct.Init(self.res)
-        self.notebook.AddPage(self.panelReconstruct, "Rate")
-        self.panelReconstruct.Update()
-        dialog = wx.ProgressDialog("A progress box", "Loading", 100,
+        self.panelOff = self.res.LoadPanel(self.notebook,
+            'panelReconstruct')
+        self.panelOn.Init(self.res)
+        self.panelOff.Init(self.res)
+        self.notebook.AddPage(self.panelOn, "Rate on")
+        self.notebook.AddPage(self.panelOff, "Rate off")
+        self.panelOn.Update()
+        self.panelOff.Update()
+        dialog = wx.ProgressDialog("Data loading progress", "Loading...", 100,
             style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_REMAINING_TIME)
-        dialog.SetSize((300,200))
-        dialog.Update(0)
+        dialog.SetSize((300, 200))
+        dialog.Update(0, newmsg="Loading data from disk")
         # Do the actual data loading
         self.bimg = BeatingImage(path=path)
         # Let's reconstruct the image
         manager = multiprocessing.Manager()
         queue = manager.Queue()
         self.bimg.reconstruct_with_update(queue=queue, dialog=dialog)
+        dialog.Update(100, newmsg="Complete")
         dialog.Destroy()
         self.rec_on = self.bimg.reconstructed_on
+        self.rec_off = self.bimg.reconstructed_off
         # Paint it!
-        self.panelReconstruct.guiRebuild.Replot(rec_on=self.rec_on,
+        self.panelOn.guiRebuild.Replot(data=self.rec_on,
+            max_rate=self.rec_on.max())
+        self.panelOff.guiRebuild.Replot(data=self.rec_off,
             max_rate=self.rec_on.max())
 
     def OnClose(self, _):
@@ -113,14 +122,14 @@ class GuiRebuild:
             crosshairs=True, autoscaleUnzoom=False)
         self.Replot()
 
-    def Replot(self, rec_on=None, max_rate=None):
+    def Replot(self, data=None, max_rate=None):
         fig = self.panelOnOff.get_figure()
         fig.set_edgecolor('white')
         # clear the axes and replot everything
-        if rec_on is not None:
+        if data is not None:
             axes = fig.gca()
             axes.cla()
-            axes.imshow(rec_on, cmap=rate_color_map,
+            axes.imshow(data, cmap=rate_color_map,
             interpolation='nearest', vmin=0.0, vmax=max_rate)
         self.panelOnOff.draw()
 
