@@ -182,7 +182,9 @@ class BeatingImageRow(object):
 
             def build_row_square(l, phi):
                 x = arange(l)
-                r = square((2 * pi) * ((self.shutter_frequency * x * 1/self.pixel_frequency) + phi))/2 + 0.5
+                shut_f = self.shutter_frequency
+                pix_f = pixel_frequency
+                r = square((2 * pi) * ((shut_f * x * 1 / pix_f) + phi))/2 + 0.5
                 return r > 0.5
 
             def find_phase(row):
