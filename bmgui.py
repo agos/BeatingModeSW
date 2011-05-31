@@ -23,6 +23,10 @@ class MainFrame(wx.Frame):
 
         # Initialize the General panel controls
         self.notebook = XRCCTRL(self, 'notebook')
+        self.lblAcquired = XRCCTRL(self, 'lblAcquired')
+        self.lblPixelFrequency = XRCCTRL(self, 'lblPixelFrequency')
+        self.lblRepetitions = XRCCTRL(self, 'lblRepetitions')
+        self.lblShutterFrequency = XRCCTRL(self, 'lblShutterFrequency')
 
         # Setup the layout for the frame
         mainGrid = wx.BoxSizer(wx.VERTICAL)
@@ -82,6 +86,13 @@ class MainFrame(wx.Frame):
         dialog.Update(0, newmsg="Loading data from disk")
         # Do the actual data loading
         self.bimg = BeatingImage(path=path)
+        # Show metadata
+        self.lblAcquired.SetLabel(self.bimg.acquired)
+        str_pixel_f = "{0} Hz".format(self.bimg.pixel_frequency)
+        self.lblPixelFrequency.SetLabel(str_pixel_f)
+        str_shutter_f = "{0} Hz".format(self.bimg.shutter_frequency)
+        self.lblShutterFrequency.SetLabel(str_shutter_f)
+        self.lblRepetitions.SetLabel(str(self.bimg.repetitions))
         # Let's reconstruct the image
         manager = multiprocessing.Manager()
         queue = manager.Queue()
