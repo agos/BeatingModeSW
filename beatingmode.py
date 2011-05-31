@@ -300,7 +300,7 @@ class BeatingImage(object):
             [(x,queue,i) for (i,x) in enumerate(self.rows)])
         l = len(self.rows)
         value = 0
-        for i in range(l):
+        for n in range(l):
             result = queue.get()
             i = result[0]
             (self._rec_on[i], self._rec_off[i]) = (result[1], result[2])
