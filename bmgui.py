@@ -70,12 +70,17 @@ class MainFrame(wx.Frame):
             'panelReconstruct')
         self.panelOff = self.res.LoadPanel(self.notebook,
             'panelReconstruct')
+        self.panelRatios = self.res.LoadPanel(self.notebook,
+            'panelRatios')
         self.panelOn.Init(self.res)
         self.panelOff.Init(self.res)
+        self.panelRatios.Init(self.res)
         self.notebook.AddPage(self.panelOn, "Rate on")
         self.notebook.AddPage(self.panelOff, "Rate off")
+        self.notebook.AddPage(self.panelRatios, "Enhancement Ratios")
         self.panelOn.Update()
         self.panelOff.Update()
+        self.panelRatios.Update()
         dialog = wx.ProgressDialog("Data loading progress", "Loading...", 100,
             style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_REMAINING_TIME)
         dialog.SetSize((300, 200))
@@ -90,11 +95,13 @@ class MainFrame(wx.Frame):
         dialog.Destroy()
         self.rec_on = self.bimg.reconstructed_on
         self.rec_off = self.bimg.reconstructed_off
+        self.ratios = self.bimg.ratios
         # Paint it!
         self.panelOn.guiRebuild.Replot(data=self.rec_on,
             max_rate=self.rec_on.max())
         self.panelOff.guiRebuild.Replot(data=self.rec_off,
             max_rate=self.rec_on.max())
+        self.panelRatios.guiRatios.Replot(data=self.ratios)
 
     def OnClose(self, _):
         self.Destroy()
