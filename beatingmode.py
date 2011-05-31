@@ -213,7 +213,8 @@ class BeatingImageRow(object):
         else:
             return self.__beating_mask
 
-    # Ora produco altre due matrici simili per prendere solo la parte CENTRALE degli on e degli off
+    # Ora produco altre due matrici simili per prendere solo
+    # la parte CENTRALE degli on e degli off
     def row_subset(self, l, phi, on, duty_cycle):
         x = arange(l)
         r = square((2 * pi) * ((self.shutter_frequency * x / self.pixel_frequency) + phi - (0.5 - duty_cycle)/2 + 0.5 * (not on)), duty_cycle)/2 + 0.5
