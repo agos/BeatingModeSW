@@ -134,6 +134,25 @@ class GuiRebuild:
         self.panelOnOff.draw()
 
 
+class GuiRatios:
+    """Displays and updates the enhancement ratio map."""
+
+    def __init__(self, parent):
+        self.panelRatios = wxmpl.PlotPanel(parent, -1, size=(6, 4.50), dpi=68,
+            crosshairs=True, autoscaleUnzoom=False)
+        self.Replot()
+
+    def Replot(self, data=None):
+        fig = self.panelRatios.get_figure()
+        fig.set_edgecolor('white')
+        # clear the axes and replot everything
+        if data is not None:
+            axes = fig.gca()
+            axes.cla()
+            axes.imshow(data, cmap=ratio_color_map, interpolation='nearest')
+        self.panelRatios.draw()
+
+
 class bmgui(wx.App):
 
     def OnInit(self):
