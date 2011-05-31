@@ -164,8 +164,8 @@ class BeatingImageRow(object):
         if self.__beating_mask is None:
             probe_estimate = empty(self.data.shape, bool)
             # Stima iniziale
-            for (position, value) in ndenumerate(self.data):
-                probe_estimate[position] = value > self.data[:, position[1]].mean()
+            for (pos, val) in ndenumerate(self.data):
+                probe_estimate[pos] = val > self.data[:, pos[1]].mean()
 
             def build_row_square(l, phi):
                 x = arange(l)
