@@ -79,7 +79,7 @@
             <object class="wxBoxSizer">
               <orient>wxVERTICAL</orient>
             </object>
-            <option>3</option>
+            <option>5</option>
             <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
             <border>3</border>
           </object>
