@@ -87,19 +87,12 @@
           <object class="sizeritem">
             <object class="wxBoxSizer">
               <orient>wxVERTICAL</orient>
+              <object class="spacer">
+                <size>0,2</size>
+                <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+              </object>
               <object class="sizeritem">
-                <object class="wxBoxSizer">
-                  <orient>wxVERTICAL</orient>
-                  <object class="spacer">
-                    <size>0,2</size>
-                    <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
-                  </object>
-                  <object class="sizeritem">
-                    <object class="wxNotebook" name="notebook"/>
-                    <option>1</option>
-                    <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
-                  </object>
-                </object>
+                <object class="wxNotebook" name="notebook"/>
                 <option>1</option>
                 <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
               </object>
