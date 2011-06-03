@@ -128,7 +128,7 @@ class MainFrame(wx.Frame):
             max_rate=self.rec_on.max())
         self.panelOff.Replot(data=self.rec_off,
             max_rate=self.rec_on.max())
-        self.panelRatios.guiRatios.Replot(data=self.ratios)
+        self.panelRatios.Replot(data=self.ratios)
 
     def OnClose(self, _):
         self.Destroy()
@@ -168,18 +168,10 @@ class PanelRatios(wx.Panel):
         self.PostCreate(pre)
 
     def Init(self, res):
-        self.guiRatios = GuiRatios(self)
-        res.AttachUnknownControl('panelRatios',
-            self.guiRatios.panelRatios, self)
-        self.guiRatios.Replot()
-
-
-class GuiRatios:
-    """Displays and updates the enhancement ratio map."""
-
-    def __init__(self, parent):
-        self.panelRatios = wxmpl.PlotPanel(parent, -1, size=(6, 4.50), dpi=68,
+        self.panelRatios = wxmpl.PlotPanel(self, -1, size=(6, 4.50), dpi=68,
             crosshairs=True, autoscaleUnzoom=False)
+        res.AttachUnknownControl('panelRatios',
+            self.panelRatios, self)
         self.Replot()
 
     def Replot(self, data=None):
