@@ -144,16 +144,16 @@ class PanelReconstruct(wx.Panel):
     def Init(self, res):
         self.panelOnOff = wxmpl.PlotPanel(self, -1, size=(6, 4.50), dpi=68,
             crosshairs=True, autoscaleUnzoom=False)
+        self.fig = self.panelOnOff.get_figure()
+        self.fig.set_edgecolor('white')
         res.AttachUnknownControl('panelReconstructed',
             self.panelOnOff, self)
         self.Replot()
 
     def Replot(self, data=None, max_rate=None):
-        fig = self.panelOnOff.get_figure()
-        fig.set_edgecolor('white')
-        # clear the axes and replot everything
+        # Clear the axes and replot everything
         if data is not None:
-            axes = fig.gca()
+            axes = self.fig.gca()
             axes.cla()
             axes.imshow(data, cmap=rate_color_map,
             interpolation='nearest', vmin=0.0, vmax=max_rate)
@@ -170,16 +170,16 @@ class PanelRatios(wx.Panel):
     def Init(self, res):
         self.panelRatios = wxmpl.PlotPanel(self, -1, size=(6, 4.50), dpi=68,
             crosshairs=True, autoscaleUnzoom=False)
+        self.fig = self.panelRatios.get_figure()
+        self.fig.set_edgecolor('white')
         res.AttachUnknownControl('panelRatios',
             self.panelRatios, self)
         self.Replot()
 
     def Replot(self, data=None):
-        fig = self.panelRatios.get_figure()
-        fig.set_edgecolor('white')
-        # clear the axes and replot everything
+        # Clear the axes and replot everything
         if data is not None:
-            axes = fig.gca()
+            axes = self.fig.gca()
             axes.cla()
             axes.imshow(data, cmap=ratio_color_map, interpolation='nearest')
         self.panelRatios.draw()
