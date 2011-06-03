@@ -124,9 +124,9 @@ class MainFrame(wx.Frame):
         self.rec_off = self.bimg.reconstructed_off
         self.ratios = self.bimg.ratios
         # Paint it!
-        self.panelOn.guiRebuild.Replot(data=self.rec_on,
+        self.panelOn.Replot(data=self.rec_on,
             max_rate=self.rec_on.max())
-        self.panelOff.guiRebuild.Replot(data=self.rec_off,
+        self.panelOff.Replot(data=self.rec_off,
             max_rate=self.rec_on.max())
         self.panelRatios.guiRatios.Replot(data=self.ratios)
 
@@ -142,10 +142,22 @@ class PanelReconstruct(wx.Panel):
         self.PostCreate(pre)
 
     def Init(self, res):
-        self.guiRebuild = GuiRebuild(self)
+        self.panelOnOff = wxmpl.PlotPanel(self, -1, size=(6, 4.50), dpi=68,
+            crosshairs=True, autoscaleUnzoom=False)
         res.AttachUnknownControl('panelReconstructed',
-            self.guiRebuild.panelOnOff, self)
-        self.guiRebuild.Replot()
+            self.panelOnOff, self)
+        self.Replot()
+
+    def Replot(self, data=None, max_rate=None):
+        fig = self.panelOnOff.get_figure()
+        fig.set_edgecolor('white')
+        # clear the axes and replot everything
+        if data is not None:
+            axes = fig.gca()
+            axes.cla()
+            axes.imshow(data, cmap=rate_color_map,
+            interpolation='nearest', vmin=0.0, vmax=max_rate)
+        self.panelOnOff.draw()
 
 
 class PanelRatios(wx.Panel):
@@ -160,26 +172,6 @@ class PanelRatios(wx.Panel):
         res.AttachUnknownControl('panelRatios',
             self.guiRatios.panelRatios, self)
         self.guiRatios.Replot()
-
-
-class GuiRebuild:
-    """Displays and updates the rebuilt on/off state."""
-
-    def __init__(self, parent):
-        self.panelOnOff = wxmpl.PlotPanel(parent, -1, size=(6, 4.50), dpi=68,
-            crosshairs=True, autoscaleUnzoom=False)
-        self.Replot()
-
-    def Replot(self, data=None, max_rate=None):
-        fig = self.panelOnOff.get_figure()
-        fig.set_edgecolor('white')
-        # clear the axes and replot everything
-        if data is not None:
-            axes = fig.gca()
-            axes.cla()
-            axes.imshow(data, cmap=rate_color_map,
-            interpolation='nearest', vmin=0.0, vmax=max_rate)
-        self.panelOnOff.draw()
 
 
 class GuiRatios:
