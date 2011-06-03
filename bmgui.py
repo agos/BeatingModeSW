@@ -149,6 +149,7 @@ class PanelReconstruct(wx.Panel):
     def Init(self, res):
         self.panelOnOff = wxmpl.PlotPanel(self, -1, size=(6, 4.50), dpi=68,
             crosshairs=True, autoscaleUnzoom=False)
+        self.panelOnOff.director.axesMouseMotion = self.axesMouseMotion
         self.fig = self.panelOnOff.get_figure()
         self.fig.set_edgecolor('white')
         res.AttachUnknownControl('panelReconstructed',
@@ -163,6 +164,16 @@ class PanelReconstruct(wx.Panel):
             axes.imshow(data, cmap=rate_color_map,
             interpolation='nearest', vmin=0.0, vmax=max_rate)
         self.panelOnOff.draw()
+
+    def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
+        """
+        Overriding wxmpl event handler to do my stuff™
+        """
+        # The original stuff. We'll leave this for now.
+        view = self.panelOnOff.director.view
+        view.cursor.setCross()
+        view.crosshairs.set(x, y)
+        view.location.set(wxmpl.format_coord(axes, xdata, ydata))
 
 
 class PanelRatios(wx.Panel):
