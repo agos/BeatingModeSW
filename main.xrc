@@ -95,7 +95,7 @@
                         <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
                       </object>
                     </object>
-                    <option>3</option>
+                    <option>5</option>
                     <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
                   </object>
                   <object class="spacer">
@@ -212,7 +212,7 @@
                         <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
                       </object>
                     </object>
-                    <option>1</option>
+                    <option>2</option>
                     <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
                   </object>
                 </object>
