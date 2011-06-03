@@ -101,13 +101,14 @@ class MainFrame(wx.Frame):
         self.panelOn.Update()
         self.panelOff.Update()
         self.panelRatios.Update()
+        # Open the Loading progress dialog
         dialog = wx.ProgressDialog("Data loading progress", "Loading...", 100,
             style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_REMAINING_TIME)
         dialog.SetSize((300, 200))
         dialog.Update(0, newmsg="Loading data from disk")
-        # Do the actual data loading
+        # Do the actual data loading from file
         self.bimg = BeatingImage(path=path)
-        # Show metadata
+        # Show measure metadata
         self.lblAcquired.SetLabel(self.bimg.acquired)
         str_pixel_f = "{0} Hz".format(self.bimg.pixel_frequency)
         self.lblPixelFrequency.SetLabel(str_pixel_f)
@@ -118,8 +119,10 @@ class MainFrame(wx.Frame):
         manager = multiprocessing.Manager()
         queue = manager.Queue()
         self.bimg.reconstruct_with_update(queue=queue, dialog=dialog)
+        # Loading complete, progress dialog is not needed anymore
         dialog.Update(100, newmsg="Complete")
         dialog.Destroy()
+        # Keep a reference to the data
         self.rec_on = self.bimg.reconstructed_on
         self.rec_off = self.bimg.reconstructed_off
         self.ratios = self.bimg.ratios
