@@ -89,6 +89,11 @@
                     <object class="wxStaticBoxSizer">
                       <label>Details</label>
                       <orient>wxVERTICAL</orient>
+                      <object class="sizeritem">
+                        <object class="unknown" name="panelDetails"/>
+                        <option>1</option>
+                        <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+                      </object>
                     </object>
                     <option>3</option>
                     <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
