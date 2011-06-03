@@ -80,11 +80,31 @@
             <object class="wxBoxSizer">
               <orient>wxVERTICAL</orient>
               <object class="spacer">
-                <size>0,2</size>
-                <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+                <size>6</size>
               </object>
               <object class="sizeritem">
-                <object class="wxNotebook"/>
+                <object class="wxBoxSizer">
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxStaticBoxSizer">
+                      <label>Details</label>
+                      <orient>wxVERTICAL</orient>
+                    </object>
+                    <option>3</option>
+                    <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+                  </object>
+                  <object class="spacer">
+                    <size>5</size>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticBoxSizer">
+                      <label>Statistics</label>
+                      <orient>wxVERTICAL</orient>
+                    </object>
+                    <option>1</option>
+                    <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+                  </object>
+                </object>
                 <option>1</option>
                 <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
               </object>
