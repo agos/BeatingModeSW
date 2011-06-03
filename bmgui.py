@@ -21,6 +21,12 @@ class MainFrame(wx.Frame):
         # Load the main panel for the program
         self.panelGeneral = self.res.LoadPanel(self, 'panelGeneral')
 
+        # Attach the details graph panel
+        self.panelDetails = wxmpl.PlotPanel(self.panelGeneral, -1,
+            size=(1, 2), dpi=68, crosshairs=True, autoscaleUnzoom=False)
+        self.res.AttachUnknownControl('panelDetails', self.panelDetails, self)
+        self.ReplotDetails()
+
         # Initialize the General panel controls
         self.notebook = XRCCTRL(self, 'notebook')
         self.lblAcquired = XRCCTRL(self, 'lblAcquired')
@@ -55,6 +61,13 @@ class MainFrame(wx.Frame):
         # Initialize the welcome notebook tab
         panelWelcome = self.res.LoadPanel(self.notebook, 'panelWelcome')
         self.notebook.AddPage(panelWelcome, 'Welcome')
+
+    def ReplotDetails(self):
+        fig = self.panelDetails.get_figure()
+        fig.set_edgecolor('white')
+        # clear the axes and replot everything
+        # Do the drawing
+        self.panelDetails.draw()
 
     def OnOpenMeasure(self, evt):
         wildcard = "Data file (*.dat)|*.dat|" \
