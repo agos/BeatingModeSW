@@ -84,7 +84,7 @@ class MainFrame(wx.Frame):
             dialog.Destroy()
 
     def loadData(self, path):
-        # Initialize the panel
+        # Initialize the panels
         self.notebook.DeleteAllPages()
         self.panelOn = self.res.LoadPanel(self.notebook,
             'panelReconstruct')
