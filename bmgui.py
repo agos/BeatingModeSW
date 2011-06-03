@@ -173,7 +173,8 @@ class PanelReconstruct(wx.Panel):
         view = self.panelOnOff.director.view
         view.cursor.setCross()
         view.crosshairs.set(x, y)
-        view.location.set(wxmpl.format_coord(axes, xdata, ydata))
+        view.location.set(wxmpl.format_coord(axes,
+            int(floor(xdata)), int(floor(ydata))))
 
 
 class PanelRatios(wx.Panel):
