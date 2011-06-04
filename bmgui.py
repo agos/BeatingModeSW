@@ -96,8 +96,8 @@ class MainFrame(wx.Frame):
             'panelReconstruct')
         self.panelRatios = self.res.LoadPanel(self.notebook,
             'panelRatios')
-        self.panelOn.Init(self.res)
-        self.panelOff.Init(self.res)
+        self.panelOn.Init(self.res, self)
+        self.panelOff.Init(self.res, self)
         self.panelRatios.Init(self.res)
         self.notebook.AddPage(self.panelOn, "Rate on")
         self.notebook.AddPage(self.panelOff, "Rate off")
@@ -148,7 +148,8 @@ class PanelReconstruct(wx.Panel):
         # the Create step is done by XRC.
         self.PostCreate(pre)
 
-    def Init(self, res):
+    def Init(self, res, frame):
+        self.mainFrame = frame
         self.panelOnOff = wxmpl.PlotPanel(self, -1, size=(6, 4.50), dpi=68,
             crosshairs=True, autoscaleUnzoom=False)
         self.panelOnOff.director.axesMouseMotion = self.axesMouseMotion
