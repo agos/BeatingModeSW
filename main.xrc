@@ -79,6 +79,146 @@
           <object class="sizeritem">
             <object class="wxBoxSizer">
               <orient>wxVERTICAL</orient>
+              <object class="spacer">
+                <size>6</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxStaticBoxSizer">
+                      <label>Details</label>
+                      <orient>wxVERTICAL</orient>
+                      <object class="sizeritem">
+                        <object class="unknown" name="panelDetails"/>
+                        <option>1</option>
+                        <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+                      </object>
+                    </object>
+                    <option>5</option>
+                    <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+                  </object>
+                  <object class="spacer">
+                    <size>5</size>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticBoxSizer">
+                      <label>Statistics</label>
+                      <orient>wxVERTICAL</orient>
+                      <object class="sizeritem">
+                        <object class="wxChoice" name="choiceStatistics">
+                          <content>
+                            <item>Whole Image</item>
+                            <item>Row</item>
+                            <item>Column</item>
+                          </content>
+                          <selection>0</selection>
+                        </object>
+                        <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+                        <ratio>0</ratio>
+                      </object>
+                      <object class="spacer">
+                        <size>0,5</size>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxFlexGridSizer">
+                          <cols>3</cols>
+                          <rows>1</rows>
+                          <vgap>5</vgap>
+                          <hgap>5</hgap>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>Width:</label>
+                            </object>
+                            <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText" name="lblWidth">
+                              <label>-</label>
+                            </object>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>µm</label>
+                            </object>
+                          </object>
+                          <growablecols>1</growablecols>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>Height:</label>
+                            </object>
+                            <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText" name="lblHeight">
+                              <label>-</label>
+                            </object>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>µm</label>
+                            </object>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>Max Rate:</label>
+                            </object>
+                            <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText" name="lblMax">
+                              <label>-</label>
+                            </object>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>Hz</label>
+                            </object>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>Min Rate:</label>
+                            </object>
+                            <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText" name="lblMin">
+                              <label>-</label>
+                            </object>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>Hz</label>
+                            </object>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>Mean Rate:</label>
+                            </object>
+                            <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText" name="lblMean">
+                              <label>-</label>
+                            </object>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>Hz</label>
+                            </object>
+                          </object>
+                        </object>
+                        <option>1</option>
+                        <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+                      </object>
+                    </object>
+                    <option>2</option>
+                    <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+                  </object>
+                </object>
+                <option>1</option>
+                <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+              </object>
             </object>
             <option>5</option>
             <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
