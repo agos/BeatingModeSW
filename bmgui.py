@@ -189,8 +189,10 @@ class PanelReconstruct(wx.Panel):
         view = self.panelOnOff.director.view
         view.cursor.setCross()
         view.crosshairs.set(x, y)
+        # Changed: we round the coordinates
         view.location.set(wxmpl.format_coord(axes,
             int(floor(xdata)), int(floor(ydata))))
+        # Added: the replot of the details on mouse movement
         self.mainFrame.ReplotDetails(int(floor(xdata)), int(floor(ydata)))
 
 
