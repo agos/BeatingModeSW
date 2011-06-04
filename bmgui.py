@@ -64,7 +64,7 @@ class MainFrame(wx.Frame):
         panelWelcome = self.res.LoadPanel(self.notebook, 'panelWelcome')
         self.notebook.AddPage(panelWelcome, 'Welcome')
 
-    def ReplotDetails(self):
+    def ReplotDetails(self, x=None, y=None):
         fig = self.panelDetails.get_figure()
         fig.set_edgecolor('white')
         self.details_top = fig.add_subplot(211, title="Row Repetitions")
