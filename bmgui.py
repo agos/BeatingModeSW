@@ -69,8 +69,12 @@ class MainFrame(wx.Frame):
             self.old_coord = (None, None)
         fig = self.panelDetails.get_figure()
         fig.set_edgecolor('white')
-        self.details_top = fig.add_subplot(211, title="Row Repetitions")
-        self.details_bottom = fig.add_subplot(212, title="Point Repetitions")
+        if not hasattr(self, 'details_top'):
+            self.details_top = fig.add_subplot(211,
+                title="Row Repetitions")
+        if not hasattr(self, 'details_bottom'):
+            self.details_bottom = fig.add_subplot(212,
+                title="Point Repetitions")
         fig.subplots_adjust(hspace=0.3)
         # clear the axes and replot everything
         # Do the drawing
