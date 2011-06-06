@@ -334,7 +334,7 @@
                 <size>3,0</size>
               </object>
               <object class="sizeritem">
-                <object class="wxSlider">
+                <object class="wxSlider" name="sliderThreshold">
                   <value></value>
                   <min></min>
                   <max></max>
