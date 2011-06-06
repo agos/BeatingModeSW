@@ -326,7 +326,7 @@
               <orient>wxHORIZONTAL</orient>
               <object class="sizeritem">
                 <object class="wxStaticText">
-                  <label>Treshold:</label>
+                  <label>Threshold:</label>
                 </object>
                 <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
               </object>
