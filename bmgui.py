@@ -104,9 +104,9 @@ class MainFrame(wx.Frame):
         # Initialize the panels
         self.notebook.DeleteAllPages()
         self.panelOn = self.res.LoadPanel(self.notebook,
-            'panelReconstruct')
+            'panelReconstructOn')
         self.panelOff = self.res.LoadPanel(self.notebook,
-            'panelReconstruct')
+            'panelReconstructOff')
         self.panelRatios = self.res.LoadPanel(self.notebook,
             'panelRatios')
         self.panelOn.Init(self.res, self)
