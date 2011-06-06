@@ -149,6 +149,16 @@ class MainFrame(wx.Frame):
         self.panelOff.Replot(data=self.rec_off,
             max_rate=self.rec_on.max())
         self.panelRatios.Replot(data=self.ratios)
+        # Threshold stuff
+        self.sliderThresOn = XRCCTRL(self.panelOn, 'sliderThresholdOn')
+        self.sliderThresOff = XRCCTRL(self.panelOff, 'sliderThresholdOff')
+        self.spinThresOn = XRCCTRL(self.panelOn, 'spinThresholdOn')
+        self.spinThresOff = XRCCTRL(self.panelOff, 'spinThresholdOff')
+        self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK,
+            self.OnSliderOn, self.sliderThresOn)
+        self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK,
+            self.OnSliderOff, self.sliderThresOff)
+
     def OnSliderOn(self, e):
         self.spinThresOn.SetValue(e.GetPosition())
 
