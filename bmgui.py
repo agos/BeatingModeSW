@@ -149,6 +149,11 @@ class MainFrame(wx.Frame):
         self.panelOff.Replot(data=self.rec_off,
             max_rate=self.rec_on.max())
         self.panelRatios.Replot(data=self.ratios)
+    def OnSliderOn(self, e):
+        self.spinThresOn.SetValue(e.GetPosition())
+
+    def OnSliderOff(self, e):
+        self.spinThresOff.SetValue(e.GetPosition())
 
     def OnClose(self, _):
         self.Destroy()
