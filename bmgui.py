@@ -79,7 +79,7 @@ class MainFrame(wx.Frame):
         fig.subplots_adjust(hspace=0.3)
         # clear the axes and replot everything
         # Do the drawing
-        if x and y and (x,y) != self.old_coord:
+        if x is not None and y is not None and (x,y) != self.old_coord:
             if y != self.old_coord[1]:
                 self.details_top.imshow(self.bimg.data[y,:,:],
                   cmap=rate_color_map, interpolation='nearest', vmin=0.0,
