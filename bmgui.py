@@ -66,7 +66,8 @@ class MainFrame(wx.Frame):
         panelWelcome = self.res.LoadPanel(self.notebook, 'panelWelcome')
         self.notebook.AddPage(panelWelcome, 'Welcome')
 
-    def ReplotDetails(self, x=None, y=None):
+    def ReplotDetails(self, e=None):
+        x, y = self.x, self.y
         if not hasattr(self, 'old_coord'):
             self.old_coord = (None, None)
         fig = self.panelDetails.get_figure()
