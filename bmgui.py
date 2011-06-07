@@ -70,15 +70,16 @@ class MainFrame(wx.Frame):
         x, y = self.x, self.y
         if not hasattr(self, 'old_coord'):
             self.old_coord = (None, None)
-        fig = self.panelDetails.get_figure()
-        fig.set_edgecolor('white')
+        if not hasattr(self, 'fig'):
+            self.fig = self.panelDetails.get_figure()
+            self.fig.set_edgecolor('white')
         if not hasattr(self, 'details_top'):
-            self.details_top = fig.add_subplot(211,
+            self.details_top = self.fig.add_subplot(211,
                 title="Row Repetitions")
         if not hasattr(self, 'details_bottom'):
-            self.details_bottom = fig.add_subplot(212,
+            self.details_bottom = self.fig.add_subplot(212,
                 title="Point Repetitions")
-        fig.subplots_adjust(hspace=0.3)
+        self.fig.subplots_adjust(hspace=0.3)
         # clear the axes and replot everything
         # Do the drawing
         if x is not None and y is not None and (x,y) != self.old_coord:
