@@ -28,6 +28,7 @@ class MainFrame(wx.Frame):
         self.panelDetails = wxmpl.PlotPanel(self.panelGeneral, -1,
             size=(1, 2), dpi=68, crosshairs=True, autoscaleUnzoom=False)
         self.res.AttachUnknownControl('panelDetails', self.panelDetails, self)
+        self.x, self.y = None, None
         self.ReplotDetails()
 
         # Initialize the General panel controls
