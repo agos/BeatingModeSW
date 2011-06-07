@@ -96,6 +96,8 @@ class MainFrame(wx.Frame):
                 val_on = ma.array(values, mask=mask_on)
                 self.details_bottom.plot(pos, val_on, 'r')
                 self.details_bottom.plot(pos, val_off, 'b')
+                self.details_bottom.axhline(y=self.bimg.thresOn, color='r')
+                self.details_bottom.axhline(y=self.bimg.thresOff, color='b')
             self.old_coord = (x,y)
         self.panelDetails.draw()
 
