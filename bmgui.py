@@ -85,6 +85,7 @@ class MainFrame(wx.Frame):
                   vmax=self.rec_on.max())
             if self.old_coord != (x,y):
                 self.details_bottom.clear()
+                self.details_bottom.set_title("Point Repetitions")
                 self.details_bottom.plot(self.bimg.data[y,:,x])
             self.old_coord = (x,y)
         self.panelDetails.draw()
