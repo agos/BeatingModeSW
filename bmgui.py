@@ -221,6 +221,8 @@ class PanelReconstruct(wx.Panel):
         """
         Overriding wxmpl event handler to do my stuff™
         """
+        xdata += 0.5
+        ydata += 0.5
         # The original stuff. We'll leave this for now.
         view = self.panelOnOff.director.view
         view.cursor.setCross()
