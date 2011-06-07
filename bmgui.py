@@ -8,6 +8,7 @@ from numpy import *
 from beatingmode import BeatingImage
 from colors import rate_color_map, ratio_color_map, gray_color_map
 import multiprocessing
+from scipy.stats.mstats import mquantiles
 
 
 class MainFrame(wx.Frame):
@@ -105,9 +106,9 @@ class MainFrame(wx.Frame):
         # Initialize the panels
         self.notebook.DeleteAllPages()
         self.panelOn = self.res.LoadPanel(self.notebook,
-            'panelReconstruct')
+            'panelReconstructOn')
         self.panelOff = self.res.LoadPanel(self.notebook,
-            'panelReconstruct')
+            'panelReconstructOff')
         self.panelRatios = self.res.LoadPanel(self.notebook,
             'panelRatios')
         self.panelOn.Init(self.res, self)
@@ -150,6 +151,40 @@ class MainFrame(wx.Frame):
         self.panelOff.Replot(data=self.rec_off,
             max_rate=self.rec_on.max())
         self.panelRatios.Replot(data=self.ratios)
+        # Threshold stuff
+        self.sliderThresOn = XRCCTRL(self.panelOn, 'sliderThresholdOn')
+        self.sliderThresOff = XRCCTRL(self.panelOff, 'sliderThresholdOff')
+        maxThresOn = mquantiles(self.rec_on.flatten(), [0.5])[0]
+        maxThresOff = mquantiles(self.rec_off.flatten(), [0.5])[0]
+        self.sliderThresOn.SetRange(0.0, maxThresOn)
+        self.sliderThresOff.SetRange(0.0, maxThresOff)
+        self.spinThresOn = XRCCTRL(self.panelOn, 'spinThresholdOn')
+        self.spinThresOff = XRCCTRL(self.panelOff, 'spinThresholdOff')
+        self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK,
+            self.OnSliderOn, self.sliderThresOn)
+        self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK,
+            self.OnSliderOff, self.sliderThresOff)
+
+    def OnSliderOn(self, e):
+        threshold = self.sliderThresOn.GetValue()
+        self.spinThresOn.SetValue(threshold)
+        self.bimg.thresOn = threshold
+        self.rec_on = self.bimg.reconstructed_on
+        self.panelOn.Replot(data=self.rec_on,
+            max_rate=self.rec_on.max())
+        self.ratios = self.bimg.ratios
+        self.panelRatios.Replot(data=self.ratios)
+
+    def OnSliderOff(self, e):
+        threshold = self.sliderThresOff.GetValue()
+        self.spinThresOff.SetValue(threshold)
+        self.bimg.thresOff = threshold
+        self.rec_off = self.bimg.reconstructed_off
+        self.panelOff.Replot(data=self.rec_off,
+            max_rate=self.rec_on.max())
+        self.ratios = self.bimg.ratios
+        self.panelRatios.Replot(data=self.ratios)
+
 
     def OnClose(self, _):
         self.Destroy()

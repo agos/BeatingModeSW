@@ -301,7 +301,7 @@
       </object>
     </object>
   </object>
-  <object class="wxPanel" name="panelReconstruct" subclass="bmgui.PanelReconstruct">
+  <object class="wxPanel" name="panelReconstructOn" subclass="bmgui.PanelReconstruct">
     <object class="wxBoxSizer">
       <orient>wxVERTICAL</orient>
       <object class="sizeritem">
@@ -326,7 +326,7 @@
               <orient>wxHORIZONTAL</orient>
               <object class="sizeritem">
                 <object class="wxStaticText">
-                  <label>Treshold:</label>
+                  <label>Threshold:</label>
                 </object>
                 <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
               </object>
@@ -334,7 +334,7 @@
                 <size>3,0</size>
               </object>
               <object class="sizeritem">
-                <object class="wxSlider">
+                <object class="wxSlider" name="sliderThresholdOn">
                   <value></value>
                   <min></min>
                   <max></max>
@@ -346,7 +346,80 @@
                 <size>0,0</size>
               </object>
               <object class="sizeritem">
-                <object class="wxSpinCtrl">
+                <object class="wxSpinCtrl" name="spinThresholdOn">
+                  <value>0</value>
+                  <min>0</min>
+                  <max>100</max>
+                </object>
+              </object>
+              <object class="spacer">
+                <size>3,0</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Hz</label>
+                </object>
+                <flag>wxALIGN_LEFT|wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="spacer">
+                <size>10,0</size>
+              </object>
+            </object>
+            <option>2</option>
+            <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+          </object>
+        </object>
+        <option>0</option>
+        <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="panelReconstructOff" subclass="bmgui.PanelReconstruct">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="unknown" name="panelReconstructed"/>
+            <option>1</option>
+            <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <option>5</option>
+        <flag>wxALL|wxEXPAND|wxALIGN_CENTRE</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticBoxSizer">
+              <label>Options</label>
+              <orient>wxHORIZONTAL</orient>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Threshold:</label>
+                </object>
+                <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="spacer">
+                <size>3,0</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxSlider" name="sliderThresholdOff">
+                  <value></value>
+                  <min></min>
+                  <max></max>
+                </object>
+                <option>5</option>
+                <flag>wxALL|wxEXPAND|wxALIGN_LEFT</flag>
+              </object>
+              <object class="spacer">
+                <size>0,0</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxSpinCtrl" name="spinThresholdOff">
                   <value>0</value>
                   <min>0</min>
                   <max>100</max>

@@ -292,6 +292,8 @@ class BeatingImage(object):
         self._rec_on = None
         self._rec_off = None
         self._ratios = None
+        self.thresOn = 0.0
+        self.thresOff = 0.0
         self.rows = []
         self.rows = [BeatingImageRow(self.data[row,:,:],
             pixel_frequency=self.pixel_frequency,
@@ -337,22 +339,18 @@ class BeatingImage(object):
     def reconstructed_on(self):
         if self._rec_on is None:
             self._reconstruct_rows()
-        return self._rec_on
+        return ma.array(self._rec_on, mask=less(self._rec_on, self.thresOn))
 
     @property
     def reconstructed_off(self):
         if self._rec_off is None:
             self._reconstruct_rows()
-        return self._rec_off
+        return ma.array(self._rec_off, mask=less(self._rec_off, self.thresOff))
 
     @property
     def ratios(self):
-        if self._ratios is None:
-            mask_on = less(self._rec_on, 20.0)
-            mask_off = less(self._rec_off, 20.0)
-            to_mask = logical_or(mask_on, mask_off)
-            self._ratios = ma.array(self._rec_on / self._rec_off, mask=to_mask)
-        return self._ratios
+        # TODO implementare caching
+        return self.reconstructed_on / self.reconstructed_off
 
 
 if __name__ == '__main__':
