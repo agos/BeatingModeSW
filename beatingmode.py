@@ -339,13 +339,13 @@ class BeatingImage(object):
     def reconstructed_on(self):
         if self._rec_on is None:
             self._reconstruct_rows()
-        return self._rec_on
+        return ma.array(self._rec_on, mask=less(self._rec_on, self.thresOn))
 
     @property
     def reconstructed_off(self):
         if self._rec_off is None:
             self._reconstruct_rows()
-        return self._rec_off
+        return ma.array(self._rec_off, mask=less(self._rec_off, self.thresOff))
 
     @property
     def ratios(self):
