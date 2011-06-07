@@ -292,6 +292,8 @@ class BeatingImage(object):
         self._rec_on = None
         self._rec_off = None
         self._ratios = None
+        self.thresOn = 0.0
+        self.thresOff = 0.0
         self.rows = []
         self.rows = [BeatingImageRow(self.data[row,:,:],
             pixel_frequency=self.pixel_frequency,
