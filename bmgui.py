@@ -195,7 +195,6 @@ class MainFrame(wx.Frame):
         self.ratios = self.bimg.ratios
         self.panelRatios.Replot(data=self.ratios)
 
-
     def OnClose(self, _):
         self.Destroy()
 
