@@ -230,17 +230,16 @@ class PanelReconstruct(wx.Panel):
         """
         Overriding wxmpl event handler to do my stuff™
         """
-        xdata += 0.5
-        ydata += 0.5
+        xdata = int(floor(xdata + 0.5))
+        ydata = int(floor(ydata + 0.5))
         # The original stuff. We'll leave this for now.
         view = self.panelOnOff.director.view
         view.cursor.setCross()
         view.crosshairs.set(x, y)
         # Changed: we round the coordinates
-        view.location.set(wxmpl.format_coord(axes,
-            int(floor(xdata)), int(floor(ydata))))
+        view.location.set(wxmpl.format_coord(axes, xdata, ydata))
         # Added: the replot of the details on mouse movement
-        self.mainFrame.ReplotDetails(int(floor(xdata)), int(floor(ydata)))
+        self.mainFrame.x, self.mainFrame.y = xdata, ydata
 
 
 class PanelRatios(wx.Panel):
