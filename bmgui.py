@@ -166,6 +166,8 @@ class MainFrame(wx.Frame):
         self.rec_on = self.bimg.reconstructed_on
         self.panelOn.Replot(data=self.rec_on,
             max_rate=self.rec_on.max())
+        self.ratios = self.bimg.ratios
+        self.panelRatios.Replot(data=self.ratios)
 
     def OnSliderOff(self, e):
         threshold = self.sliderThresOff.GetValue()
@@ -174,6 +176,9 @@ class MainFrame(wx.Frame):
         self.rec_off = self.bimg.reconstructed_off
         self.panelOff.Replot(data=self.rec_off,
             max_rate=self.rec_off.max())
+        self.ratios = self.bimg.ratios
+        self.panelRatios.Replot(data=self.ratios)
+
 
     def OnClose(self, _):
         self.Destroy()
