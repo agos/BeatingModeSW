@@ -160,10 +160,20 @@ class MainFrame(wx.Frame):
             self.OnSliderOff, self.sliderThresOff)
 
     def OnSliderOn(self, e):
-        self.spinThresOn.SetValue(e.GetPosition())
+        threshold = self.sliderThresOn.GetValue()
+        self.spinThresOn.SetValue(threshold)
+        self.bimg.thresOn = threshold
+        self.rec_on = self.bimg.reconstructed_on
+        self.panelOn.Replot(data=self.rec_on,
+            max_rate=self.rec_on.max())
 
     def OnSliderOff(self, e):
-        self.spinThresOff.SetValue(e.GetPosition())
+        threshold = self.sliderThresOff.GetValue()
+        self.spinThresOff.SetValue(threshold)
+        self.bimg.thresOff = threshold
+        self.rec_off = self.bimg.reconstructed_off
+        self.panelOff.Replot(data=self.rec_off,
+            max_rate=self.rec_off.max())
 
     def OnClose(self, _):
         self.Destroy()
