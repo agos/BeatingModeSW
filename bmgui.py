@@ -228,7 +228,7 @@ class PanelReconstruct(wx.Panel):
     def Init(self, res, frame):
         self.mainFrame = frame
         self.panelOnOff = wxmpl.PlotPanel(self, -1, size=(6, 4.50), dpi=68,
-            crosshairs=True, autoscaleUnzoom=False)
+            crosshairs=False, autoscaleUnzoom=False)
         self.panelOnOff.director.axesMouseMotion = self.axesMouseMotion
         self.fig = self.panelOnOff.get_figure()
         self.fig.set_edgecolor('white')
