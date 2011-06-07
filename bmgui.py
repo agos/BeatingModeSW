@@ -176,7 +176,7 @@ class MainFrame(wx.Frame):
         self.bimg.thresOff = threshold
         self.rec_off = self.bimg.reconstructed_off
         self.panelOff.Replot(data=self.rec_off,
-            max_rate=self.rec_off.max())
+            max_rate=self.rec_on.max())
         self.ratios = self.bimg.ratios
         self.panelRatios.Replot(data=self.ratios)
 
