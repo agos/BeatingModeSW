@@ -89,6 +89,13 @@ class MainFrame(wx.Frame):
                 self.details_bottom.set_title("Point Repetitions")
                 values = self.bimg.rows[y].unbleached_data[:,x]
                 self.details_bottom.plot(values, 'k')
+                pos = arange(len(values))
+                mask_off = self.bimg.rows[y].beating_mask[:,x]
+                mask_on = ones(mask_off.shape) - mask_off
+                val_off = ma.array(values, mask=mask_off)
+                val_on = ma.array(values, mask=mask_on)
+                self.details_bottom.plot(pos, val_on, 'r')
+                self.details_bottom.plot(pos, val_off, 'b')
             self.old_coord = (x,y)
         self.panelDetails.draw()
 
