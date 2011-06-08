@@ -180,7 +180,6 @@ class MainFrame(wx.Frame):
             self.OnSliderOff, self.sliderThresOff)
         # Enable the Save menu
         self.menuMain.Enable(XRCID('menuSave'), True)
-        
 
     def OnSliderOn(self, e):
         threshold = self.sliderThresOn.GetValue()
@@ -203,7 +202,7 @@ class MainFrame(wx.Frame):
         self.panelRatios.Replot(data=self.ratios)
 
     def OnSave(self, e):
-        wildcard = "Data file (.dat)|*.dat|PNG file (.png)|*.png" 
+        wildcard = "Data file (.dat)|*.dat|PNG file (.png)|*.png"
         dialog = wx.FileDialog(None, message="Choose a name", defaultDir="",
             defaultFile="output", wildcard=wildcard, style=wx.SAVE)
         if dialog.ShowModal() == wx.ID_OK:
@@ -296,7 +295,8 @@ class PanelRatios(wx.Panel):
         if data is not None:
             axes = self.fig.gca()
             axes.cla()
-            cax = axes.imshow(data, cmap=ratio_color_map, interpolation='nearest')
+            cax = axes.imshow(data, cmap=ratio_color_map,
+                interpolation='nearest')
             cb = self.fig.colorbar(cax, shrink=0.5)
         self.panelRatios.draw()
 
