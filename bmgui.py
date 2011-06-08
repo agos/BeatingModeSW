@@ -178,6 +178,9 @@ class MainFrame(wx.Frame):
             self.OnSliderOn, self.sliderThresOn)
         self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK,
             self.OnSliderOff, self.sliderThresOff)
+        # Enable the Save menu
+        self.menuMain.Enable(XRCID('menuSave'), True)
+        
 
     def OnSliderOn(self, e):
         threshold = self.sliderThresOn.GetValue()
