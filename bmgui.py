@@ -244,19 +244,25 @@ class PanelReconstruct(wx.Panel):
         self.fig.set_edgecolor('white')
         res.AttachUnknownControl('panelReconstructed',
             self.panelOnOff, self)
-        self.Replot()
+        self.empty = True
+        self.panelOnOff.draw()
 
     def Replot(self, data=None, max_rate=None):
         # Clear the axes and replot everything
         if data is not None:
-            axes = self.fig.gca()
-            axes.cla()
-            cax = axes.imshow(data, cmap=rate_color_map,
-            interpolation='nearest', vmin=0.0, vmax=max_rate)
-            if not hasattr(self, 'cb'):
-                self.cb = self.fig.colorbar(cax, shrink=0.5)
-                self.cb.set_label("Hz")
-        self.panelOnOff.draw()
+            if self.empty:
+                self.axes = self.fig.gca()
+                self.axes.cla()
+                self.cax = self.axes.imshow(data, cmap=rate_color_map,
+                interpolation='nearest', vmin=0.0, vmax=max_rate, animated=True)
+                if not hasattr(self, 'cb'):
+                    self.cb = self.fig.colorbar(self.cax, shrink=0.5)
+                    self.cb.set_label("Hz")
+                self.panelOnOff.draw()
+                self.empty = False
+            else:
+                self.cax.set_data(data)
+                self.panelOnOff.draw()
 
     def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
         """
