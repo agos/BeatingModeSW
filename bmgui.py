@@ -256,7 +256,7 @@ class PanelRatios(wx.Panel):
     def Init(self, res, frame):
         self.mainFrame = frame
         self.panelRatios = wxmpl.PlotPanel(self, -1, size=(6, 4.50), dpi=68,
-            crosshairs=True, autoscaleUnzoom=False)
+            crosshairs=False, autoscaleUnzoom=False)
         self.panelRatios.director.axesMouseMotion = self.axesMouseMotion
         self.fig = self.panelRatios.get_figure()
         self.fig.set_edgecolor('white')
