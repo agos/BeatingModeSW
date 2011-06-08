@@ -212,6 +212,17 @@ class MainFrame(wx.Frame):
             self.saveData(dialog.GetPath(), dialog.GetFilterIndex())
             dialog.Destroy()
 
+    def saveData(self, path, index):
+        if index == 0:
+            savetxt(path + "-on.dat", self.rec_on,
+                fmt="%10.5f", delimiter="\t")
+            savetxt(path + "-off.dat", self.rec_off,
+                fmt="%10.5f", delimiter="\t")
+            savetxt(path + "-ratios.dat", self.ratios,
+                fmt="%10.5f", delimiter="\t")
+        else:
+            pass
+
     def OnClose(self, _):
         self.Destroy()
 
