@@ -177,22 +177,6 @@ class MainFrame(wx.Frame):
             self.OnSliderOn, self.sliderThresOn)
         self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK,
             self.OnSliderOff, self.sliderThresOff)
-        # Prepare the timer for the details redrawing
-        self.timer = wx.Timer(self)
-        self.Bind(wx.EVT_TIMER, self.ReplotDetails, self.timer)
-        # Activate and deactivate the timer
-        canvasOn = self.panelOn.fig.canvas
-        canvasOff = self.panelOff.fig.canvas
-        canvasOn.mpl_connect('axes_enter_event', self.OnEnterPlot)
-        canvasOff.mpl_connect('axes_enter_event', self.OnEnterPlot)
-        canvasOn.mpl_connect('axes_leave_event', self.OnExitPlot)
-        canvasOff.mpl_connect('axes_leave_event', self.OnExitPlot)
-    
-    def OnEnterPlot(self, e):
-        self.timer.Start(250)
-
-    def OnExitPlot(self, e):
-        self.timer.Stop()
 
     def OnSliderOn(self, e):
         threshold = self.sliderThresOn.GetValue()
@@ -259,6 +243,7 @@ class PanelReconstruct(wx.Panel):
         view.location.set(wxmpl.format_coord(axes, xdata, ydata))
         # Added: the replot of the details on mouse movement
         self.mainFrame.x, self.mainFrame.y = xdata, ydata
+        self.mainFrame.ReplotDetails()
 
 
 class PanelRatios(wx.Panel):
