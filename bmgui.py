@@ -297,18 +297,24 @@ class PanelRatios(wx.Panel):
         self.fig.set_edgecolor('white')
         res.AttachUnknownControl('panelRatios',
             self.panelRatios, self)
-        self.Replot()
+        self.empty = True
+        self.panelRatios.draw()
 
     def Replot(self, data=None):
         # Clear the axes and replot everything
         if data is not None:
-            axes = self.fig.gca()
-            axes.cla()
-            cax = axes.imshow(data, cmap=ratio_color_map,
-                interpolation='nearest')
-            if not hasattr(self, 'cb'):
-                self.cb = self.fig.colorbar(cax, shrink=0.5)
-        self.panelRatios.draw()
+            if empty:
+                self.axes = self.fig.gca()
+                self.axes.cla()
+                self.cax = self.axes.imshow(data, cmap=ratio_color_map,
+                    interpolation='nearest', animated=True)
+                if not hasattr(self, 'cb'):
+                    self.cb = self.fig.colorbar(self.cax, shrink=0.5)
+                self.panelRatios.draw()
+                self.empty = False
+            else:
+                self.cax.set_data(data)
+                self.panelRatios.draw()
 
     def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
         """
