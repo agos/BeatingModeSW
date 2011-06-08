@@ -202,6 +202,16 @@ class MainFrame(wx.Frame):
         self.ratios = self.bimg.ratios
         self.panelRatios.Replot(data=self.ratios)
 
+    def OnSave(self, e):
+        wildcard = "Data file (.dat)|*.dat|PNG file (.png)|*.png" 
+        dialog = wx.FileDialog(None, message="Choose a name", defaultDir="",
+            defaultFile="output", wildcard=wildcard, style=wx.SAVE)
+        if dialog.ShowModal() == wx.ID_OK:
+            print("Saving. Prefix: {0}. Format: {1}".format(
+                dialog.GetPath(), dialog.GetFilterIndex()))
+            self.saveData(dialog.GetPath(), dialog.GetFilterIndex())
+            dialog.Destroy()
+
     def OnClose(self, _):
         self.Destroy()
 
