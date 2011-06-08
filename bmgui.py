@@ -220,7 +220,9 @@ class MainFrame(wx.Frame):
             savetxt(path + "-ratios.dat", self.ratios,
                 fmt="%10.5f", delimiter="\t")
         else:
-            pass
+            self.panelOn.fig.savefig(path + "-on.png", dpi=300)
+            self.panelOff.fig.savefig(path + "-off.png", dpi=300)
+            self.panelRatios.fig.savefig(path + "-ratios.png", dpi=300)
 
     def OnClose(self, _):
         self.Destroy()
