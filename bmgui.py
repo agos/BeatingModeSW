@@ -253,8 +253,9 @@ class PanelReconstruct(wx.Panel):
             axes.cla()
             cax = axes.imshow(data, cmap=rate_color_map,
             interpolation='nearest', vmin=0.0, vmax=max_rate)
-            cb = self.fig.colorbar(cax, shrink=0.5)
-            cb.set_label("Hz")
+            if not hasattr(self, 'cb'):
+                self.cb = self.fig.colorbar(cax, shrink=0.5)
+                self.cb.set_label("Hz")
         self.panelOnOff.draw()
 
     def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
@@ -299,7 +300,8 @@ class PanelRatios(wx.Panel):
             axes.cla()
             cax = axes.imshow(data, cmap=ratio_color_map,
                 interpolation='nearest')
-            cb = self.fig.colorbar(cax, shrink=0.5)
+            if not hasattr(self, 'cb'):
+                self.cb = self.fig.colorbar(cax, shrink=0.5)
         self.panelRatios.draw()
 
     def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
