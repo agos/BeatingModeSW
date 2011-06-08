@@ -294,6 +294,11 @@
         <label>&amp;Open...</label>
         <accel>Ctrl-O</accel>
       </object>
+      <object class="wxMenuItem" name="menuSave">
+        <label>&amp;Save...</label>
+        <accel>Ctrl-S</accel>
+        <enabled>0</enabled>
+      </object>
       <object class="separator"/>
       <object class="wxMenuItem" name="menuExit">
         <label>E&amp;xit</label>
