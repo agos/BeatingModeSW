@@ -46,14 +46,15 @@ class MainFrame(wx.Frame):
         mainGrid.Add(hGrid, 1, flag=wx.EXPAND|wx.ALL|wx.ALIGN_CENTRE)
 
         # Load the menu for the frame
-        menuMain = self.res.LoadMenuBar('menuMain')
+        self.menuMain = self.res.LoadMenuBar('menuMain')
 
         # Bind menu events to the proper methods
         wx.EVT_MENU(self, XRCID('menuOpen'), self.OnOpenMeasure)
+        wx.EVT_MENU(self, XRCID('menuSave'), self.OnSave)
         wx.EVT_MENU(self, XRCID('menuExit'), self.OnClose)
 
         # Set the menu as the default menu for this frame
-        self.SetMenuBar(menuMain)
+        self.SetMenuBar(self.menuMain)
 
         self.SetSizer(mainGrid)
         self.Layout()
@@ -126,7 +127,7 @@ class MainFrame(wx.Frame):
             'panelRatios')
         self.panelOn.Init(self.res, self)
         self.panelOff.Init(self.res, self)
-        self.panelRatios.Init(self.res)
+        self.panelRatios.Init(self.res, self)
         self.notebook.AddPage(self.panelOn, "Rate on")
         self.notebook.AddPage(self.panelOff, "Rate off")
         self.notebook.AddPage(self.panelRatios, "Enhancement Ratios")
@@ -177,22 +178,8 @@ class MainFrame(wx.Frame):
             self.OnSliderOn, self.sliderThresOn)
         self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK,
             self.OnSliderOff, self.sliderThresOff)
-        # Prepare the timer for the details redrawing
-        self.timer = wx.Timer(self)
-        self.Bind(wx.EVT_TIMER, self.ReplotDetails, self.timer)
-        # Activate and deactivate the timer
-        canvasOn = self.panelOn.fig.canvas
-        canvasOff = self.panelOff.fig.canvas
-        canvasOn.mpl_connect('axes_enter_event', self.OnEnterPlot)
-        canvasOff.mpl_connect('axes_enter_event', self.OnEnterPlot)
-        canvasOn.mpl_connect('axes_leave_event', self.OnExitPlot)
-        canvasOff.mpl_connect('axes_leave_event', self.OnExitPlot)
-    
-    def OnEnterPlot(self, e):
-        self.timer.Start(250)
-
-    def OnExitPlot(self, e):
-        self.timer.Stop()
+        # Enable the Save menu
+        self.menuMain.Enable(XRCID('menuSave'), True)
 
     def OnSliderOn(self, e):
         threshold = self.sliderThresOn.GetValue()
@@ -213,6 +200,29 @@ class MainFrame(wx.Frame):
             max_rate=self.rec_on.max())
         self.ratios = self.bimg.ratios
         self.panelRatios.Replot(data=self.ratios)
+
+    def OnSave(self, e):
+        wildcard = "Data file (.dat)|*.dat|PNG file (.png)|*.png"
+        dialog = wx.FileDialog(None, message="Choose a prefix", defaultDir="",
+            defaultFile="output", wildcard=wildcard, style=wx.SAVE)
+        if dialog.ShowModal() == wx.ID_OK:
+            print("Saving. Prefix: {0}. Format: {1}".format(
+                dialog.GetPath(), dialog.GetFilterIndex()))
+            self.saveData(dialog.GetPath(), dialog.GetFilterIndex())
+            dialog.Destroy()
+
+    def saveData(self, path, index):
+        if index == 0:
+            savetxt(path + "-on.dat", self.rec_on,
+                fmt="%10.5f", delimiter="\t")
+            savetxt(path + "-off.dat", self.rec_off,
+                fmt="%10.5f", delimiter="\t")
+            savetxt(path + "-ratios.dat", self.ratios,
+                fmt="%10.5f", delimiter="\t")
+        else:
+            self.panelOn.fig.savefig(path + "-on.png", dpi=300)
+            self.panelOff.fig.savefig(path + "-off.png", dpi=300)
+            self.panelRatios.fig.savefig(path + "-ratios.png", dpi=300)
 
     def OnClose(self, _):
         self.Destroy()
@@ -243,8 +253,9 @@ class PanelReconstruct(wx.Panel):
             axes.cla()
             cax = axes.imshow(data, cmap=rate_color_map,
             interpolation='nearest', vmin=0.0, vmax=max_rate)
-            cb = self.fig.colorbar(cax, shrink=0.5)
-            cb.set_label("Hz")
+            if not hasattr(self, 'cb'):
+                self.cb = self.fig.colorbar(cax, shrink=0.5)
+                self.cb.set_label("Hz")
         self.panelOnOff.draw()
 
     def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
@@ -261,6 +272,7 @@ class PanelReconstruct(wx.Panel):
         view.location.set(wxmpl.format_coord(axes, xdata, ydata))
         # Added: the replot of the details on mouse movement
         self.mainFrame.x, self.mainFrame.y = xdata, ydata
+        self.mainFrame.ReplotDetails()
 
 
 class PanelRatios(wx.Panel):
@@ -270,9 +282,11 @@ class PanelRatios(wx.Panel):
         # the Create step is done by XRC.
         self.PostCreate(pre)
 
-    def Init(self, res):
+    def Init(self, res, frame):
+        self.mainFrame = frame
         self.panelRatios = wxmpl.PlotPanel(self, -1, size=(6, 4.50), dpi=68,
-            crosshairs=True, autoscaleUnzoom=False)
+            crosshairs=False, autoscaleUnzoom=False)
+        self.panelRatios.director.axesMouseMotion = self.axesMouseMotion
         self.fig = self.panelRatios.get_figure()
         self.fig.set_edgecolor('white')
         res.AttachUnknownControl('panelRatios',
@@ -284,9 +298,27 @@ class PanelRatios(wx.Panel):
         if data is not None:
             axes = self.fig.gca()
             axes.cla()
-            cax = axes.imshow(data, cmap=ratio_color_map, interpolation='nearest')
-            cb = self.fig.colorbar(cax, shrink=0.5)
+            cax = axes.imshow(data, cmap=ratio_color_map,
+                interpolation='nearest')
+            if not hasattr(self, 'cb'):
+                self.cb = self.fig.colorbar(cax, shrink=0.5)
         self.panelRatios.draw()
+
+    def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
+        """
+        Overriding wxmpl event handler to do my stuff™
+        """
+        xdata = int(floor(xdata + 0.5))
+        ydata = int(floor(ydata + 0.5))
+        # The original stuff. We'll leave this for now.
+        view = self.panelRatios.director.view
+        view.cursor.setCross()
+        view.crosshairs.set(x, y)
+        # Changed: we round the coordinates
+        view.location.set(wxmpl.format_coord(axes, xdata, ydata))
+        # Added: the replot of the details on mouse movement
+        self.mainFrame.x, self.mainFrame.y = xdata, ydata
+        self.mainFrame.ReplotDetails()
 
 
 class bmgui(wx.App):
