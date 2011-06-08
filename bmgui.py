@@ -46,14 +46,14 @@ class MainFrame(wx.Frame):
         mainGrid.Add(hGrid, 1, flag=wx.EXPAND|wx.ALL|wx.ALIGN_CENTRE)
 
         # Load the menu for the frame
-        menuMain = self.res.LoadMenuBar('menuMain')
+        self.menuMain = self.res.LoadMenuBar('menuMain')
 
         # Bind menu events to the proper methods
         wx.EVT_MENU(self, XRCID('menuOpen'), self.OnOpenMeasure)
         wx.EVT_MENU(self, XRCID('menuExit'), self.OnClose)
 
         # Set the menu as the default menu for this frame
-        self.SetMenuBar(menuMain)
+        self.SetMenuBar(self.menuMain)
 
         self.SetSizer(mainGrid)
         self.Layout()
