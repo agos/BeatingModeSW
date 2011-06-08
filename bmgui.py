@@ -46,14 +46,15 @@ class MainFrame(wx.Frame):
         mainGrid.Add(hGrid, 1, flag=wx.EXPAND|wx.ALL|wx.ALIGN_CENTRE)
 
         # Load the menu for the frame
-        menuMain = self.res.LoadMenuBar('menuMain')
+        self.menuMain = self.res.LoadMenuBar('menuMain')
 
         # Bind menu events to the proper methods
         wx.EVT_MENU(self, XRCID('menuOpen'), self.OnOpenMeasure)
+        wx.EVT_MENU(self, XRCID('menuSave'), self.OnSave)
         wx.EVT_MENU(self, XRCID('menuExit'), self.OnClose)
 
         # Set the menu as the default menu for this frame
-        self.SetMenuBar(menuMain)
+        self.SetMenuBar(self.menuMain)
 
         self.SetSizer(mainGrid)
         self.Layout()
@@ -177,6 +178,8 @@ class MainFrame(wx.Frame):
             self.OnSliderOn, self.sliderThresOn)
         self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK,
             self.OnSliderOff, self.sliderThresOff)
+        # Enable the Save menu
+        self.menuMain.Enable(XRCID('menuSave'), True)
 
     def OnSliderOn(self, e):
         threshold = self.sliderThresOn.GetValue()
@@ -197,6 +200,29 @@ class MainFrame(wx.Frame):
             max_rate=self.rec_on.max())
         self.ratios = self.bimg.ratios
         self.panelRatios.Replot(data=self.ratios)
+
+    def OnSave(self, e):
+        wildcard = "Data file (.dat)|*.dat|PNG file (.png)|*.png"
+        dialog = wx.FileDialog(None, message="Choose a name", defaultDir="",
+            defaultFile="output", wildcard=wildcard, style=wx.SAVE)
+        if dialog.ShowModal() == wx.ID_OK:
+            print("Saving. Prefix: {0}. Format: {1}".format(
+                dialog.GetPath(), dialog.GetFilterIndex()))
+            self.saveData(dialog.GetPath(), dialog.GetFilterIndex())
+            dialog.Destroy()
+
+    def saveData(self, path, index):
+        if index == 0:
+            savetxt(path + "-on.dat", self.rec_on,
+                fmt="%10.5f", delimiter="\t")
+            savetxt(path + "-off.dat", self.rec_off,
+                fmt="%10.5f", delimiter="\t")
+            savetxt(path + "-ratios.dat", self.ratios,
+                fmt="%10.5f", delimiter="\t")
+        else:
+            self.panelOn.fig.savefig(path + "-on.png", dpi=300)
+            self.panelOff.fig.savefig(path + "-off.png", dpi=300)
+            self.panelRatios.fig.savefig(path + "-ratios.png", dpi=300)
 
     def OnClose(self, _):
         self.Destroy()
@@ -271,7 +297,8 @@ class PanelRatios(wx.Panel):
         if data is not None:
             axes = self.fig.gca()
             axes.cla()
-            cax = axes.imshow(data, cmap=ratio_color_map, interpolation='nearest')
+            cax = axes.imshow(data, cmap=ratio_color_map,
+                interpolation='nearest')
             cb = self.fig.colorbar(cax, shrink=0.5)
         self.panelRatios.draw()
 
