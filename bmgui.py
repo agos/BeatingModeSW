@@ -50,6 +50,7 @@ class MainFrame(wx.Frame):
 
         # Bind menu events to the proper methods
         wx.EVT_MENU(self, XRCID('menuOpen'), self.OnOpenMeasure)
+        wx.EVT_MENU(self, XRCID('menuSave'), self.OnSave)
         wx.EVT_MENU(self, XRCID('menuExit'), self.OnClose)
 
         # Set the menu as the default menu for this frame
