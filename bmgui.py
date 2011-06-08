@@ -203,7 +203,7 @@ class MainFrame(wx.Frame):
 
     def OnSave(self, e):
         wildcard = "Data file (.dat)|*.dat|PNG file (.png)|*.png"
-        dialog = wx.FileDialog(None, message="Choose a name", defaultDir="",
+        dialog = wx.FileDialog(None, message="Choose a prefix", defaultDir="",
             defaultFile="output", wildcard=wildcard, style=wx.SAVE)
         if dialog.ShowModal() == wx.ID_OK:
             print("Saving. Prefix: {0}. Format: {1}".format(
