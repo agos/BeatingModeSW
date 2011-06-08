@@ -29,7 +29,7 @@ class MainFrame(wx.Frame):
             size=(1, 2), dpi=68, crosshairs=True, autoscaleUnzoom=False)
         self.res.AttachUnknownControl('panelDetails', self.panelDetails, self)
         self.x, self.y = None, None
-        self.ReplotDetails()
+        self.InitDetails()
 
         # Initialize the General panel controls
         self.notebook = XRCCTRL(self, 'notebook')
@@ -67,20 +67,18 @@ class MainFrame(wx.Frame):
         panelWelcome = self.res.LoadPanel(self.notebook, 'panelWelcome')
         self.notebook.AddPage(panelWelcome, 'Welcome')
 
+    def InitDetails(self):
+        self.old_coord = (None, None)
+        self.fig = self.panelDetails.get_figure()
+        self.fig.set_edgecolor('white')
+        self.details_top = self.fig.add_subplot(211,
+            title="Row Repetitions", animated=True)
+        self.details_bottom = self.fig.add_subplot(212,
+            title="Point Repetitions", animated=True)
+        self.fig.subplots_adjust(hspace=0.3)
+
     def ReplotDetails(self, e=None):
         x, y = self.x, self.y
-        if not hasattr(self, 'old_coord'):
-            self.old_coord = (None, None)
-        if not hasattr(self, 'fig'):
-            self.fig = self.panelDetails.get_figure()
-            self.fig.set_edgecolor('white')
-        if not hasattr(self, 'details_top'):
-            self.details_top = self.fig.add_subplot(211,
-                title="Row Repetitions")
-        if not hasattr(self, 'details_bottom'):
-            self.details_bottom = self.fig.add_subplot(212,
-                title="Point Repetitions")
-        self.fig.subplots_adjust(hspace=0.3)
         # clear the axes and replot everything
         # Do the drawing
         if x is not None and y is not None and (x,y) != self.old_coord:
