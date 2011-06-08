@@ -8,6 +8,7 @@ from numpy import *
 from beatingmode import BeatingImage
 from colors import rate_color_map, ratio_color_map, gray_color_map
 import multiprocessing
+from scipy.stats.mstats import mquantiles
 
 
 class MainFrame(wx.Frame):
@@ -27,6 +28,7 @@ class MainFrame(wx.Frame):
         self.panelDetails = wxmpl.PlotPanel(self.panelGeneral, -1,
             size=(1, 2), dpi=68, crosshairs=True, autoscaleUnzoom=False)
         self.res.AttachUnknownControl('panelDetails', self.panelDetails, self)
+        self.x, self.y = None, None
         self.ReplotDetails()
 
         # Initialize the General panel controls
@@ -64,28 +66,41 @@ class MainFrame(wx.Frame):
         panelWelcome = self.res.LoadPanel(self.notebook, 'panelWelcome')
         self.notebook.AddPage(panelWelcome, 'Welcome')
 
-    def ReplotDetails(self, x=None, y=None):
+    def ReplotDetails(self, e=None):
+        x, y = self.x, self.y
         if not hasattr(self, 'old_coord'):
             self.old_coord = (None, None)
-        fig = self.panelDetails.get_figure()
-        fig.set_edgecolor('white')
+        if not hasattr(self, 'fig'):
+            self.fig = self.panelDetails.get_figure()
+            self.fig.set_edgecolor('white')
         if not hasattr(self, 'details_top'):
-            self.details_top = fig.add_subplot(211,
+            self.details_top = self.fig.add_subplot(211,
                 title="Row Repetitions")
         if not hasattr(self, 'details_bottom'):
-            self.details_bottom = fig.add_subplot(212,
+            self.details_bottom = self.fig.add_subplot(212,
                 title="Point Repetitions")
-        fig.subplots_adjust(hspace=0.3)
+        self.fig.subplots_adjust(hspace=0.3)
         # clear the axes and replot everything
         # Do the drawing
-        if x and y and (x,y) != self.old_coord:
+        if x is not None and y is not None and (x,y) != self.old_coord:
             if y != self.old_coord[1]:
                 self.details_top.imshow(self.bimg.data[y,:,:],
                   cmap=rate_color_map, interpolation='nearest', vmin=0.0,
                   vmax=self.rec_on.max())
             if self.old_coord != (x,y):
                 self.details_bottom.clear()
-                self.details_bottom.plot(self.bimg.data[y,:,x])
+                self.details_bottom.set_title("Point Repetitions")
+                values = self.bimg.rows[y].unbleached_data[:,x]
+                self.details_bottom.plot(values, 'k')
+                pos = arange(len(values))
+                mask_off = self.bimg.rows[y].beating_mask[:,x]
+                mask_on = ones(mask_off.shape) - mask_off
+                val_off = ma.array(values, mask=mask_off)
+                val_on = ma.array(values, mask=mask_on)
+                self.details_bottom.plot(pos, val_on, 'r')
+                self.details_bottom.plot(pos, val_off, 'b')
+                self.details_bottom.axhline(y=self.bimg.thresOn, color='r')
+                self.details_bottom.axhline(y=self.bimg.thresOff, color='b')
             self.old_coord = (x,y)
         self.panelDetails.draw()
 
@@ -104,9 +119,9 @@ class MainFrame(wx.Frame):
         # Initialize the panels
         self.notebook.DeleteAllPages()
         self.panelOn = self.res.LoadPanel(self.notebook,
-            'panelReconstruct')
+            'panelReconstructOn')
         self.panelOff = self.res.LoadPanel(self.notebook,
-            'panelReconstruct')
+            'panelReconstructOff')
         self.panelRatios = self.res.LoadPanel(self.notebook,
             'panelRatios')
         self.panelOn.Init(self.res, self)
@@ -149,6 +164,55 @@ class MainFrame(wx.Frame):
         self.panelOff.Replot(data=self.rec_off,
             max_rate=self.rec_on.max())
         self.panelRatios.Replot(data=self.ratios)
+        # Threshold stuff
+        self.sliderThresOn = XRCCTRL(self.panelOn, 'sliderThresholdOn')
+        self.sliderThresOff = XRCCTRL(self.panelOff, 'sliderThresholdOff')
+        maxThresOn = mquantiles(self.rec_on.flatten(), [0.5])[0]
+        maxThresOff = mquantiles(self.rec_off.flatten(), [0.5])[0]
+        self.sliderThresOn.SetRange(0.0, maxThresOn)
+        self.sliderThresOff.SetRange(0.0, maxThresOff)
+        self.spinThresOn = XRCCTRL(self.panelOn, 'spinThresholdOn')
+        self.spinThresOff = XRCCTRL(self.panelOff, 'spinThresholdOff')
+        self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK,
+            self.OnSliderOn, self.sliderThresOn)
+        self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK,
+            self.OnSliderOff, self.sliderThresOff)
+        # Prepare the timer for the details redrawing
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.ReplotDetails, self.timer)
+        # Activate and deactivate the timer
+        canvasOn = self.panelOn.fig.canvas
+        canvasOff = self.panelOff.fig.canvas
+        canvasOn.mpl_connect('axes_enter_event', self.OnEnterPlot)
+        canvasOff.mpl_connect('axes_enter_event', self.OnEnterPlot)
+        canvasOn.mpl_connect('axes_leave_event', self.OnExitPlot)
+        canvasOff.mpl_connect('axes_leave_event', self.OnExitPlot)
+    
+    def OnEnterPlot(self, e):
+        self.timer.Start(250)
+
+    def OnExitPlot(self, e):
+        self.timer.Stop()
+
+    def OnSliderOn(self, e):
+        threshold = self.sliderThresOn.GetValue()
+        self.spinThresOn.SetValue(threshold)
+        self.bimg.thresOn = threshold
+        self.rec_on = self.bimg.reconstructed_on
+        self.panelOn.Replot(data=self.rec_on,
+            max_rate=self.rec_on.max())
+        self.ratios = self.bimg.ratios
+        self.panelRatios.Replot(data=self.ratios)
+
+    def OnSliderOff(self, e):
+        threshold = self.sliderThresOff.GetValue()
+        self.spinThresOff.SetValue(threshold)
+        self.bimg.thresOff = threshold
+        self.rec_off = self.bimg.reconstructed_off
+        self.panelOff.Replot(data=self.rec_off,
+            max_rate=self.rec_on.max())
+        self.ratios = self.bimg.ratios
+        self.panelRatios.Replot(data=self.ratios)
 
     def OnClose(self, _):
         self.Destroy()
@@ -164,7 +228,7 @@ class PanelReconstruct(wx.Panel):
     def Init(self, res, frame):
         self.mainFrame = frame
         self.panelOnOff = wxmpl.PlotPanel(self, -1, size=(6, 4.50), dpi=68,
-            crosshairs=True, autoscaleUnzoom=False)
+            crosshairs=False, autoscaleUnzoom=False)
         self.panelOnOff.director.axesMouseMotion = self.axesMouseMotion
         self.fig = self.panelOnOff.get_figure()
         self.fig.set_edgecolor('white')
@@ -177,23 +241,26 @@ class PanelReconstruct(wx.Panel):
         if data is not None:
             axes = self.fig.gca()
             axes.cla()
-            axes.imshow(data, cmap=rate_color_map,
+            cax = axes.imshow(data, cmap=rate_color_map,
             interpolation='nearest', vmin=0.0, vmax=max_rate)
+            cb = self.fig.colorbar(cax, shrink=0.5)
+            cb.set_label("Hz")
         self.panelOnOff.draw()
 
     def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
         """
         Overriding wxmpl event handler to do my stuff™
         """
+        xdata = int(floor(xdata + 0.5))
+        ydata = int(floor(ydata + 0.5))
         # The original stuff. We'll leave this for now.
         view = self.panelOnOff.director.view
         view.cursor.setCross()
         view.crosshairs.set(x, y)
         # Changed: we round the coordinates
-        view.location.set(wxmpl.format_coord(axes,
-            int(floor(xdata)), int(floor(ydata))))
+        view.location.set(wxmpl.format_coord(axes, xdata, ydata))
         # Added: the replot of the details on mouse movement
-        self.mainFrame.ReplotDetails(int(floor(xdata)), int(floor(ydata)))
+        self.mainFrame.x, self.mainFrame.y = xdata, ydata
 
 
 class PanelRatios(wx.Panel):
@@ -217,7 +284,8 @@ class PanelRatios(wx.Panel):
         if data is not None:
             axes = self.fig.gca()
             axes.cla()
-            axes.imshow(data, cmap=ratio_color_map, interpolation='nearest')
+            cax = axes.imshow(data, cmap=ratio_color_map, interpolation='nearest')
+            cb = self.fig.colorbar(cax, shrink=0.5)
         self.panelRatios.draw()
 
 
