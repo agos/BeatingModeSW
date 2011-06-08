@@ -126,7 +126,7 @@ class MainFrame(wx.Frame):
             'panelRatios')
         self.panelOn.Init(self.res, self)
         self.panelOff.Init(self.res, self)
-        self.panelRatios.Init(self.res)
+        self.panelRatios.Init(self.res, self)
         self.notebook.AddPage(self.panelOn, "Rate on")
         self.notebook.AddPage(self.panelOff, "Rate off")
         self.notebook.AddPage(self.panelRatios, "Enhancement Ratios")
@@ -177,22 +177,6 @@ class MainFrame(wx.Frame):
             self.OnSliderOn, self.sliderThresOn)
         self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK,
             self.OnSliderOff, self.sliderThresOff)
-        # Prepare the timer for the details redrawing
-        self.timer = wx.Timer(self)
-        self.Bind(wx.EVT_TIMER, self.ReplotDetails, self.timer)
-        # Activate and deactivate the timer
-        canvasOn = self.panelOn.fig.canvas
-        canvasOff = self.panelOff.fig.canvas
-        canvasOn.mpl_connect('axes_enter_event', self.OnEnterPlot)
-        canvasOff.mpl_connect('axes_enter_event', self.OnEnterPlot)
-        canvasOn.mpl_connect('axes_leave_event', self.OnExitPlot)
-        canvasOff.mpl_connect('axes_leave_event', self.OnExitPlot)
-    
-    def OnEnterPlot(self, e):
-        self.timer.Start(250)
-
-    def OnExitPlot(self, e):
-        self.timer.Stop()
 
     def OnSliderOn(self, e):
         threshold = self.sliderThresOn.GetValue()
@@ -261,6 +245,7 @@ class PanelReconstruct(wx.Panel):
         view.location.set(wxmpl.format_coord(axes, xdata, ydata))
         # Added: the replot of the details on mouse movement
         self.mainFrame.x, self.mainFrame.y = xdata, ydata
+        self.mainFrame.ReplotDetails()
 
 
 class PanelRatios(wx.Panel):
@@ -270,9 +255,11 @@ class PanelRatios(wx.Panel):
         # the Create step is done by XRC.
         self.PostCreate(pre)
 
-    def Init(self, res):
+    def Init(self, res, frame):
+        self.mainFrame = frame
         self.panelRatios = wxmpl.PlotPanel(self, -1, size=(6, 4.50), dpi=68,
-            crosshairs=True, autoscaleUnzoom=False)
+            crosshairs=False, autoscaleUnzoom=False)
+        self.panelRatios.director.axesMouseMotion = self.axesMouseMotion
         self.fig = self.panelRatios.get_figure()
         self.fig.set_edgecolor('white')
         res.AttachUnknownControl('panelRatios',
@@ -287,6 +274,22 @@ class PanelRatios(wx.Panel):
             cax = axes.imshow(data, cmap=ratio_color_map, interpolation='nearest')
             cb = self.fig.colorbar(cax, shrink=0.5)
         self.panelRatios.draw()
+
+    def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
+        """
+        Overriding wxmpl event handler to do my stuff™
+        """
+        xdata = int(floor(xdata + 0.5))
+        ydata = int(floor(ydata + 0.5))
+        # The original stuff. We'll leave this for now.
+        view = self.panelRatios.director.view
+        view.cursor.setCross()
+        view.crosshairs.set(x, y)
+        # Changed: we round the coordinates
+        view.location.set(wxmpl.format_coord(axes, xdata, ydata))
+        # Added: the replot of the details on mouse movement
+        self.mainFrame.x, self.mainFrame.y = xdata, ydata
+        self.mainFrame.ReplotDetails()
 
 
 class bmgui(wx.App):
