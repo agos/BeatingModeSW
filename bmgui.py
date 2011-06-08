@@ -203,7 +203,7 @@ class MainFrame(wx.Frame):
 
     def OnSave(self, e):
         wildcard = "Data file (.dat)|*.dat|PNG file (.png)|*.png"
-        dialog = wx.FileDialog(None, message="Choose a name", defaultDir="",
+        dialog = wx.FileDialog(None, message="Choose a prefix", defaultDir="",
             defaultFile="output", wildcard=wildcard, style=wx.SAVE)
         if dialog.ShowModal() == wx.ID_OK:
             print("Saving. Prefix: {0}. Format: {1}".format(
@@ -253,8 +253,9 @@ class PanelReconstruct(wx.Panel):
             axes.cla()
             cax = axes.imshow(data, cmap=rate_color_map,
             interpolation='nearest', vmin=0.0, vmax=max_rate)
-            cb = self.fig.colorbar(cax, shrink=0.5)
-            cb.set_label("Hz")
+            if not hasattr(self, 'cb'):
+                self.cb = self.fig.colorbar(cax, shrink=0.5)
+                self.cb.set_label("Hz")
         self.panelOnOff.draw()
 
     def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
@@ -299,7 +300,8 @@ class PanelRatios(wx.Panel):
             axes.cla()
             cax = axes.imshow(data, cmap=ratio_color_map,
                 interpolation='nearest')
-            cb = self.fig.colorbar(cax, shrink=0.5)
+            if not hasattr(self, 'cb'):
+                self.cb = self.fig.colorbar(cax, shrink=0.5)
         self.panelRatios.draw()
 
     def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
