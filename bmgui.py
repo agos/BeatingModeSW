@@ -126,7 +126,7 @@ class MainFrame(wx.Frame):
             'panelRatios')
         self.panelOn.Init(self.res, self)
         self.panelOff.Init(self.res, self)
-        self.panelRatios.Init(self.res)
+        self.panelRatios.Init(self.res, self)
         self.notebook.AddPage(self.panelOn, "Rate on")
         self.notebook.AddPage(self.panelOff, "Rate off")
         self.notebook.AddPage(self.panelRatios, "Enhancement Ratios")
@@ -268,9 +268,11 @@ class PanelRatios(wx.Panel):
         # the Create step is done by XRC.
         self.PostCreate(pre)
 
-    def Init(self, res):
+    def Init(self, res, frame):
+        self.mainFrame = frame
         self.panelRatios = wxmpl.PlotPanel(self, -1, size=(6, 4.50), dpi=68,
             crosshairs=True, autoscaleUnzoom=False)
+        self.panelRatios.director.axesMouseMotion = self.axesMouseMotion
         self.fig = self.panelRatios.get_figure()
         self.fig.set_edgecolor('white')
         res.AttachUnknownControl('panelRatios',
@@ -284,6 +286,22 @@ class PanelRatios(wx.Panel):
             axes.cla()
             axes.imshow(data, cmap=ratio_color_map, interpolation='nearest')
         self.panelRatios.draw()
+
+    def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
+        """
+        Overriding wxmpl event handler to do my stuff™
+        """
+        xdata = int(floor(xdata + 0.5))
+        ydata = int(floor(ydata + 0.5))
+        # The original stuff. We'll leave this for now.
+        view = self.panelRatios.director.view
+        view.cursor.setCross()
+        view.crosshairs.set(x, y)
+        # Changed: we round the coordinates
+        view.location.set(wxmpl.format_coord(axes, xdata, ydata))
+        # Added: the replot of the details on mouse movement
+        self.mainFrame.x, self.mainFrame.y = xdata, ydata
+        self.mainFrame.ReplotDetails()
 
 
 class bmgui(wx.App):
