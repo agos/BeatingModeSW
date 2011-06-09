@@ -361,14 +361,14 @@ class PanelRatios(wx.Panel):
             if empty:
                 self.axes = self.fig.gca()
                 self.axes.cla()
-                self.cax = self.axes.imshow(data, cmap=ratio_color_map,
+                self.im = self.axes.imshow(data, cmap=ratio_color_map,
                     interpolation='nearest', animated=True)
                 if not hasattr(self, 'cb'):
-                    self.cb = self.fig.colorbar(self.cax, shrink=0.5)
+                    self.cb = self.fig.colorbar(self.im, shrink=0.5)
                 self.panelRatios.draw()
                 self.empty = False
             else:
-                self.cax.set_data(data)
+                self.im.set_data(data)
                 self.panelRatios.draw()
 
     def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
