@@ -125,7 +125,8 @@ class MainFrame(wx.Frame):
                 # Update data
                 # TODO migliorare accesso a questi dati
                 values = self.bimg.rows[y].unbleached_data[:,x]
-                pos = arange(len(values))
+                width = len(values)
+                pos = arange(width)
                 mask_off = self.bimg.rows[y].beating_mask[:,x]
                 mask_on = ones(mask_off.shape) - mask_off
                 val_off = ma.array(values, mask=mask_off)
@@ -134,10 +135,14 @@ class MainFrame(wx.Frame):
                 self.det_plt.set_ydata(values)
                 self.det_plt_on.set_ydata(val_on)
                 self.det_plt_off.set_ydata(val_off)
+                self.det_thr_on.set_ydata(self.bimg.thresOn)
+                self.det_thr_off.set_ydata(self.bimg.thresOff)
                 # Tell those slacking artists to draw
                 ax_bottom.draw_artist(self.det_plt)
                 ax_bottom.draw_artist(self.det_plt_on)
                 ax_bottom.draw_artist(self.det_plt_off)
+                ax_bottom.draw_artist(self.det_thr_on)
+                ax_bottom.draw_artist(self.det_thr_off)
                 # Blit, and we're done
                 self.canvas.blit(ax_top.bbox)
                 self.canvas.blit(ax_bottom.bbox)
