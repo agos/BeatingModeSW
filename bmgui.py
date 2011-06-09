@@ -122,15 +122,25 @@ class MainFrame(wx.Frame):
                 # Restore backgrounds
                 self.canvas.restore_region(self.bg_top)
                 self.canvas.restore_region(self.bg_bottom)
-                # Update line image and line data
+                # Update data
                 # TODO migliorare accesso a questi dati
                 values = self.bimg.rows[y].unbleached_data[:,x]
+                pos = arange(len(values))
+                mask_off = self.bimg.rows[y].beating_mask[:,x]
+                mask_on = ones(mask_off.shape) - mask_off
+                val_off = ma.array(values, mask=mask_off)
+                val_on = ma.array(values, mask=mask_on)
+                # Update line image and line data
                 self.det_plt.set_ydata(values)
+                self.det_plt_on.set_ydata(val_on)
+                self.det_plt_off.set_ydata(val_off)
                 # Tell those slacking artists to draw
-                self.ax_bottom.draw_artist(self.det_plt)
+                ax_bottom.draw_artist(self.det_plt)
+                ax_bottom.draw_artist(self.det_plt_on)
+                ax_bottom.draw_artist(self.det_plt_off)
                 # Blit, and we're done
-                self.canvas.blit(self.ax_top.bbox)
-                self.canvas.blit(self.ax_bottom.bbox)
+                self.canvas.blit(ax_top.bbox)
+                self.canvas.blit(ax_bottom.bbox)
             self.old_coord = (x,y)
 
     def OnOpenMeasure(self, evt):
