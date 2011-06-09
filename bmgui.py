@@ -127,7 +127,7 @@ class MainFrame(wx.Frame):
                 if y != self.old_coord[1]:
                     self.canvas.restore_region(self.bg_top)
                     self.det_im.set_data(self.bimg.unbleached_array[y,:,:])
-                    ax_bottom.draw_artist(self.det_im)
+                    ax_top.draw_artist(self.det_im)
                     self.canvas.blit(ax_top.bbox)
                 # Bottom panel
                 # Restore background
