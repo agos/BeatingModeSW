@@ -75,7 +75,6 @@ class MainFrame(wx.Frame):
             title="Row Repetitions")
         self.ax_bottom = self.fig.add_subplot(212,
             title="Point Repetitions")
-        # TODO Settare limiti!
         self.ax_bottom.grid()
         self.fig.subplots_adjust(hspace=0.3)
         self.canvas = self.fig.canvas
@@ -89,6 +88,11 @@ class MainFrame(wx.Frame):
         # Do the drawing
         if x is not None and y is not None and (x,y) != self.old_coord:
             if self.empty_details:
+                # TODO non aspettare il primo draw per fare le prime cose
+                # Set axes limits
+                ax_top.imshow(empty((self.bimg.width, self.bimg.repetitions)))
+                self.ax_bottom.set_xlim(0.0, self.bimg.repetitions)
+                self.ax_bottom.set_ylim(0.0, self.bimg.data.max())
                 # Copy the plot backgrounds for later reuse
                 self.bg_top = self.canvas.copy_from_bbox(ax_top.bbox)
                 self.bg_bottom = self.canvas.copy_from_bbox(ax_bottom.bbox)
