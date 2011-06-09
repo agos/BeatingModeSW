@@ -325,11 +325,13 @@ class BeatingImage(object):
         l = len(self.rows)
         value = 0
         dialog.Update(value, newmsg="Reconstructing rows: 0/{0}".format(l))
+        self.unbleached_array = empty((l, self.repetitions, self.width))
         for n in range(l):
             result = queue.get()
             i = result[0]
             (self._rec_on[i], self._rec_off[i]) = (result[1], result[2])
             value += 100.0/l
+            self.unbleached_array[i] = self.rows[i].unbleached_data
             dialog.Update(value,
                 newmsg="Reconstructing rows: {0}/{1}".format(n+1, l))
         print("Time to reconstruct: {0} s".format(time.time() - start))
