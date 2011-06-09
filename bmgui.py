@@ -91,6 +91,8 @@ class MainFrame(wx.Frame):
                 # TODO non aspettare il primo draw per fare le prime cose
                 # Set axes limits
                 ax_top.imshow(empty((self.bimg.width, self.bimg.repetitions)))
+                self.axis = ax_top.get_xaxis()
+                # self.bg_axis = self.canvas.copy_from_bbox(axis.bbox)
                 self.ax_bottom.set_xlim(0.0, self.bimg.repetitions)
                 self.ax_bottom.set_ylim(0.0, self.bimg.unbleached_array.max())
                 # Copy the plot backgrounds for later reuse
@@ -126,7 +128,10 @@ class MainFrame(wx.Frame):
                 # Top panel: only if y changes. Laziness = performance
                 self.canvas.restore_region(self.bg_top)
                 self.det_im.set_data(self.bimg.unbleached_array[y,:,:])
+                self.axis.set_ticks([10,20,30,x])
+                self.axis.set_ticklabels(["p", "u", "z", "z"])
                 ax_top.draw_artist(self.det_im)
+                ax_top.draw_artist(self.axis)
                 self.canvas.blit(ax_top.bbox)
                 # Bottom panel
                 # Restore background
