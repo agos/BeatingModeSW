@@ -304,6 +304,8 @@ class PanelReconstruct(wx.Panel):
             if self.empty:
                 self.axes = self.fig.gca()
                 self.axes.cla()
+                self.axes.imshow(empty_like(data))
+                self.bg = self.panelOnOff.copy_from_bbox(self.axes.bbox)
                 self.im = self.axes.imshow(data, cmap=rate_color_map,
                 interpolation='nearest', vmin=0.0, vmax=max_rate, animated=True)
                 if not hasattr(self, 'cb'):
@@ -312,8 +314,10 @@ class PanelReconstruct(wx.Panel):
                 self.panelOnOff.draw()
                 self.empty = False
             else:
+                self.panelOnOff.restore_region(self.bg)
                 self.im.set_data(data)
-                self.panelOnOff.draw()
+                self.axes.draw_artist(self.im)
+                self.panelOnOff.blit(self.axes.bbox)
 
     def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
         """
