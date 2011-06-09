@@ -89,15 +89,19 @@ class MainFrame(wx.Frame):
         # Do the drawing
         if x is not None and y is not None and (x,y) != self.old_coord:
             if self.empty_details:
+                # Copy the plot backgrounds for later reuse
                 self.bg_top = self.canvas.copy_from_bbox(ax_top.bbox)
                 self.bg_bottom = self.canvas.copy_from_bbox(ax_bottom.bbox)
+                # Initial plot, top slot
                 self.det_im = ax_top.imshow(self.bimg.data[y,:,:],
                     cmap=rate_color_map, interpolation='nearest',
                     vmin=0.0, vmax=self.rec_on.max(), animated=True)
+                # Initial plot, bottom slot (repetitions)
                 values = self.bimg.rows[y].unbleached_data[:,x]
                 pos = arange(len(values))
                 self.det_plt, = ax_bottom.plot(pos, values, 'k',
                     animated=True)
+                # Beating status highlight plots
                 mask_off = self.bimg.rows[y].beating_mask[:,x]
                 mask_on = ones(mask_off.shape) - mask_off
                 val_off = ma.array(values, mask=mask_off)
@@ -106,12 +110,13 @@ class MainFrame(wx.Frame):
                     animated=True)
                 self_det_plt_off, = ax_bottom.plot(pos, val_off, 'b',
                     animated=True)
+                # Thresholds plot
                 self_det_thr_on = ax_bottom.axhline(
                     y=self.bimg.thresOn, color='r', animated=True)
                 self_det_thr_off = ax_bottom.axhline(
                     y=self.bimg.thresOff, color='b', animated=True)
+                # Draw, but from now on we blit
                 self.panelDetails.draw()
-                # self.canvas.blit(ax_bottom.bbox)
                 self.empty_details = False
             else:
                 self.canvas.restore_region(self.bg_top)
