@@ -10,6 +10,8 @@ rate_color_map = matplotlib.colors.LinearSegmentedColormap("stdGreen",
                         (1.0, 0.0, 0.0)],
                 })
 
+rate_color_map.set_bad('w', 1.)
+
 ratio_color_map = matplotlib.cm.jet
 ratio_color_map.set_bad('k', 1.)
 
