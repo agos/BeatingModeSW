@@ -101,7 +101,7 @@ class MainFrame(wx.Frame):
                     cmap=rate_color_map, interpolation='nearest',
                     vmin=0.0, vmax=self.rec_on.max(), animated=True)
                 # Initial plot, bottom slot (repetitions)
-                values = self.bimg.rows[y].unbleached_data[:,x]
+                values = self.bimg.unbleached_array[y,:,x]
                 pos = arange(len(values))
                 self.det_plt, = ax_bottom.plot(pos, values, 'k',
                     animated=True)
@@ -128,7 +128,7 @@ class MainFrame(wx.Frame):
                 self.canvas.restore_region(self.bg_bottom)
                 # Update data
                 # TODO migliorare accesso a questi dati
-                values = self.bimg.rows[y].unbleached_data[:,x]
+                values = self.bimg.unbleached_array[y,:,x]
                 width = len(values)
                 pos = arange(width)
                 mask_off = self.bimg.rows[y].beating_mask[:,x]
