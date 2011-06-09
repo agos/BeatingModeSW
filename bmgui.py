@@ -304,7 +304,7 @@ class PanelReconstruct(wx.Panel):
             if self.empty:
                 self.axes = self.fig.gca()
                 self.axes.cla()
-                self.axes.imshow(zeros_like(data))
+                self.axes.imshow(zeros_like(data), cmap=rate_color_map)
                 self.panelOnOff.draw()
                 self.bg = self.panelOnOff.copy_from_bbox(self.axes.bbox)
                 self.im = self.axes.imshow(data, cmap=rate_color_map,
@@ -362,7 +362,7 @@ class PanelRatios(wx.Panel):
             if empty:
                 self.axes = self.fig.gca()
                 self.axes.cla()
-                self.axes.imshow(zeros_like(data))
+                self.axes.imshow(zeros_like(data), cmap=ratio_color_map)
                 self.panelRatios.draw()
                 self.bg = self.panelRatios.copy_from_bbox(self.axes.bbox)
                 self.im = self.axes.imshow(data, cmap=ratio_color_map,
