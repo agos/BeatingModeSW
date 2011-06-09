@@ -59,8 +59,9 @@ def reconstruct_row_update(p):
         comp_off = array([item for pos, item in enumerate(
             row.unbleached_data[:, i]) if row.central_part_off[pos, i]])
         reconstructed_off[i] = comp_off.mean()
-    queue.put((index, reconstructed_on, reconstructed_off))
-    return (index, reconstructed_on, reconstructed_off)
+    queue.put((index, reconstructed_on, reconstructed_off,
+        row.unbleached_data))
+    return (index, reconstructed_on, reconstructed_off, row.unbleached_data)
 
 
 class BeatingImageRow(object):
@@ -331,7 +332,7 @@ class BeatingImage(object):
             i = result[0]
             (self._rec_on[i], self._rec_off[i]) = (result[1], result[2])
             value += 100.0/l
-            self.unbleached_array[i] = self.rows[i].unbleached_data
+            self.unbleached_array[i] = result[3]
             dialog.Update(value,
                 newmsg="Reconstructing rows: {0}/{1}".format(n+1, l))
         print("Time to reconstruct: {0} s".format(time.time() - start))
