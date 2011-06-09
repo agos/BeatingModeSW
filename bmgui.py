@@ -304,15 +304,15 @@ class PanelReconstruct(wx.Panel):
             if self.empty:
                 self.axes = self.fig.gca()
                 self.axes.cla()
-                self.cax = self.axes.imshow(data, cmap=rate_color_map,
+                self.im = self.axes.imshow(data, cmap=rate_color_map,
                 interpolation='nearest', vmin=0.0, vmax=max_rate, animated=True)
                 if not hasattr(self, 'cb'):
-                    self.cb = self.fig.colorbar(self.cax, shrink=0.5)
+                    self.cb = self.fig.colorbar(self.im, shrink=0.5)
                     self.cb.set_label("Hz")
                 self.panelOnOff.draw()
                 self.empty = False
             else:
-                self.cax.set_data(data)
+                self.im.set_data(data)
                 self.panelOnOff.draw()
 
     def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
