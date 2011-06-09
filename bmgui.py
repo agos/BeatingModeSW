@@ -29,7 +29,7 @@ class MainFrame(wx.Frame):
             size=(1, 2), dpi=68, crosshairs=True, autoscaleUnzoom=False)
         self.res.AttachUnknownControl('panelDetails', self.panelDetails, self)
         self.x, self.y = None, None
-        self.ReplotDetails()
+        self.InitDetails()
 
         # Initialize the General panel controls
         self.notebook = XRCCTRL(self, 'notebook')
@@ -67,43 +67,95 @@ class MainFrame(wx.Frame):
         panelWelcome = self.res.LoadPanel(self.notebook, 'panelWelcome')
         self.notebook.AddPage(panelWelcome, 'Welcome')
 
+    def InitDetails(self):
+        self.old_coord = (None, None)
+        self.fig = self.panelDetails.get_figure()
+        self.fig.set_edgecolor('white')
+        self.ax_top = self.fig.add_subplot(211,
+            title="Row Repetitions")
+        self.ax_bottom = self.fig.add_subplot(212,
+            title="Point Repetitions")
+        self.ax_bottom.grid()
+        self.fig.subplots_adjust(hspace=0.3)
+        self.canvas = self.fig.canvas
+        self.empty_details = True
+        self.canvas.draw()
+
     def ReplotDetails(self, e=None):
         x, y = self.x, self.y
-        if not hasattr(self, 'old_coord'):
-            self.old_coord = (None, None)
-        if not hasattr(self, 'fig'):
-            self.fig = self.panelDetails.get_figure()
-            self.fig.set_edgecolor('white')
-        if not hasattr(self, 'details_top'):
-            self.details_top = self.fig.add_subplot(211,
-                title="Row Repetitions")
-        if not hasattr(self, 'details_bottom'):
-            self.details_bottom = self.fig.add_subplot(212,
-                title="Point Repetitions")
-        self.fig.subplots_adjust(hspace=0.3)
+        ax_top, ax_bottom = self.ax_top, self.ax_bottom
         # clear the axes and replot everything
         # Do the drawing
         if x is not None and y is not None and (x,y) != self.old_coord:
-            if y != self.old_coord[1]:
-                self.details_top.imshow(self.bimg.data[y,:,:],
-                  cmap=rate_color_map, interpolation='nearest', vmin=0.0,
-                  vmax=self.rec_on.max())
-            if self.old_coord != (x,y):
-                self.details_bottom.clear()
-                self.details_bottom.set_title("Point Repetitions")
-                values = self.bimg.rows[y].unbleached_data[:,x]
-                self.details_bottom.plot(values, 'k')
+            if self.empty_details:
+                # TODO non aspettare il primo draw per fare le prime cose
+                # Set axes limits
+                ax_top.imshow(empty((self.bimg.width, self.bimg.repetitions)))
+                self.ax_bottom.set_xlim(0.0, self.bimg.repetitions)
+                self.ax_bottom.set_ylim(0.0, self.bimg.unbleached_array.max())
+                self.canvas.draw()
+                # Copy the plot backgrounds for later reuse
+                self.bg_top = self.canvas.copy_from_bbox(ax_top.bbox)
+                self.bg_bottom = self.canvas.copy_from_bbox(ax_bottom.bbox)
+                # Initial plot, top slot
+                self.det_im = ax_top.imshow(self.bimg.unbleached_array[y,:,:],
+                    cmap=rate_color_map, interpolation='nearest',
+                    vmin=0.0, vmax=self.rec_on.max(), animated=True)
+                # Initial plot, bottom slot (repetitions)
+                values = self.bimg.unbleached_array[y,:,x]
                 pos = arange(len(values))
+                self.det_plt, = ax_bottom.plot(pos, values, 'k',
+                    animated=True)
+                # Beating status highlight plots
                 mask_off = self.bimg.rows[y].beating_mask[:,x]
                 mask_on = ones(mask_off.shape) - mask_off
                 val_off = ma.array(values, mask=mask_off)
                 val_on = ma.array(values, mask=mask_on)
-                self.details_bottom.plot(pos, val_on, 'r')
-                self.details_bottom.plot(pos, val_off, 'b')
-                self.details_bottom.axhline(y=self.bimg.thresOn, color='r')
-                self.details_bottom.axhline(y=self.bimg.thresOff, color='b')
+                self.det_plt_on, = ax_bottom.plot(pos, val_on, 'r',
+                    animated=True)
+                self.det_plt_off, = ax_bottom.plot(pos, val_off, 'b',
+                    animated=True)
+                # Thresholds plot
+                self.det_thr_on = ax_bottom.axhline(
+                    y=self.bimg.thresOn, color='r', animated=True)
+                self.det_thr_off = ax_bottom.axhline(
+                    y=self.bimg.thresOff, color='b', animated=True)
+                # Draw, but from now on we blit
+                self.panelDetails.draw()
+                self.empty_details = False
+            else:
+                # Top panel: only if y changes. Laziness = performance
+                if y != self.old_coord[1]:
+                    self.canvas.restore_region(self.bg_top)
+                    self.det_im.set_data(self.bimg.unbleached_array[y,:,:])
+                    ax_top.draw_artist(self.det_im)
+                    self.canvas.blit(ax_top.bbox)
+                # Bottom panel
+                # Restore background
+                self.canvas.restore_region(self.bg_bottom)
+                # Update data
+                values = self.bimg.unbleached_array[y,:,x]
+                width = len(values)
+                pos = arange(width)
+                mask_off = self.bimg.rows[y].beating_mask[:,x]
+                mask_on = ones(mask_off.shape) - mask_off
+                val_off = ma.array(values, mask=mask_off)
+                val_on = ma.array(values, mask=mask_on)
+                # Update line image and line data
+                self.det_plt.set_ydata(values)
+                self.det_plt_on.set_ydata(val_on)
+                self.det_plt_off.set_ydata(val_off)
+                self.det_thr_on.set_ydata(self.bimg.thresOn)
+                self.det_thr_off.set_ydata(self.bimg.thresOff)
+                # Tell those slacking artists to draw
+                ax_bottom.draw_artist(self.det_plt)
+                ax_bottom.draw_artist(self.det_plt_on)
+                ax_bottom.draw_artist(self.det_plt_off)
+                ax_bottom.draw_artist(self.det_thr_on)
+                ax_bottom.draw_artist(self.det_thr_off)
+                # Blit, and we're done
+                self.canvas.blit(ax_bottom.bbox)
             self.old_coord = (x,y)
-        self.panelDetails.draw()
 
     def OnOpenMeasure(self, evt):
         wildcard = "Data file (*.dat)|*.dat|" \
@@ -244,19 +296,30 @@ class PanelReconstruct(wx.Panel):
         self.fig.set_edgecolor('white')
         res.AttachUnknownControl('panelReconstructed',
             self.panelOnOff, self)
-        self.Replot()
+        self.empty = True
+        self.panelOnOff.draw()
 
     def Replot(self, data=None, max_rate=None):
         # Clear the axes and replot everything
         if data is not None:
-            axes = self.fig.gca()
-            axes.cla()
-            cax = axes.imshow(data, cmap=rate_color_map,
-            interpolation='nearest', vmin=0.0, vmax=max_rate)
-            if not hasattr(self, 'cb'):
-                self.cb = self.fig.colorbar(cax, shrink=0.5)
-                self.cb.set_label("Hz")
-        self.panelOnOff.draw()
+            if self.empty:
+                self.axes = self.fig.gca()
+                self.axes.cla()
+                self.axes.imshow(zeros_like(data), cmap=rate_color_map)
+                self.panelOnOff.draw()
+                self.bg = self.panelOnOff.copy_from_bbox(self.axes.bbox)
+                self.im = self.axes.imshow(data, cmap=rate_color_map,
+                interpolation='nearest', vmin=0.0, vmax=max_rate, animated=True)
+                if not hasattr(self, 'cb'):
+                    self.cb = self.fig.colorbar(self.im, shrink=0.5)
+                    self.cb.set_label("Hz")
+                self.panelOnOff.draw()
+                self.empty = False
+            else:
+                self.panelOnOff.restore_region(self.bg)
+                self.im.set_data(data)
+                self.axes.draw_artist(self.im)
+                self.panelOnOff.blit(self.axes.bbox)
 
     def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
         """
@@ -291,18 +354,29 @@ class PanelRatios(wx.Panel):
         self.fig.set_edgecolor('white')
         res.AttachUnknownControl('panelRatios',
             self.panelRatios, self)
-        self.Replot()
+        self.empty = True
+        self.panelRatios.draw()
 
     def Replot(self, data=None):
         # Clear the axes and replot everything
         if data is not None:
-            axes = self.fig.gca()
-            axes.cla()
-            cax = axes.imshow(data, cmap=ratio_color_map,
-                interpolation='nearest')
-            if not hasattr(self, 'cb'):
-                self.cb = self.fig.colorbar(cax, shrink=0.5)
-        self.panelRatios.draw()
+            if empty:
+                self.axes = self.fig.gca()
+                self.axes.cla()
+                self.axes.imshow(zeros_like(data), cmap=ratio_color_map)
+                self.panelRatios.draw()
+                self.bg = self.panelRatios.copy_from_bbox(self.axes.bbox)
+                self.im = self.axes.imshow(data, cmap=ratio_color_map,
+                    interpolation='nearest', animated=True)
+                if not hasattr(self, 'cb'):
+                    self.cb = self.fig.colorbar(self.im, shrink=0.5)
+                self.panelRatios.draw()
+                self.empty = False
+            else:
+                self.panelRatios.restore_region(self.bg)
+                self.im.set_data(data)
+                self.axes.draw_artist(self.im)
+                self.panelRatios.blit(self.axes.bbox)
 
     def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
         """
