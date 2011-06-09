@@ -127,7 +127,6 @@ class MainFrame(wx.Frame):
                 self.canvas.restore_region(self.bg_top)
                 self.canvas.restore_region(self.bg_bottom)
                 # Update data
-                # TODO migliorare accesso a questi dati
                 values = self.bimg.unbleached_array[y,:,x]
                 width = len(values)
                 pos = arange(width)
