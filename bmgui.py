@@ -87,26 +87,41 @@ class MainFrame(wx.Frame):
         # clear the axes and replot everything
         # Do the drawing
         if x is not None and y is not None and (x,y) != self.old_coord:
-            if y != self.old_coord[1]:
-                self.details_top.imshow(self.bimg.data[y,:,:],
-                  cmap=rate_color_map, interpolation='nearest', vmin=0.0,
-                  vmax=self.rec_on.max())
-            if self.old_coord != (x,y):
-                self.details_bottom.clear()
-                self.details_bottom.set_title("Point Repetitions")
+            if self.empty_details:
+                self.bg_top = self.canvas.copy_from_bbox(self.ax_top.bbox)
+                self.bg_bottom = self.canvas.copy_from_bbox(self.ax_bottom.bbox)
+                self.det_im = self.ax_top.imshow(self.bimg.data[y,:,:],
+                    cmap=rate_color_map, interpolation='nearest',
+                    vmin=0.0, vmax=self.rec_on.max(), animated=True)
                 values = self.bimg.rows[y].unbleached_data[:,x]
-                self.details_bottom.plot(values, 'k')
                 pos = arange(len(values))
+                self.det_plt, = self.ax_bottom.plot(pos, values, 'k',
+                    animated=True)
                 mask_off = self.bimg.rows[y].beating_mask[:,x]
                 mask_on = ones(mask_off.shape) - mask_off
                 val_off = ma.array(values, mask=mask_off)
                 val_on = ma.array(values, mask=mask_on)
-                self.details_bottom.plot(pos, val_on, 'r')
-                self.details_bottom.plot(pos, val_off, 'b')
-                self.details_bottom.axhline(y=self.bimg.thresOn, color='r')
-                self.details_bottom.axhline(y=self.bimg.thresOff, color='b')
+                self_det_plt_on, = self.ax_bottom.plot(pos, val_on, 'r',
+                    animated=True)
+                self_det_plt_off, = self.ax_bottom.plot(pos, val_off, 'b',
+                    animated=True)
+                self_det_thr_on = self.ax_bottom.axhline(
+                    y=self.bimg.thresOn, color='r', animated=True)
+                self_det_thr_off = self.ax_bottom.axhline(
+                    y=self.bimg.thresOff, color='b', animated=True)
+                self.panelDetails.draw()
+                # self.canvas.blit(self.ax_bottom.bbox)
+                self.empty_details = False
+            else:
+                self.canvas.restore_region(self.bg_top)
+                self.canvas.restore_region(self.bg_bottom)
+                # TODO migliorare accesso a questi dati
+                values = self.bimg.rows[y].unbleached_data[:,x]
+                self.det_plt.set_ydata(values)
+                self.ax_bottom.draw_artist(self.det_plt)
+                self.canvas.blit(self.ax_top.bbox)
+                self.canvas.blit(self.ax_bottom.bbox)
             self.old_coord = (x,y)
-        self.panelDetails.draw()
 
     def OnOpenMeasure(self, evt):
         wildcard = "Data file (*.dat)|*.dat|" \
