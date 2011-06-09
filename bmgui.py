@@ -124,11 +124,10 @@ class MainFrame(wx.Frame):
                 self.empty_details = False
             else:
                 # Top panel: only if y changes. Laziness = performance
-                if y != self.old_coord[1]:
-                    self.canvas.restore_region(self.bg_top)
-                    self.det_im.set_data(self.bimg.unbleached_array[y,:,:])
-                    ax_top.draw_artist(self.det_im)
-                    self.canvas.blit(ax_top.bbox)
+                self.canvas.restore_region(self.bg_top)
+                self.det_im.set_data(self.bimg.unbleached_array[y,:,:])
+                ax_top.draw_artist(self.det_im)
+                self.canvas.blit(ax_top.bbox)
                 # Bottom panel
                 # Restore background
                 self.canvas.restore_region(self.bg_bottom)
