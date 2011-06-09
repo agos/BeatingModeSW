@@ -119,12 +119,16 @@ class MainFrame(wx.Frame):
                 self.panelDetails.draw()
                 self.empty_details = False
             else:
+                # Restore backgrounds
                 self.canvas.restore_region(self.bg_top)
                 self.canvas.restore_region(self.bg_bottom)
+                # Update line image and line data
                 # TODO migliorare accesso a questi dati
                 values = self.bimg.rows[y].unbleached_data[:,x]
                 self.det_plt.set_ydata(values)
+                # Tell those slacking artists to draw
                 self.ax_bottom.draw_artist(self.det_plt)
+                # Blit, and we're done
                 self.canvas.blit(self.ax_top.bbox)
                 self.canvas.blit(self.ax_bottom.bbox)
             self.old_coord = (x,y)
