@@ -106,14 +106,14 @@ class MainFrame(wx.Frame):
                 mask_on = ones(mask_off.shape) - mask_off
                 val_off = ma.array(values, mask=mask_off)
                 val_on = ma.array(values, mask=mask_on)
-                self_det_plt_on, = ax_bottom.plot(pos, val_on, 'r',
+                self.det_plt_on, = ax_bottom.plot(pos, val_on, 'r',
                     animated=True)
-                self_det_plt_off, = ax_bottom.plot(pos, val_off, 'b',
+                self.det_plt_off, = ax_bottom.plot(pos, val_off, 'b',
                     animated=True)
                 # Thresholds plot
-                self_det_thr_on = ax_bottom.axhline(
+                self.det_thr_on = ax_bottom.axhline(
                     y=self.bimg.thresOn, color='r', animated=True)
-                self_det_thr_off = ax_bottom.axhline(
+                self.det_thr_off = ax_bottom.axhline(
                     y=self.bimg.thresOff, color='b', animated=True)
                 # Draw, but from now on we blit
                 self.panelDetails.draw()
