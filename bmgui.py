@@ -71,11 +71,16 @@ class MainFrame(wx.Frame):
         self.old_coord = (None, None)
         self.fig = self.panelDetails.get_figure()
         self.fig.set_edgecolor('white')
-        self.details_top = self.fig.add_subplot(211,
-            title="Row Repetitions", animated=True)
-        self.details_bottom = self.fig.add_subplot(212,
-            title="Point Repetitions", animated=True)
+        self.ax_top = self.fig.add_subplot(211,
+            title="Row Repetitions")
+        self.ax_bottom = self.fig.add_subplot(212,
+            title="Point Repetitions")
+        # TODO Settare limiti!
+        self.ax_bottom.grid()
         self.fig.subplots_adjust(hspace=0.3)
+        self.canvas = self.fig.canvas
+        self.empty_details = True
+        self.canvas.draw()
 
     def ReplotDetails(self, e=None):
         x, y = self.x, self.y
