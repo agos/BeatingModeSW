@@ -84,33 +84,34 @@ class MainFrame(wx.Frame):
 
     def ReplotDetails(self, e=None):
         x, y = self.x, self.y
+        ax_top, ax_bottom = self.ax_top, self.ax_bottom
         # clear the axes and replot everything
         # Do the drawing
         if x is not None and y is not None and (x,y) != self.old_coord:
             if self.empty_details:
-                self.bg_top = self.canvas.copy_from_bbox(self.ax_top.bbox)
-                self.bg_bottom = self.canvas.copy_from_bbox(self.ax_bottom.bbox)
-                self.det_im = self.ax_top.imshow(self.bimg.data[y,:,:],
+                self.bg_top = self.canvas.copy_from_bbox(ax_top.bbox)
+                self.bg_bottom = self.canvas.copy_from_bbox(ax_bottom.bbox)
+                self.det_im = ax_top.imshow(self.bimg.data[y,:,:],
                     cmap=rate_color_map, interpolation='nearest',
                     vmin=0.0, vmax=self.rec_on.max(), animated=True)
                 values = self.bimg.rows[y].unbleached_data[:,x]
                 pos = arange(len(values))
-                self.det_plt, = self.ax_bottom.plot(pos, values, 'k',
+                self.det_plt, = ax_bottom.plot(pos, values, 'k',
                     animated=True)
                 mask_off = self.bimg.rows[y].beating_mask[:,x]
                 mask_on = ones(mask_off.shape) - mask_off
                 val_off = ma.array(values, mask=mask_off)
                 val_on = ma.array(values, mask=mask_on)
-                self_det_plt_on, = self.ax_bottom.plot(pos, val_on, 'r',
+                self_det_plt_on, = ax_bottom.plot(pos, val_on, 'r',
                     animated=True)
-                self_det_plt_off, = self.ax_bottom.plot(pos, val_off, 'b',
+                self_det_plt_off, = ax_bottom.plot(pos, val_off, 'b',
                     animated=True)
-                self_det_thr_on = self.ax_bottom.axhline(
+                self_det_thr_on = ax_bottom.axhline(
                     y=self.bimg.thresOn, color='r', animated=True)
-                self_det_thr_off = self.ax_bottom.axhline(
+                self_det_thr_off = ax_bottom.axhline(
                     y=self.bimg.thresOff, color='b', animated=True)
                 self.panelDetails.draw()
-                # self.canvas.blit(self.ax_bottom.bbox)
+                # self.canvas.blit(ax_bottom.bbox)
                 self.empty_details = False
             else:
                 self.canvas.restore_region(self.bg_top)
