@@ -97,7 +97,7 @@ class MainFrame(wx.Frame):
                 self.bg_top = self.canvas.copy_from_bbox(ax_top.bbox)
                 self.bg_bottom = self.canvas.copy_from_bbox(ax_bottom.bbox)
                 # Initial plot, top slot
-                self.det_im = ax_top.imshow(self.bimg.data[y,:,:],
+                self.det_im = ax_top.imshow(self.bimg.unbleached_array[y,:,:],
                     cmap=rate_color_map, interpolation='nearest',
                     vmin=0.0, vmax=self.rec_on.max(), animated=True)
                 # Initial plot, bottom slot (repetitions)
