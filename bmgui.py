@@ -304,7 +304,7 @@ class PanelReconstruct(wx.Panel):
             if self.empty:
                 self.axes = self.fig.gca()
                 self.axes.cla()
-                self.axes.imshow(empty_like(data))
+                self.axes.imshow(zeros_like(data))
                 self.bg = self.panelOnOff.copy_from_bbox(self.axes.bbox)
                 self.im = self.axes.imshow(data, cmap=rate_color_map,
                 interpolation='nearest', vmin=0.0, vmax=max_rate, animated=True)
