@@ -95,6 +95,7 @@ class MainFrame(wx.Frame):
                 # self.bg_axis = self.canvas.copy_from_bbox(axis.bbox)
                 self.ax_bottom.set_xlim(0.0, self.bimg.repetitions)
                 self.ax_bottom.set_ylim(0.0, self.bimg.unbleached_array.max())
+                self.canvas.draw()
                 # Copy the plot backgrounds for later reuse
                 self.bg_top = self.canvas.copy_from_bbox(ax_top.bbox)
                 self.bg_bottom = self.canvas.copy_from_bbox(ax_bottom.bbox)
