@@ -90,7 +90,7 @@ class MainFrame(wx.Frame):
             if self.empty_details:
                 # TODO non aspettare il primo draw per fare le prime cose
                 # Set axes limits
-                ax_top.imshow(empty((self.bimg.width, self.bimg.repetitions)))
+                ax_top.imshow(empty((self.bimg.repetitions, self.bimg.width)))
                 self.axis = ax_top.get_xaxis()
                 # self.bg_axis = self.canvas.copy_from_bbox(axis.bbox)
                 self.ax_bottom.set_xlim(0.0, self.bimg.repetitions)
