@@ -92,13 +92,11 @@ class MainFrame(wx.Frame):
                 # Set axes limits
                 ax_top.imshow(empty((self.bimg.repetitions, self.bimg.width)))
                 self.axis = ax_top.get_xaxis()
-                # self.bg_axis = self.canvas.copy_from_bbox(axis.bbox)
                 self.ax_bottom.set_xlim(0.0, self.bimg.repetitions)
                 self.ax_bottom.set_ylim(0.0, self.bimg.unbleached_array.max())
                 self.canvas.draw()
                 # Copy the plot backgrounds for later reuse
-                self.bg_top = self.canvas.copy_from_bbox(ax_top.bbox)
-                self.bg_bottom = self.canvas.copy_from_bbox(ax_bottom.bbox)
+                self.bg = self.canvas.copy_from_bbox(self.fig.bbox)
                 # Initial plot, top slot
                 self.det_im = ax_top.imshow(self.bimg.unbleached_array[y,:,:],
                     cmap=rate_color_map, interpolation='nearest',
@@ -126,17 +124,15 @@ class MainFrame(wx.Frame):
                 self.panelDetails.draw()
                 self.empty_details = False
             else:
-                # Top panel: only if y changes. Laziness = performance
-                self.canvas.restore_region(self.bg_top)
+                # Restore background
+                self.canvas.restore_region(self.bg)
+                # Top panel
                 self.det_im.set_data(self.bimg.unbleached_array[y,:,:])
                 self.axis.set_ticks([10,20,30,x])
                 self.axis.set_ticklabels(["p", "u", "z", "z"])
                 ax_top.draw_artist(self.det_im)
                 ax_top.draw_artist(self.axis)
-                self.canvas.blit(ax_top.bbox)
                 # Bottom panel
-                # Restore background
-                self.canvas.restore_region(self.bg_bottom)
                 # Update data
                 values = self.bimg.unbleached_array[y,:,x]
                 width = len(values)
@@ -158,7 +154,7 @@ class MainFrame(wx.Frame):
                 ax_bottom.draw_artist(self.det_thr_on)
                 ax_bottom.draw_artist(self.det_thr_off)
                 # Blit, and we're done
-                self.canvas.blit(ax_bottom.bbox)
+                self.canvas.blit(self.fig.bbox)
             self.old_coord = (x,y)
 
     def OnOpenMeasure(self, evt):
