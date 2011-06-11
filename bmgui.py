@@ -217,10 +217,8 @@ class MainFrame(wx.Frame):
         self.panelOff.prepare(data=self.rec_off,
                 max_rate=self.rec_on.max())
         # Paint it!
-        self.panelOn.Replot(data=self.rec_on,
-            max_rate=self.rec_on.max())
-        self.panelOff.Replot(data=self.rec_off,
-            max_rate=self.rec_on.max())
+        self.panelOn.Replot(data=self.rec_on)
+        self.panelOff.Replot(data=self.rec_off)
         self.panelRatios.Replot(data=self.ratios)
         # Threshold stuff
         self.sliderThresOn = XRCCTRL(self.panelOn, 'sliderThresholdOn')
@@ -243,8 +241,7 @@ class MainFrame(wx.Frame):
         self.spinThresOn.SetValue(threshold)
         self.bimg.thresOn = threshold
         self.rec_on = self.bimg.reconstructed_on
-        self.panelOn.Replot(data=self.rec_on,
-            max_rate=self.rec_on.max())
+        self.panelOn.Replot(data=self.rec_on)
         self.ratios = self.bimg.ratios
         self.panelRatios.Replot(data=self.ratios)
 
@@ -253,8 +250,7 @@ class MainFrame(wx.Frame):
         self.spinThresOff.SetValue(threshold)
         self.bimg.thresOff = threshold
         self.rec_off = self.bimg.reconstructed_off
-        self.panelOff.Replot(data=self.rec_off,
-            max_rate=self.rec_on.max())
+        self.panelOff.Replot(data=self.rec_off)
         self.ratios = self.bimg.ratios
         self.panelRatios.Replot(data=self.ratios)
 
@@ -313,7 +309,7 @@ class PanelReconstruct(wx.Panel):
         self.panelOnOff.draw()
         self.bg = self.panelOnOff.copy_from_bbox(self.axes.bbox)
 
-    def Replot(self, data, max_rate):
+    def Replot(self, data):
         self.panelOnOff.restore_region(self.bg)
         self.im.set_data(data)
         self.axes.draw_artist(self.im)
