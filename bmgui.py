@@ -212,6 +212,10 @@ class MainFrame(wx.Frame):
         self.rec_on = self.bimg.reconstructed_on
         self.rec_off = self.bimg.reconstructed_off
         self.ratios = self.bimg.ratios
+        self.panelOn.prepare(data=self.rec_on,
+            max_rate=self.rec_on.max())
+        self.panelOff.prepare(data=self.rec_off,
+                max_rate=self.rec_on.max())
         # Paint it!
         self.panelOn.Replot(data=self.rec_on,
             max_rate=self.rec_on.max())
@@ -299,6 +303,18 @@ class PanelReconstruct(wx.Panel):
             self.panelOnOff, self)
         self.empty = True
         self.panelOnOff.draw()
+
+    def prepare(self, data, max_rate=None):
+        self.axes = self.fig.gca()
+        self.axes.cla()
+        self.im = self.axes.imshow(zeros_like(data), cmap=rate_color_map,
+            interpolation='nearest', vmin=0.0, vmax=max_rate, animated=True)
+        self.panelOnOff.draw()
+        self.bg = self.panelOnOff.copy_from_bbox(self.axes.bbox)
+        self.cb = self.fig.colorbar(self.im, shrink=0.5)
+        self.cb.set_label("Hz")
+        self.panelOnOff.draw()
+        self.empty = False
 
     def Replot(self, data=None, max_rate=None):
         # Clear the axes and replot everything
