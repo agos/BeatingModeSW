@@ -331,7 +331,7 @@ class PanelReconstruct(wx.Panel):
         axis = self.cb.ax.get_yaxis()
         value = self.data[ydata,xdata]
         self.cb.set_ticks([value])
-        axis.set_tick_params(direction='in', length=6, width=2, colors='r')
+        axis.set_tick_params(direction='in', length=8, width=3, colors='r')
         axis.set_animated(True)
         self.cb.ax.draw_artist(axis)
         self.panelOnOff.blit(self.cb.ax.bbox)
