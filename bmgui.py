@@ -86,7 +86,7 @@ class MainFrame(wx.Frame):
         ax_top, ax_bottom = self.ax_top, self.ax_bottom
         # Set axes limits
         self.det_im = ax_top.imshow(
-            empty((self.bimg.repetitions, self.bimg.width)), 
+            zeros((self.bimg.repetitions, self.bimg.width)), 
             cmap=rate_color_map, interpolation='nearest',
             vmin=0.0, vmax=self.rec_on.max(), animated=True)
         self.axis = ax_top.get_xaxis()
