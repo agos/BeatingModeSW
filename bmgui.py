@@ -302,8 +302,10 @@ class PanelReconstruct(wx.Panel):
         self.cb.set_label("Hz")
         self.panelOnOff.draw()
         self.bg = self.panelOnOff.copy_from_bbox(self.axes.bbox)
+        self.bg_cb = self.panelOnOff.copy_from_bbox(self.cb.ax.bbox)
 
     def Replot(self, data):
+        self.data = data
         self.panelOnOff.restore_region(self.bg)
         self.im.set_data(data)
         self.axes.draw_artist(self.im)
@@ -319,11 +321,20 @@ class PanelReconstruct(wx.Panel):
         view = self.panelOnOff.director.view
         view.cursor.setCross()
         view.crosshairs.set(x, y)
-        # Changed: we round the coordinates
-        view.location.set(wxmpl.format_coord(axes, xdata, ydata))
         # Added: the replot of the details on mouse movement
         self.mainFrame.x, self.mainFrame.y = xdata, ydata
         self.mainFrame.ReplotDetails()
+        # Update colorbar
+        self.panelOnOff.restore_region(self.bg_cb)
+        axis = self.cb.ax.get_yaxis()
+        value = self.data[ydata,xdata]
+        self.cb.set_ticks([value])
+        axis.set_tick_params(direction='in', length=8, width=3, colors='r')
+        axis.set_animated(True)
+        self.cb.ax.draw_artist(axis)
+        self.panelOnOff.blit(self.cb.ax.bbox)
+        # Changed: we round the coordinates
+        view.location.set(wxmpl.format_coord(axes, xdata, ydata))
 
 
 class PanelRatios(wx.Panel):
@@ -345,6 +356,7 @@ class PanelRatios(wx.Panel):
         self.panelRatios.draw()
 
     def prepare(self, data):
+        self.data = data
         self.axes = self.fig.gca()
         self.axes.cla()
         self.im = self.axes.imshow(zeros_like(data), cmap=ratio_color_map,
@@ -353,6 +365,7 @@ class PanelRatios(wx.Panel):
         self.cb = self.fig.colorbar(self.im, shrink=0.5)
         self.panelRatios.draw()
         self.bg = self.panelRatios.copy_from_bbox(self.axes.bbox)
+        self.bg_cb = self.panelRatios.copy_from_bbox(self.cb.ax.bbox)
 
     def Replot(self, data=None):
         # Clear the axes and replot everything
@@ -372,11 +385,21 @@ class PanelRatios(wx.Panel):
         view = self.panelRatios.director.view
         view.cursor.setCross()
         view.crosshairs.set(x, y)
-        # Changed: we round the coordinates
-        view.location.set(wxmpl.format_coord(axes, xdata, ydata))
         # Added: the replot of the details on mouse movement
         self.mainFrame.x, self.mainFrame.y = xdata, ydata
         self.mainFrame.ReplotDetails()
+        # Update colorbar
+        self.panelRatios.restore_region(self.bg_cb)
+        axis = self.cb.ax.get_yaxis()
+        value = self.data[ydata,xdata]
+        self.cb.set_ticks([value])
+        axis.set_tick_params(direction='in', length=8, width=3,
+            colors='black')
+        axis.set_animated(True)
+        self.cb.ax.draw_artist(axis)
+        self.panelRatios.blit(self.cb.ax.bbox)
+        # Changed: we round the coordinates
+        view.location.set(wxmpl.format_coord(axes, xdata, ydata))
 
 
 class bmgui(wx.App):
