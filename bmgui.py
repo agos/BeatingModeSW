@@ -216,6 +216,7 @@ class MainFrame(wx.Frame):
             max_rate=self.rec_on.max())
         self.panelOff.prepare(data=self.rec_off,
                 max_rate=self.rec_on.max())
+        self.panelRatios.prepare(data=self.ratios)
         # Paint it!
         self.panelOn.Replot(data=self.rec_on)
         self.panelOff.Replot(data=self.rec_off)
@@ -348,29 +349,25 @@ class PanelRatios(wx.Panel):
         self.fig.set_edgecolor('white')
         res.AttachUnknownControl('panelRatios',
             self.panelRatios, self)
-        self.empty = True
         self.panelRatios.draw()
+
+    def prepare(self, data):
+        self.axes = self.fig.gca()
+        self.axes.cla()
+        self.im = self.axes.imshow(zeros_like(data), cmap=ratio_color_map,
+            interpolation='nearest', vmin=data.min(), vmax=data.max(),
+            animated=True)
+        self.cb = self.fig.colorbar(self.im, shrink=0.5)
+        self.panelRatios.draw()
+        self.bg = self.panelRatios.copy_from_bbox(self.axes.bbox)
 
     def Replot(self, data=None):
         # Clear the axes and replot everything
         if data is not None:
-            if empty:
-                self.axes = self.fig.gca()
-                self.axes.cla()
-                self.axes.imshow(zeros_like(data), cmap=ratio_color_map)
-                self.panelRatios.draw()
-                self.bg = self.panelRatios.copy_from_bbox(self.axes.bbox)
-                self.im = self.axes.imshow(data, cmap=ratio_color_map,
-                    interpolation='nearest', animated=True)
-                if not hasattr(self, 'cb'):
-                    self.cb = self.fig.colorbar(self.im, shrink=0.5)
-                self.panelRatios.draw()
-                self.empty = False
-            else:
-                self.panelRatios.restore_region(self.bg)
-                self.im.set_data(data)
-                self.axes.draw_artist(self.im)
-                self.panelRatios.blit(self.axes.bbox)
+            self.panelRatios.restore_region(self.bg)
+            self.im.set_data(data)
+            self.axes.draw_artist(self.im)
+            self.panelRatios.blit(self.axes.bbox)
 
     def axesMouseMotion(self, evt, x, y, axes, xdata, ydata):
         """
