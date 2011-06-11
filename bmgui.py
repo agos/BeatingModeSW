@@ -128,8 +128,10 @@ class MainFrame(wx.Frame):
                 self.canvas.restore_region(self.bg)
                 # Top panel
                 self.det_im.set_data(self.bimg.unbleached_array[y,:,:])
-                self.axis.set_ticks([10,20,30,x])
-                self.axis.set_ticklabels(["p", "u", "z", "z"])
+                self.axis.set_ticks([x])
+                self.axis.set_tick_params(direction='out', length=6, width=2, colors='r')
+                self.axis.set_ticklabels([""])
+                # self.axis.set_alpha(1)
                 ax_top.draw_artist(self.det_im)
                 ax_top.draw_artist(self.axis)
                 # Bottom panel
