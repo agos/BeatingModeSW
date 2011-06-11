@@ -209,6 +209,8 @@ class MainFrame(wx.Frame):
         self.panelOn.Replot(data=self.rec_on)
         self.panelOff.Replot(data=self.rec_off)
         self.panelRatios.Replot(data=self.ratios)
+        # Resize stuff
+        self.canvas.mpl_connect('resize_event', self.OnResize)
         # Threshold stuff
         self.sliderThresOn = XRCCTRL(self.panelOn, 'sliderThresholdOn')
         self.sliderThresOff = XRCCTRL(self.panelOff, 'sliderThresholdOff')
@@ -224,6 +226,9 @@ class MainFrame(wx.Frame):
             self.OnSliderOff, self.sliderThresOff)
         # Enable the Save menu
         self.menuMain.Enable(XRCID('menuSave'), True)
+
+    def OnResize(self, e):
+        self.prepare_details()
 
     def OnSliderOn(self, e):
         threshold = self.sliderThresOn.GetValue()
