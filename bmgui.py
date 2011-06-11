@@ -302,6 +302,7 @@ class PanelReconstruct(wx.Panel):
         self.cb.set_label("Hz")
         self.panelOnOff.draw()
         self.bg = self.panelOnOff.copy_from_bbox(self.axes.bbox)
+        self.bg_cb = self.panelOnOff.copy_from_bbox(self.cb.ax.bbox)
 
     def Replot(self, data):
         self.data = data
@@ -325,6 +326,15 @@ class PanelReconstruct(wx.Panel):
         # Added: the replot of the details on mouse movement
         self.mainFrame.x, self.mainFrame.y = xdata, ydata
         self.mainFrame.ReplotDetails()
+        # Update colorbar
+        self.panelOnOff.restore_region(self.bg_cb)
+        axis = self.cb.ax.get_yaxis()
+        value = self.data[ydata,xdata]
+        self.cb.set_ticks([value])
+        axis.set_tick_params(direction='in', length=6, width=2, colors='r')
+        axis.set_animated(True)
+        self.cb.ax.draw_artist(axis)
+        self.panelOnOff.blit(self.cb.ax.bbox)
 
 
 class PanelRatios(wx.Panel):
