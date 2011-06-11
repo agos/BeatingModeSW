@@ -321,8 +321,6 @@ class PanelReconstruct(wx.Panel):
         view = self.panelOnOff.director.view
         view.cursor.setCross()
         view.crosshairs.set(x, y)
-        # Changed: we round the coordinates
-        view.location.set(wxmpl.format_coord(axes, xdata, ydata))
         # Added: the replot of the details on mouse movement
         self.mainFrame.x, self.mainFrame.y = xdata, ydata
         self.mainFrame.ReplotDetails()
@@ -335,6 +333,8 @@ class PanelReconstruct(wx.Panel):
         axis.set_animated(True)
         self.cb.ax.draw_artist(axis)
         self.panelOnOff.blit(self.cb.ax.bbox)
+        # Changed: we round the coordinates
+        view.location.set(wxmpl.format_coord(axes, xdata, ydata))
 
 
 class PanelRatios(wx.Panel):
@@ -385,8 +385,6 @@ class PanelRatios(wx.Panel):
         view = self.panelRatios.director.view
         view.cursor.setCross()
         view.crosshairs.set(x, y)
-        # Changed: we round the coordinates
-        view.location.set(wxmpl.format_coord(axes, xdata, ydata))
         # Added: the replot of the details on mouse movement
         self.mainFrame.x, self.mainFrame.y = xdata, ydata
         self.mainFrame.ReplotDetails()
@@ -400,6 +398,8 @@ class PanelRatios(wx.Panel):
         axis.set_animated(True)
         self.cb.ax.draw_artist(axis)
         self.panelRatios.blit(self.cb.ax.bbox)
+        # Changed: we round the coordinates
+        view.location.set(wxmpl.format_coord(axes, xdata, ydata))
 
 
 class bmgui(wx.App):
