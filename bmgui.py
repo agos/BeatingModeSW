@@ -199,10 +199,8 @@ class MainFrame(wx.Frame):
         self.rec_off = self.bimg.reconstructed_off
         self.ratios = self.bimg.ratios
         # Prepare main figure and details figure
-        self.panelOn.prepare(data=self.rec_on,
-            max_rate=self.rec_on.max())
-        self.panelOff.prepare(data=self.rec_off,
-                max_rate=self.rec_on.max())
+        self.panelOn.prepare(data=self.rec_on, max_rate=self.rec_on.max())
+        self.panelOff.prepare(data=self.rec_off, max_rate=self.rec_on.max())
         self.panelRatios.prepare(data=self.ratios)
         self.prepare_details()
         # Paint it!
