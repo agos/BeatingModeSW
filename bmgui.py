@@ -304,6 +304,7 @@ class PanelReconstruct(wx.Panel):
         self.bg = self.panelOnOff.copy_from_bbox(self.axes.bbox)
 
     def Replot(self, data):
+        self.data = data
         self.panelOnOff.restore_region(self.bg)
         self.im.set_data(data)
         self.axes.draw_artist(self.im)
