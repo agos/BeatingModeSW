@@ -115,7 +115,8 @@ class MainFrame(wx.Frame):
             # Top panel
             self.det_im.set_data(self.bimg.unbleached_array[y,:,:])
             self.axis.set_ticks([x])
-            self.axis.set_tick_params(direction='out', length=6, width=2, colors='r')
+            self.axis.set_tick_params(direction='out',
+                length=6, width=2, colors='r')
             self.axis.set_ticklabels([""])
             ax_top.draw_artist(self.det_im)
             ax_top.draw_artist(self.axis)
