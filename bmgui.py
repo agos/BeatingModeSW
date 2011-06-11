@@ -117,6 +117,7 @@ class MainFrame(wx.Frame):
             self.axis.set_ticks([x])
             self.axis.set_tick_params(direction='out',
                 length=6, width=2, colors='r')
+            self.axis.set_animated(True)
             self.axis.set_ticklabels([""])
             ax_top.draw_artist(self.det_im)
             ax_top.draw_artist(self.axis)
