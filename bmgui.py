@@ -356,6 +356,7 @@ class PanelRatios(wx.Panel):
         self.panelRatios.draw()
 
     def prepare(self, data):
+        self.data = data
         self.axes = self.fig.gca()
         self.axes.cla()
         self.im = self.axes.imshow(zeros_like(data), cmap=ratio_color_map,
@@ -364,6 +365,7 @@ class PanelRatios(wx.Panel):
         self.cb = self.fig.colorbar(self.im, shrink=0.5)
         self.panelRatios.draw()
         self.bg = self.panelRatios.copy_from_bbox(self.axes.bbox)
+        self.bg_cb = self.panelRatios.copy_from_bbox(self.cb.ax.bbox)
 
     def Replot(self, data=None):
         # Clear the axes and replot everything
@@ -388,6 +390,16 @@ class PanelRatios(wx.Panel):
         # Added: the replot of the details on mouse movement
         self.mainFrame.x, self.mainFrame.y = xdata, ydata
         self.mainFrame.ReplotDetails()
+        # Update colorbar
+        self.panelRatios.restore_region(self.bg_cb)
+        axis = self.cb.ax.get_yaxis()
+        value = self.data[ydata,xdata]
+        self.cb.set_ticks([value])
+        axis.set_tick_params(direction='in', length=8, width=3,
+            colors='black')
+        axis.set_animated(True)
+        self.cb.ax.draw_artist(axis)
+        self.panelRatios.blit(self.cb.ax.bbox)
 
 
 class bmgui(wx.App):
