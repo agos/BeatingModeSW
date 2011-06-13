@@ -247,7 +247,7 @@ class MainFrame(wx.Frame):
             lbl = [self.bimg.w_step * self.bimg.width,
                 self.bimg.h_step * self.bimg.height,
                 self.bimg.w_step, self.bimg.h_step,
-                self.rec_on.count() / self.rec_on.size * 100]
+                "{:.2%}".format(float(self.ratios.count()) / self.ratios.size)]
             unit = ["µm", "µm", "µm", "µm", "%"]
         for i in range(5):
             self.caption[i].SetLabel(str(caption[i]))
