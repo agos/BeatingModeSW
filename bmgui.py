@@ -38,6 +38,15 @@ class MainFrame(wx.Frame):
         self.lblRepetitions = XRCCTRL(self, 'lblRepetitions')
         self.lblShutterFrequency = XRCCTRL(self, 'lblShutterFrequency')
 
+        # Get the references for the stats panel
+        self.caption = []
+        self.lbl = []
+        self.unit = []
+        for i in range(5):
+            self.caption.append(XRCCTRL(self, 'caption{0}'.format(i)))
+            self.lbl.append(XRCCTRL(self, 'lbl{0}'.format(i)))
+            self.unit.append(XRCCTRL(self, 'unit{0}'.format(i)))
+
         # Setup the layout for the frame
         mainGrid = wx.BoxSizer(wx.VERTICAL)
         hGrid = wx.BoxSizer(wx.HORIZONTAL)
