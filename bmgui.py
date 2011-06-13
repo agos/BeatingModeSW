@@ -39,6 +39,7 @@ class MainFrame(wx.Frame):
         self.lblShutterFrequency = XRCCTRL(self, 'lblShutterFrequency')
 
         # Get the references for the stats panel
+        self.choiceStatistics = XRCCTRL(self, 'choiceStatistics')
         self.caption = []
         self.lbl = []
         self.unit = []
