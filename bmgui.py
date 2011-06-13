@@ -236,6 +236,17 @@ class MainFrame(wx.Frame):
             self.OnSliderOff, self.sliderThresOff)
         # Enable the Save menu
         self.menuMain.Enable(XRCID('menuSave'), True)
+    def update_stats(self):
+        choice = self.choiceStatistics.GetCurrentSelection()
+        if choice == 0:
+            caption = ["Width:", "Height:",
+            "Pixel Width:", "Pixel Height:", "Over Threshold:"]
+            lbl = [10, 20, 30, 40, 50]
+            unit = ["µm", "µm", "µm", "µm", "%"]
+        for i in range(5):
+            self.caption[i].SetLabel(str(caption[i]))
+            self.lbl[i].SetLabel(str(lbl[i]))
+            self.unit[i].SetLabel(str(unit[i]))
 
     def OnResize(self, e):
         self.prepare_details()
