@@ -236,6 +236,9 @@ class MainFrame(wx.Frame):
             self.OnSliderOff, self.sliderThresOff)
         # Enable the Save menu
         self.menuMain.Enable(XRCID('menuSave'), True)
+        # Update the stats
+        self.update_stats()
+
     def update_stats(self):
         choice = self.choiceStatistics.GetCurrentSelection()
         if choice == 0:
