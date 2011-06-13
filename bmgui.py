@@ -265,6 +265,7 @@ class MainFrame(wx.Frame):
         self.panelOn.Replot(data=self.rec_on)
         self.ratios = self.bimg.ratios
         self.panelRatios.Replot(data=self.ratios)
+        self.update_stats()
 
     def OnSliderOff(self, e):
         threshold = self.sliderThresOff.GetValue()
@@ -274,6 +275,7 @@ class MainFrame(wx.Frame):
         self.panelOff.Replot(data=self.rec_off)
         self.ratios = self.bimg.ratios
         self.panelRatios.Replot(data=self.ratios)
+        self.update_stats()
 
     def OnSave(self, e):
         wildcard = "Data file (.dat)|*.dat|PNG file (.png)|*.png"
