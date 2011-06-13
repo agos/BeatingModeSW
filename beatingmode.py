@@ -283,6 +283,8 @@ class BeatingImage(object):
         self.repetitions = y['repetitions']
         self.shutter_frequency = y['shutter_frequency']
         self.pixel_frequency = y['pixel_frequency']
+        self.h_step = y['h_step']
+        self.w_step = y['w_step']
         header_length = len(input[0].split('\n'))
         self.data = loadtxt(path, skiprows=header_length)
         self.data = self.data[:, 1:]
