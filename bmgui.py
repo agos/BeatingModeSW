@@ -244,7 +244,10 @@ class MainFrame(wx.Frame):
         if choice == 0:
             caption = ["Width:", "Height:",
             "Pixel Width:", "Pixel Height:", "Over Threshold:"]
-            lbl = [10, 20, 30, 40, 50]
+            lbl = [self.bimg.w_step * self.bimg.width,
+                self.bimg.h_step * self.bimg.height,
+                self.bimg.w_step, self.bimg.h_step,
+                self.rec_on.count() / self.rec_on.size * 100]
             unit = ["µm", "µm", "µm", "µm", "%"]
         for i in range(5):
             self.caption[i].SetLabel(str(caption[i]))
