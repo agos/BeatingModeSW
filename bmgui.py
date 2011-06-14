@@ -249,6 +249,19 @@ class MainFrame(wx.Frame):
                 self.bimg.w_step, self.bimg.h_step,
                 "{:.2%}".format(float(self.ratios.count()) / self.ratios.size)]
             unit = ["µm", "µm", "µm", "µm", "%"]
+        if choice == 1:
+            caption = ["Max:", "Min:", "Mean:", "Bleach Time:", "-"]
+            lbl = []
+            if self.x is not None and self.y is not None:
+                row = self.rec_on[self.y]
+                lbl.append("{:.2f}".format(row.max()))
+                lbl.append("{:.2f}".format(row.min()))
+                lbl.append("{:.2f}".format(row.mean()))
+                lbl.append("-")
+                lbl.append("-")
+            else:
+                lbl = ["-"] * 5
+            unit = ["Hz", "Hz", "Hz", "s", "-"]
         for i in range(5):
             self.caption[i].SetLabel(str(caption[i]))
             self.lbl[i].SetLabel(str(lbl[i]))
