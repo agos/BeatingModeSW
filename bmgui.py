@@ -47,6 +47,7 @@ class MainFrame(wx.Frame):
             self.caption.append(XRCCTRL(self, 'caption{0}'.format(i)))
             self.lbl.append(XRCCTRL(self, 'lbl{0}'.format(i)))
             self.unit.append(XRCCTRL(self, 'unit{0}'.format(i)))
+        self.Bind(wx.EVT_CHOICE, self.OnChoice)
 
         # Setup the layout for the frame
         mainGrid = wx.BoxSizer(wx.VERTICAL)
@@ -266,6 +267,9 @@ class MainFrame(wx.Frame):
             self.caption[i].SetLabel(str(caption[i]))
             self.lbl[i].SetLabel(str(lbl[i]))
             self.unit[i].SetLabel(str(unit[i]))
+
+    def OnChoice(self, e):
+        self.update_stats()
 
     def OnResize(self, e):
         self.prepare_details()
