@@ -394,6 +394,7 @@ class PanelReconstruct(wx.Panel):
         self.panelOnOff.blit(self.cb.ax.bbox)
         # Changed: we round the coordinates
         view.location.set(wxmpl.format_coord(axes, xdata, ydata))
+        self.mainFrame.update_stats()
 
 
 class PanelRatios(wx.Panel):
@@ -459,6 +460,7 @@ class PanelRatios(wx.Panel):
         self.panelRatios.blit(self.cb.ax.bbox)
         # Changed: we round the coordinates
         view.location.set(wxmpl.format_coord(axes, xdata, ydata))
+        self.mainFrame.update_stats()
 
 
 class bmgui(wx.App):
