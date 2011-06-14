@@ -177,8 +177,8 @@ class MainFrame(wx.Frame):
             'panelReconstructOff')
         self.panelRatios = self.res.LoadPanel(self.notebook,
             'panelRatios')
-        self.panelOn.Init(self.res, self)
-        self.panelOff.Init(self.res, self)
+        self.panelOn.Init(self.res, self, on=True)
+        self.panelOff.Init(self.res, self, on=False)
         self.panelRatios.Init(self.res, self)
         self.notebook.AddPage(self.panelOn, "Rate on")
         self.notebook.AddPage(self.panelOff, "Rate off")
@@ -240,7 +240,7 @@ class MainFrame(wx.Frame):
         # Update the stats
         self.update_stats()
 
-    def update_stats(self):
+    def update_stats(self, on=None):
         choice = self.choiceStatistics.GetCurrentSelection()
         if choice == 0:
             caption = ["Width:", "Height:",
@@ -250,11 +250,18 @@ class MainFrame(wx.Frame):
                 self.bimg.w_step, self.bimg.h_step,
                 "{:.2%}".format(float(self.ratios.count()) / self.ratios.size)]
             unit = ["µm", "µm", "µm", "µm", "%"]
+        else:
+            if on is None:
+                data = self.ratios
+            elif on is False:
+                data = self.rec_off
+            else:
+                data = self.rec_on
         if choice == 1:
             caption = ["Max:", "Min:", "Mean:", "Bleach Time:", "-"]
             lbl = []
             if self.x is not None and self.y is not None:
-                row = self.rec_on[self.y]
+                row = data[self.y]
                 lbl.append("{:.2f}".format(row.max()))
                 lbl.append("{:.2f}".format(row.min()))
                 lbl.append("{:.2f}".format(row.mean()))
@@ -267,7 +274,7 @@ class MainFrame(wx.Frame):
             caption = ["Max:", "Min:", "Mean:", "Bleach Time:", "-"]
             lbl = []
             if self.x is not None and self.y is not None:
-                col = self.rec_on[:,self.x]
+                col = data[:,self.x]
                 lbl.append("{:.2f}".format(col.max()))
                 lbl.append("{:.2f}".format(col.min()))
                 lbl.append("{:.2f}".format(col.mean()))
@@ -341,7 +348,8 @@ class PanelReconstruct(wx.Panel):
         # the Create step is done by XRC.
         self.PostCreate(pre)
 
-    def Init(self, res, frame):
+    def Init(self, res, frame, on):
+        self.on = on
         self.mainFrame = frame
         self.panelOnOff = wxmpl.PlotPanel(self, -1, size=(6, 4.50), dpi=68,
             crosshairs=False, autoscaleUnzoom=False)
@@ -394,7 +402,7 @@ class PanelReconstruct(wx.Panel):
         self.panelOnOff.blit(self.cb.ax.bbox)
         # Changed: we round the coordinates
         view.location.set(wxmpl.format_coord(axes, xdata, ydata))
-        self.mainFrame.update_stats()
+        self.mainFrame.update_stats(on=self.on)
 
 
 class PanelRatios(wx.Panel):
