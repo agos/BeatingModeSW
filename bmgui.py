@@ -263,6 +263,19 @@ class MainFrame(wx.Frame):
             else:
                 lbl = ["-"] * 5
             unit = ["Hz", "Hz", "Hz", "s", "-"]
+        if choice == 2:
+            caption = ["Max:", "Min:", "Mean:", "Bleach Time:", "-"]
+            lbl = []
+            if self.x is not None and self.y is not None:
+                col = self.rec_on[:,self.x]
+                lbl.append("{:.2f}".format(col.max()))
+                lbl.append("{:.2f}".format(col.min()))
+                lbl.append("{:.2f}".format(col.mean()))
+                lbl.append("-")
+                lbl.append("-")
+            else:
+                lbl = ["-"] * 5
+            unit = ["Hz", "Hz", "Hz", "s", "-"]
         for i in range(5):
             self.caption[i].SetLabel(str(caption[i]))
             self.lbl[i].SetLabel(str(lbl[i]))
