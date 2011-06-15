@@ -226,8 +226,9 @@ class MainFrame(wx.Frame):
         self.sliderThresOff = XRCCTRL(self.panelOff, 'sliderThresholdOff')
         maxThresOn = self.rec_on.mean() * 0.5
         maxThresOff = self.rec_off.mean() * 0.5
-        self.sliderThresOn.SetRange(0.0, maxThresOn)
-        self.sliderThresOff.SetRange(0.0, maxThresOff)
+        self.sliderThresOn.SetRange(0.0, maxThresOn * 100)
+        self.sliderThresOff.SetRange(0.0, maxThresOff * 100)
+        self.sliderThresOn.SetTickFreq(5)
         self.spinThresOn = XRCCTRL(self.panelOn, 'spinThresholdOn')
         self.spinThresOff = XRCCTRL(self.panelOff, 'spinThresholdOff')
         self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK,
@@ -294,7 +295,7 @@ class MainFrame(wx.Frame):
         self.prepare_details()
 
     def OnSliderOn(self, e):
-        threshold = self.sliderThresOn.GetValue()
+        threshold = float(self.sliderThresOn.GetValue()) / 100
         self.spinThresOn.SetValue(threshold)
         self.bimg.thresOn = threshold
         self.rec_on = self.bimg.reconstructed_on
@@ -304,7 +305,7 @@ class MainFrame(wx.Frame):
         self.update_stats()
 
     def OnSliderOff(self, e):
-        threshold = self.sliderThresOff.GetValue()
+        threshold = float(self.sliderThresOff.GetValue()) / 100
         self.spinThresOff.SetValue(threshold)
         self.bimg.thresOff = threshold
         self.rec_off = self.bimg.reconstructed_off
