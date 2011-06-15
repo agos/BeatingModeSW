@@ -343,6 +343,7 @@
                   <value></value>
                   <min></min>
                   <max></max>
+                  <style>wxSL_HORIZONTAL|wxSL_AUTOTICKS</style>
                 </object>
                 <option>5</option>
                 <flag>wxALL|wxEXPAND|wxALIGN_LEFT</flag>
@@ -416,6 +417,7 @@
                   <value></value>
                   <min></min>
                   <max></max>
+                  <style>wxSL_HORIZONTAL|wxSL_AUTOTICKS</style>
                 </object>
                 <option>5</option>
                 <flag>wxALL|wxEXPAND|wxALIGN_LEFT</flag>
