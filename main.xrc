@@ -127,84 +127,84 @@
                           <vgap>5</vgap>
                           <hgap>5</hgap>
                           <object class="sizeritem">
-                            <object class="wxStaticText">
+                            <object class="wxStaticText" name="caption0">
                               <label>Width:</label>
                             </object>
                             <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
                           </object>
                           <object class="sizeritem">
-                            <object class="wxStaticText" name="lblWidth">
+                            <object class="wxStaticText" name="lbl0">
                               <label>-</label>
                             </object>
                           </object>
                           <object class="sizeritem">
-                            <object class="wxStaticText">
+                            <object class="wxStaticText" name="unit0">
                               <label>µm</label>
                             </object>
                           </object>
                           <growablecols>1</growablecols>
                           <object class="sizeritem">
-                            <object class="wxStaticText">
+                            <object class="wxStaticText" name="caption1">
                               <label>Height:</label>
                             </object>
                             <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
                           </object>
                           <object class="sizeritem">
-                            <object class="wxStaticText" name="lblHeight">
+                            <object class="wxStaticText" name="lbl1">
                               <label>-</label>
                             </object>
                           </object>
                           <object class="sizeritem">
-                            <object class="wxStaticText">
+                            <object class="wxStaticText" name="unit1">
                               <label>µm</label>
                             </object>
                           </object>
                           <object class="sizeritem">
-                            <object class="wxStaticText">
-                              <label>Max Rate:</label>
+                            <object class="wxStaticText" name="caption2">
+                              <label>Pixel Width:</label>
                             </object>
                             <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
                           </object>
                           <object class="sizeritem">
-                            <object class="wxStaticText" name="lblMax">
+                            <object class="wxStaticText" name="lbl2">
                               <label>-</label>
                             </object>
                           </object>
                           <object class="sizeritem">
-                            <object class="wxStaticText">
-                              <label>Hz</label>
+                            <object class="wxStaticText" name="unit2">
+                              <label>µm</label>
                             </object>
                           </object>
                           <object class="sizeritem">
-                            <object class="wxStaticText">
-                              <label>Min Rate:</label>
+                            <object class="wxStaticText" name="caption3">
+                              <label>Pixel Height:</label>
                             </object>
                             <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
                           </object>
                           <object class="sizeritem">
-                            <object class="wxStaticText" name="lblMin">
+                            <object class="wxStaticText" name="lbl3">
                               <label>-</label>
                             </object>
                           </object>
                           <object class="sizeritem">
-                            <object class="wxStaticText">
-                              <label>Hz</label>
+                            <object class="wxStaticText" name="unit3">
+                              <label>µm</label>
                             </object>
                           </object>
                           <object class="sizeritem">
-                            <object class="wxStaticText">
-                              <label>Mean Rate:</label>
+                            <object class="wxStaticText" name="caption4">
+                              <label>Over Threshold:</label>
                             </object>
                             <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
                           </object>
                           <object class="sizeritem">
-                            <object class="wxStaticText" name="lblMean">
+                            <object class="wxStaticText" name="lbl4">
                               <label>-</label>
                             </object>
                           </object>
                           <object class="sizeritem">
-                            <object class="wxStaticText">
-                              <label>Hz</label>
+                            <object class="wxStaticText" name="unit4">
+                              <label>%</label>
                             </object>
                           </object>
                         </object>

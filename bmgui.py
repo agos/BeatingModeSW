@@ -38,6 +38,17 @@ class MainFrame(wx.Frame):
         self.lblRepetitions = XRCCTRL(self, 'lblRepetitions')
         self.lblShutterFrequency = XRCCTRL(self, 'lblShutterFrequency')
 
+        # Get the references for the stats panel
+        self.choiceStatistics = XRCCTRL(self, 'choiceStatistics')
+        self.caption = []
+        self.lbl = []
+        self.unit = []
+        for i in range(5):
+            self.caption.append(XRCCTRL(self, 'caption{0}'.format(i)))
+            self.lbl.append(XRCCTRL(self, 'lbl{0}'.format(i)))
+            self.unit.append(XRCCTRL(self, 'unit{0}'.format(i)))
+        self.Bind(wx.EVT_CHOICE, self.OnChoice)
+
         # Setup the layout for the frame
         mainGrid = wx.BoxSizer(wx.VERTICAL)
         hGrid = wx.BoxSizer(wx.HORIZONTAL)
@@ -166,8 +177,8 @@ class MainFrame(wx.Frame):
             'panelReconstructOff')
         self.panelRatios = self.res.LoadPanel(self.notebook,
             'panelRatios')
-        self.panelOn.Init(self.res, self)
-        self.panelOff.Init(self.res, self)
+        self.panelOn.Init(self.res, self, on=True)
+        self.panelOff.Init(self.res, self, on=False)
         self.panelRatios.Init(self.res, self)
         self.notebook.AddPage(self.panelOn, "Rate on")
         self.notebook.AddPage(self.panelOff, "Rate off")
@@ -226,6 +237,59 @@ class MainFrame(wx.Frame):
             self.OnSliderOff, self.sliderThresOff)
         # Enable the Save menu
         self.menuMain.Enable(XRCID('menuSave'), True)
+        # Update the stats
+        self.update_stats()
+
+    def update_stats(self, on=None):
+        choice = self.choiceStatistics.GetCurrentSelection()
+        if choice == 0:
+            caption = ["Width:", "Height:",
+            "Pixel Width:", "Pixel Height:", "Over Threshold:"]
+            lbl = [self.bimg.w_step * self.bimg.width,
+                self.bimg.h_step * self.bimg.height,
+                self.bimg.w_step, self.bimg.h_step,
+                "{:.2%}".format(float(self.ratios.count()) / self.ratios.size)]
+            unit = ["µm", "µm", "µm", "µm", "%"]
+        else:
+            if on is None:
+                data = self.ratios
+            elif on is False:
+                data = self.rec_off
+            else:
+                data = self.rec_on
+        if choice == 1:
+            caption = ["Max:", "Min:", "Mean:", "Bleach Time:", "-"]
+            lbl = []
+            if self.x is not None and self.y is not None:
+                row = data[self.y]
+                lbl.append("{:.2f}".format(row.max()))
+                lbl.append("{:.2f}".format(row.min()))
+                lbl.append("{:.2f}".format(row.mean()))
+                lbl.append("-")
+                lbl.append("-")
+            else:
+                lbl = ["-"] * 5
+            unit = ["Hz", "Hz", "Hz", "s", "-"]
+        if choice == 2:
+            caption = ["Max:", "Min:", "Mean:", "Bleach Time:", "-"]
+            lbl = []
+            if self.x is not None and self.y is not None:
+                col = data[:,self.x]
+                lbl.append("{:.2f}".format(col.max()))
+                lbl.append("{:.2f}".format(col.min()))
+                lbl.append("{:.2f}".format(col.mean()))
+                lbl.append("-")
+                lbl.append("-")
+            else:
+                lbl = ["-"] * 5
+            unit = ["Hz", "Hz", "Hz", "s", "-"]
+        for i in range(5):
+            self.caption[i].SetLabel(str(caption[i]))
+            self.lbl[i].SetLabel(str(lbl[i]))
+            self.unit[i].SetLabel(str(unit[i]))
+
+    def OnChoice(self, e):
+        self.update_stats()
 
     def OnResize(self, e):
         self.prepare_details()
@@ -238,6 +302,7 @@ class MainFrame(wx.Frame):
         self.panelOn.Replot(data=self.rec_on)
         self.ratios = self.bimg.ratios
         self.panelRatios.Replot(data=self.ratios)
+        self.update_stats()
 
     def OnSliderOff(self, e):
         threshold = self.sliderThresOff.GetValue()
@@ -247,6 +312,7 @@ class MainFrame(wx.Frame):
         self.panelOff.Replot(data=self.rec_off)
         self.ratios = self.bimg.ratios
         self.panelRatios.Replot(data=self.ratios)
+        self.update_stats()
 
     def OnSave(self, e):
         wildcard = "Data file (.dat)|*.dat|PNG file (.png)|*.png"
@@ -282,7 +348,8 @@ class PanelReconstruct(wx.Panel):
         # the Create step is done by XRC.
         self.PostCreate(pre)
 
-    def Init(self, res, frame):
+    def Init(self, res, frame, on):
+        self.on = on
         self.mainFrame = frame
         self.panelOnOff = wxmpl.PlotPanel(self, -1, size=(6, 4.50), dpi=68,
             crosshairs=False, autoscaleUnzoom=False)
@@ -335,6 +402,7 @@ class PanelReconstruct(wx.Panel):
         self.panelOnOff.blit(self.cb.ax.bbox)
         # Changed: we round the coordinates
         view.location.set(wxmpl.format_coord(axes, xdata, ydata))
+        self.mainFrame.update_stats(on=self.on)
 
 
 class PanelRatios(wx.Panel):
@@ -400,6 +468,7 @@ class PanelRatios(wx.Panel):
         self.panelRatios.blit(self.cb.ax.bbox)
         # Changed: we round the coordinates
         view.location.set(wxmpl.format_coord(axes, xdata, ydata))
+        self.mainFrame.update_stats()
 
 
 class bmgui(wx.App):
