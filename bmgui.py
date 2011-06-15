@@ -229,8 +229,8 @@ class MainFrame(wx.Frame):
         self.sliderThresOn.SetRange(0.0, maxThresOn * 100)
         self.sliderThresOff.SetRange(0.0, maxThresOff * 100)
         self.sliderThresOn.SetTickFreq(5)
-        self.spinThresOn = XRCCTRL(self.panelOn, 'spinThresholdOn')
-        self.spinThresOff = XRCCTRL(self.panelOff, 'spinThresholdOff')
+        self.lblThresOn = XRCCTRL(self.panelOn, 'lblThresholdOn')
+        self.lblThresOff = XRCCTRL(self.panelOff, 'lblThresholdOff')
         self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK,
             self.OnSliderOn, self.sliderThresOn)
         self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK,
@@ -296,7 +296,7 @@ class MainFrame(wx.Frame):
 
     def OnSliderOn(self, e):
         threshold = float(self.sliderThresOn.GetValue()) / 100
-        self.spinThresOn.SetValue(threshold)
+        self.lblThresOn.SetLabel("{:.2f} Hz".format(threshold))
         self.bimg.thresOn = threshold
         self.rec_on = self.bimg.reconstructed_on
         self.panelOn.Replot(data=self.rec_on)
@@ -306,7 +306,7 @@ class MainFrame(wx.Frame):
 
     def OnSliderOff(self, e):
         threshold = float(self.sliderThresOff.GetValue()) / 100
-        self.spinThresOff.SetValue(threshold)
+        self.lblThresOff.SetLabel("{:.2f} Hz".format(threshold))
         self.bimg.thresOff = threshold
         self.rec_off = self.bimg.reconstructed_off
         self.panelOff.Replot(data=self.rec_off)
