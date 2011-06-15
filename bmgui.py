@@ -8,7 +8,6 @@ from numpy import *
 from beatingmode import BeatingImage
 from colors import rate_color_map, ratio_color_map, gray_color_map
 import multiprocessing
-from scipy.stats.mstats import mquantiles
 
 
 class MainFrame(wx.Frame):
@@ -225,8 +224,8 @@ class MainFrame(wx.Frame):
         # Threshold stuff
         self.sliderThresOn = XRCCTRL(self.panelOn, 'sliderThresholdOn')
         self.sliderThresOff = XRCCTRL(self.panelOff, 'sliderThresholdOff')
-        maxThresOn = mquantiles(self.rec_on.flatten(), [0.5])[0]
-        maxThresOff = mquantiles(self.rec_off.flatten(), [0.5])[0]
+        maxThresOn = self.rec_on.mean() * 0.5
+        maxThresOff = self.rec_off.mean() * 0.5
         self.sliderThresOn.SetRange(0.0, maxThresOn)
         self.sliderThresOff.SetRange(0.0, maxThresOff)
         self.spinThresOn = XRCCTRL(self.panelOn, 'spinThresholdOn')
