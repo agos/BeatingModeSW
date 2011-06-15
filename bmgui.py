@@ -428,7 +428,7 @@ class PanelRatios(wx.Panel):
         self.axes = self.fig.gca()
         self.axes.cla()
         self.im = self.axes.imshow(zeros_like(data), cmap=ratio_color_map,
-            interpolation='nearest', vmin=data.min(), vmax=data.max(),
+            interpolation='nearest', vmin=0.95, vmax=data.max(),
             animated=True)
         self.cb = self.fig.colorbar(self.im, shrink=0.5)
         self.panelRatios.draw()

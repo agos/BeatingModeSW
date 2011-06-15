@@ -14,5 +14,6 @@ rate_color_map.set_bad('w', 1.)
 
 ratio_color_map = matplotlib.cm.jet
 ratio_color_map.set_bad('k', 1.)
+ratio_color_map.set_under('k', 1.)
 
 gray_color_map = matplotlib.cm.gray
