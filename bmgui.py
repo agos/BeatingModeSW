@@ -8,7 +8,6 @@ from numpy import *
 from beatingmode import BeatingImage
 from colors import rate_color_map, ratio_color_map, gray_color_map
 import multiprocessing
-from scipy.stats.mstats import mquantiles
 
 
 class MainFrame(wx.Frame):
@@ -225,12 +224,13 @@ class MainFrame(wx.Frame):
         # Threshold stuff
         self.sliderThresOn = XRCCTRL(self.panelOn, 'sliderThresholdOn')
         self.sliderThresOff = XRCCTRL(self.panelOff, 'sliderThresholdOff')
-        maxThresOn = mquantiles(self.rec_on.flatten(), [0.5])[0]
-        maxThresOff = mquantiles(self.rec_off.flatten(), [0.5])[0]
-        self.sliderThresOn.SetRange(0.0, maxThresOn)
-        self.sliderThresOff.SetRange(0.0, maxThresOff)
-        self.spinThresOn = XRCCTRL(self.panelOn, 'spinThresholdOn')
-        self.spinThresOff = XRCCTRL(self.panelOff, 'spinThresholdOff')
+        maxThresOn = self.rec_on.mean() * 0.5
+        maxThresOff = self.rec_off.mean() * 0.5
+        self.sliderThresOn.SetRange(0.0, maxThresOn * 100)
+        self.sliderThresOff.SetRange(0.0, maxThresOff * 100)
+        self.sliderThresOn.SetTickFreq(5)
+        self.lblThresOn = XRCCTRL(self.panelOn, 'lblThresholdOn')
+        self.lblThresOff = XRCCTRL(self.panelOff, 'lblThresholdOff')
         self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK,
             self.OnSliderOn, self.sliderThresOn)
         self.Bind(wx.EVT_COMMAND_SCROLL_THUMBTRACK,
@@ -295,8 +295,8 @@ class MainFrame(wx.Frame):
         self.prepare_details()
 
     def OnSliderOn(self, e):
-        threshold = self.sliderThresOn.GetValue()
-        self.spinThresOn.SetValue(threshold)
+        threshold = float(self.sliderThresOn.GetValue()) / 100
+        self.lblThresOn.SetLabel("{:.2f} Hz".format(threshold))
         self.bimg.thresOn = threshold
         self.rec_on = self.bimg.reconstructed_on
         self.panelOn.Replot(data=self.rec_on)
@@ -305,8 +305,8 @@ class MainFrame(wx.Frame):
         self.update_stats()
 
     def OnSliderOff(self, e):
-        threshold = self.sliderThresOff.GetValue()
-        self.spinThresOff.SetValue(threshold)
+        threshold = float(self.sliderThresOff.GetValue()) / 100
+        self.lblThresOff.SetLabel("{:.2f} Hz".format(threshold))
         self.bimg.thresOff = threshold
         self.rec_off = self.bimg.reconstructed_off
         self.panelOff.Replot(data=self.rec_off)

@@ -343,31 +343,19 @@
                   <value></value>
                   <min></min>
                   <max></max>
+                  <style>wxSL_HORIZONTAL|wxSL_AUTOTICKS</style>
                 </object>
-                <option>5</option>
+                <option>8</option>
                 <flag>wxALL|wxEXPAND|wxALIGN_LEFT</flag>
               </object>
               <object class="spacer">
-                <size>0,0</size>
-              </object>
-              <object class="sizeritem">
-                <object class="wxSpinCtrl" name="spinThresholdOn">
-                  <value>0</value>
-                  <min>0</min>
-                  <max>100</max>
-                </object>
-              </object>
-              <object class="spacer">
-                <size>3,0</size>
-              </object>
-              <object class="sizeritem">
-                <object class="wxStaticText">
-                  <label>Hz</label>
-                </object>
-                <flag>wxALIGN_LEFT|wxALIGN_CENTRE_VERTICAL</flag>
-              </object>
-              <object class="spacer">
                 <size>10,0</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="lblThresholdOn">
+                  <label>0 Hz</label>
+                </object>
+                <option>1</option>
               </object>
             </object>
             <option>2</option>
@@ -416,31 +404,19 @@
                   <value></value>
                   <min></min>
                   <max></max>
+                  <style>wxSL_HORIZONTAL|wxSL_AUTOTICKS</style>
                 </object>
-                <option>5</option>
+                <option>8</option>
                 <flag>wxALL|wxEXPAND|wxALIGN_LEFT</flag>
               </object>
               <object class="spacer">
-                <size>0,0</size>
-              </object>
-              <object class="sizeritem">
-                <object class="wxSpinCtrl" name="spinThresholdOff">
-                  <value>0</value>
-                  <min>0</min>
-                  <max>100</max>
-                </object>
-              </object>
-              <object class="spacer">
-                <size>3,0</size>
-              </object>
-              <object class="sizeritem">
-                <object class="wxStaticText">
-                  <label>Hz</label>
-                </object>
-                <flag>wxALIGN_LEFT|wxALIGN_CENTRE_VERTICAL</flag>
-              </object>
-              <object class="spacer">
                 <size>10,0</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="lblThresholdOff">
+                  <label>0 Hz</label>
+                </object>
+                <option>1</option>
               </object>
             </object>
             <option>2</option>
@@ -465,7 +441,7 @@
             <border>4</border>
           </object>
           <object class="spacer">
-            <size>0,68</size>
+            <size>0,62</size>
           </object>
         </object>
         <option>5</option>
