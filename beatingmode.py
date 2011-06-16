@@ -168,8 +168,10 @@ class BeatingImageRow(object):
                 r = compensate_column_parameters(c)
                 return r[0]
 
-            self.__unbleached_data = array(map(
-                compensate_column, masked_image.swapaxes(0, 1))).swapaxes(0, 1)
+            comp_data = map(compensate_column_parameters, masked_image.swapaxes(0,1))
+            comp_cols = [r[0] for r in comp_data]
+            params_on = [r[1] for r in comp_data]
+            self.__unbleached_data = array(comp_cols).swapaxes(0, 1)
             return self.__unbleached_data
         else:
             return self.__unbleached_data
