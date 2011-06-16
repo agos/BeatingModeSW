@@ -268,12 +268,15 @@ class MainFrame(wx.Frame):
             lbl = []
             if self.bimg is not None \
             and self.x is not None and self.y is not None:
-                row = data[self.y]
-                lbl.append("{:.2f}".format(row.max()))
-                lbl.append("{:.2f}".format(row.min()))
-                lbl.append("{:.2f}".format(row.mean()))
-                lbl.append("-")
-                lbl.append("-")
+                row = data[self.y].compressed()
+                if len(row) > 0:
+                    lbl.append("{:.2f}".format(row.max()))
+                    lbl.append("{:.2f}".format(row.min()))
+                    lbl.append("{:.2f}".format(row.mean()))
+                    lbl.append("-")
+                    lbl.append("-")
+                else:
+                    lbl = ["-"] * 5
             else:
                 lbl = ["-"] * 5
             unit = ["Hz", "Hz", "Hz", "s", "-"]
@@ -282,12 +285,15 @@ class MainFrame(wx.Frame):
             lbl = []
             if self.bimg is not None \
             and self.x is not None and self.y is not None:
-                col = data[:,self.x]
-                lbl.append("{:.2f}".format(col.max()))
-                lbl.append("{:.2f}".format(col.min()))
-                lbl.append("{:.2f}".format(col.mean()))
-                lbl.append("-")
-                lbl.append("-")
+                col = data[:,self.x].compressed()
+                if len(col) > 0:
+                    lbl.append("{:.2f}".format(col.max()))
+                    lbl.append("{:.2f}".format(col.min()))
+                    lbl.append("{:.2f}".format(col.mean()))
+                    lbl.append("-")
+                    lbl.append("-")
+                else:
+                    lbl = ["-"] * 5
             else:
                 lbl = ["-"] * 5
             unit = ["Hz", "Hz", "Hz", "s", "-"]
