@@ -270,10 +270,11 @@ class MainFrame(wx.Frame):
             if self.bimg is not None \
             and self.x is not None and self.y is not None:
                 row = data[self.y].compressed()
+                row_taus = self.taus[self.y]
                 mask = ma.logical_or(
                     data[self.y].mask,
-                    isnan(self.taus[self.y]))
-                taus = ma.array(self.taus[self.y], mask=mask).compressed()
+                    isnan(row_taus))
+                taus = ma.array(row_taus, mask=mask).compressed()
                 if len(row) > 0:
                     lbl.append("{:.2f}".format(row.max()))
                     lbl.append("{:.2f}".format(row.min()))
@@ -296,10 +297,11 @@ class MainFrame(wx.Frame):
             if self.bimg is not None \
             and self.x is not None and self.y is not None:
                 col = data[:,self.x].compressed()
+                col_taus = self.taus[:,self.x]
                 mask = ma.logical_or(
                     data[:,self.x].mask,
-                    isnan(self.taus[:,self.x]))
-                taus = ma.array(self.taus[:,self.x], mask=mask).compressed()
+                    isnan(col_taus))
+                taus = ma.array(col_taus, mask=mask).compressed()
                 if len(col) > 0:
                     lbl.append("{:.2f}".format(col.max()))
                     lbl.append("{:.2f}".format(col.min()))
