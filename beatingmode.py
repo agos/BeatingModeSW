@@ -332,7 +332,7 @@ class BeatingImage(object):
         for n in range(l):
             result = queue.get()
             i = result[0]
-            (self._rec_on[i], self._rec_off[i]) = (result[1], result[2])
+            self._rec_on[i], self._rec_off[i] = result[1], result[2]
             value += 100.0/l
             self.unbleached_array[i] = result[3]
             dialog.Update(value,
