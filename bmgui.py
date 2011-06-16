@@ -295,6 +295,7 @@ class MainFrame(wx.Frame):
             self.caption[i].SetLabel(str(caption[i]))
             self.lbl[i].SetLabel(str(lbl[i]))
             self.unit[i].SetLabel(str(unit[i]))
+            self.lbl[i].Parent.Layout()
 
     def OnChoice(self, e):
         self.update_stats()
