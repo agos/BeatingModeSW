@@ -246,10 +246,14 @@ class MainFrame(wx.Frame):
         if choice == 0:
             caption = ["Width:", "Height:",
             "Pixel Width:", "Pixel Height:", "Over Threshold:"]
-            lbl = [self.bimg.w_step * self.bimg.width,
-                self.bimg.h_step * self.bimg.height,
-                self.bimg.w_step, self.bimg.h_step,
-                "{:.2%}".format(float(self.ratios.count()) / self.ratios.size)]
+            if self.bimg is not None:
+                lbl = [self.bimg.w_step * self.bimg.width,
+                    self.bimg.h_step * self.bimg.height,
+                    self.bimg.w_step, self.bimg.h_step,
+                    "{:.2%}".format(float(
+                    self.ratios.count()) / self.ratios.size)]
+            else:
+                lbl = ["-"] * 5
             unit = ["µm", "µm", "µm", "µm", "%"]
         else:
             if self.bimg is not None:
