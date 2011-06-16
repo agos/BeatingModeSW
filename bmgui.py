@@ -211,7 +211,7 @@ class MainFrame(wx.Frame):
         self.rec_on = self.bimg.reconstructed_on
         self.rec_off = self.bimg.reconstructed_off
         self.ratios = self.bimg.ratios
-        self.bleach_times = self.bimg.bleach_times
+        self.taus = self.bimg.taus
         # Prepare main figure and details figure
         self.panelOn.prepare(data=self.rec_on, max_rate=self.rec_on.max())
         self.panelOff.prepare(data=self.rec_off, max_rate=self.rec_on.max())
@@ -272,16 +272,16 @@ class MainFrame(wx.Frame):
                 row = data[self.y].compressed()
                 mask = ma.logical_or(
                     data[self.y].mask,
-                    isnan(self.bimg.bleach_times[self.y]))
-                bleach_times = ma.array(self.bimg.bleach_times[self.y], mask=mask).compressed()
+                    isnan(self.taus[self.y]))
+                taus = ma.array(self.taus[self.y], mask=mask).compressed()
                 if len(row) > 0:
                     lbl.append("{:.2f}".format(row.max()))
                     lbl.append("{:.2f}".format(row.min()))
                     lbl.append("{:.2f}".format(row.mean()))
-                    if len(bleach_times) > 0:
+                    if len(taus) > 0:
                         pixel_f = self.bimg.pixel_frequency
-                        bleach_time = bleach_times.mean() * 1000 / pixel_f
-                        lbl.append("{:.2f}".format(bleach_time))
+                        tau = taus.mean() * 1000 / pixel_f
+                        lbl.append("{:.2f}".format(tau))
                     else:
                         lbl.append("-")
                     lbl.append("-")
@@ -298,16 +298,16 @@ class MainFrame(wx.Frame):
                 col = data[:,self.x].compressed()
                 mask = ma.logical_or(
                     data[:,self.x].mask,
-                    isnan(self.bimg.bleach_times[:,self.x]))
-                bleach_times = ma.array(self.bimg.bleach_times[:,self.x], mask=mask).compressed()
+                    isnan(self.taus[:,self.x]))
+                taus = ma.array(self.taus[:,self.x], mask=mask).compressed()
                 if len(col) > 0:
                     lbl.append("{:.2f}".format(col.max()))
                     lbl.append("{:.2f}".format(col.min()))
                     lbl.append("{:.2f}".format(col.mean()))
-                    if len(bleach_times) > 0:
+                    if len(taus) > 0:
                         pixel_f = self.bimg.pixel_frequency
-                        bleach_time = bleach_times.mean() * 1000 / pixel_f
-                        lbl.append("{:.2f}".format(bleach_time))
+                        tau = taus.mean() * 1000 / pixel_f
+                        lbl.append("{:.2f}".format(tau))
                     else:
                         lbl.append("-")
                     lbl.append("-")

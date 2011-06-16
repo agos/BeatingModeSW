@@ -60,9 +60,9 @@ def reconstruct_row_update(p):
             row.unbleached_data[:, i]) if row.central_part_off[pos, i]])
         reconstructed_off[i] = comp_off.mean()
     queue.put((index, reconstructed_on, reconstructed_off,
-        row.unbleached_data, row.bleach_times))
+        row.unbleached_data, row.taus))
     return (index, reconstructed_on, reconstructed_off,
-        row.unbleached_data, row.bleach_times)
+        row.unbleached_data, row.taus)
 
 
 class BeatingImageRow(object):
@@ -168,7 +168,7 @@ class BeatingImageRow(object):
             comp_data = map(compensate_column_parameters,
                 masked_image.swapaxes(0,1))
             comp_cols = [r[0] for r in comp_data]
-            self.bleach_times = [r[1][1] for r in comp_data]
+            self.taus = [r[1][1] for r in comp_data]
             self.__unbleached_data = array(comp_cols).swapaxes(0, 1)
             return self.__unbleached_data
         else:
@@ -322,7 +322,7 @@ class BeatingImage(object):
     def reconstruct_with_update(self, queue, dialog):
         self._rec_on = empty((self.height, self.width), float)
         self._rec_off = empty((self.height, self.width), float)
-        self.bleach_times = empty((self.height, self.width), float)
+        self.taus = empty((self.height, self.width), float)
         start = time.time()
         pool = multiprocessing.Pool(processes=_ncpus)
         results = pool.map_async(reconstruct_row_update,
@@ -337,7 +337,7 @@ class BeatingImage(object):
             self._rec_on[i], self._rec_off[i] = result[1], result[2]
             value += 100.0/l
             self.unbleached_array[i] = result[3]
-            self.bleach_times[i] = result[4]
+            self.taus[i] = result[4]
             dialog.Update(value,
                 newmsg="Reconstructing rows: {0}/{1}".format(n+1, l))
         print("Time to reconstruct: {0} s".format(time.time() - start))
