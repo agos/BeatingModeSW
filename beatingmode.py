@@ -132,7 +132,7 @@ class BeatingImageRow(object):
                     compensated_on = array([compensate(
                       item, parameters_on, col.shape[0]) for item in col_on])
                 else:
-                    parameters_on = (p0,)
+                    parameters_on = list(p0)
                     compensated_on = col_on
                 # Trovo parametri dark
                 positions = col_off[:, 0]
@@ -156,7 +156,7 @@ class BeatingImageRow(object):
                     compensated_off = array([compensate(
                       item, parameters_off, col.shape[0]) for item in col_off])
                 else:
-                    parameters_off = (p0,)
+                    parameters_off = list(p0)
                     compensated_off = col_off
                 c = concatenate((compensated_on, compensated_off))
                 i = c[:, 0]
