@@ -47,6 +47,7 @@ class MainFrame(wx.Frame):
             self.lbl.append(XRCCTRL(self, 'lbl{0}'.format(i)))
             self.unit.append(XRCCTRL(self, 'unit{0}'.format(i)))
         self.Bind(wx.EVT_CHOICE, self.OnChoice)
+        self.bimg = None
 
         # Setup the layout for the frame
         mainGrid = wx.BoxSizer(wx.VERTICAL)
@@ -245,22 +246,28 @@ class MainFrame(wx.Frame):
         if choice == 0:
             caption = ["Width:", "Height:",
             "Pixel Width:", "Pixel Height:", "Over Threshold:"]
-            lbl = [self.bimg.w_step * self.bimg.width,
-                self.bimg.h_step * self.bimg.height,
-                self.bimg.w_step, self.bimg.h_step,
-                "{:.2%}".format(float(self.ratios.count()) / self.ratios.size)]
+            if self.bimg is not None:
+                lbl = [self.bimg.w_step * self.bimg.width,
+                    self.bimg.h_step * self.bimg.height,
+                    self.bimg.w_step, self.bimg.h_step,
+                    "{:.2%}".format(float(
+                    self.ratios.count()) / self.ratios.size)]
+            else:
+                lbl = ["-"] * 5
             unit = ["µm", "µm", "µm", "µm", "%"]
         else:
-            if on is None:
-                data = self.ratios
-            elif on is False:
-                data = self.rec_off
-            else:
-                data = self.rec_on
+            if self.bimg is not None:
+                if on is None:
+                    data = self.ratios
+                elif on is False:
+                    data = self.rec_off
+                else:
+                    data = self.rec_on
         if choice == 1:
             caption = ["Max:", "Min:", "Mean:", "Bleach Time:", "-"]
             lbl = []
-            if self.x is not None and self.y is not None:
+            if self.bimg is not None \
+            and self.x is not None and self.y is not None:
                 row = data[self.y]
                 lbl.append("{:.2f}".format(row.max()))
                 lbl.append("{:.2f}".format(row.min()))
@@ -273,7 +280,8 @@ class MainFrame(wx.Frame):
         if choice == 2:
             caption = ["Max:", "Min:", "Mean:", "Bleach Time:", "-"]
             lbl = []
-            if self.x is not None and self.y is not None:
+            if self.bimg is not None \
+            and self.x is not None and self.y is not None:
                 col = data[:,self.x]
                 lbl.append("{:.2f}".format(col.max()))
                 lbl.append("{:.2f}".format(col.min()))
@@ -287,6 +295,7 @@ class MainFrame(wx.Frame):
             self.caption[i].SetLabel(str(caption[i]))
             self.lbl[i].SetLabel(str(lbl[i]))
             self.unit[i].SetLabel(str(unit[i]))
+            self.lbl[i].Parent.Layout()
 
     def OnChoice(self, e):
         self.update_stats()
