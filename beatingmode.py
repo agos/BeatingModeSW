@@ -164,10 +164,6 @@ class BeatingImageRow(object):
                 ind = i.argsort(axis=0)
                 return (c[ind], parameters_on, parameters_off)
 
-            def compensate_column(c):
-                r = compensate_column_parameters(c)
-                return r[0]
-
             comp_data = map(compensate_column_parameters, masked_image.swapaxes(0,1))
             comp_cols = [r[0] for r in comp_data]
             self.bleach_times = [r[1][1] for r in comp_data]
