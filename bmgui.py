@@ -211,6 +211,7 @@ class MainFrame(wx.Frame):
         self.rec_on = self.bimg.reconstructed_on
         self.rec_off = self.bimg.reconstructed_off
         self.ratios = self.bimg.ratios
+        self.bleach_times = self.bimg.bleach_times
         # Prepare main figure and details figure
         self.panelOn.prepare(data=self.rec_on, max_rate=self.rec_on.max())
         self.panelOff.prepare(data=self.rec_off, max_rate=self.rec_on.max())
@@ -269,11 +270,18 @@ class MainFrame(wx.Frame):
             if self.bimg is not None \
             and self.x is not None and self.y is not None:
                 row = data[self.y].compressed()
+                mask = ma.logical_or(
+                    data[self.y].mask,
+                    isnan(self.bimg.bleach_times[self.y]))
+                bleach_times = ma.array(self.bimg.bleach_times[self.y], mask=mask).compressed()
                 if len(row) > 0:
                     lbl.append("{:.2f}".format(row.max()))
                     lbl.append("{:.2f}".format(row.min()))
                     lbl.append("{:.2f}".format(row.mean()))
-                    lbl.append("-")
+                    if len(bleach_times) > 0:
+                        lbl.append("{:.2f}".format(bleach_times.mean()))
+                    else:
+                        lbl.append("-")
                     lbl.append("-")
                 else:
                     lbl = ["-"] * 5
@@ -286,11 +294,18 @@ class MainFrame(wx.Frame):
             if self.bimg is not None \
             and self.x is not None and self.y is not None:
                 col = data[:,self.x].compressed()
+                mask = ma.logical_or(
+                    data[:,self.x].mask,
+                    isnan(self.bimg.bleach_times[:,self.x]))
+                bleach_times = ma.array(self.bimg.bleach_times[:,self.x], mask=mask).compressed()
                 if len(col) > 0:
                     lbl.append("{:.2f}".format(col.max()))
                     lbl.append("{:.2f}".format(col.min()))
                     lbl.append("{:.2f}".format(col.mean()))
-                    lbl.append("-")
+                    if len(bleach_times) > 0:
+                        lbl.append("{:.2f}".format(bleach_times.mean()))
+                    else:
+                        lbl.append("-")
                     lbl.append("-")
                 else:
                     lbl = ["-"] * 5
