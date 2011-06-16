@@ -279,7 +279,9 @@ class MainFrame(wx.Frame):
                     lbl.append("{:.2f}".format(row.min()))
                     lbl.append("{:.2f}".format(row.mean()))
                     if len(bleach_times) > 0:
-                        lbl.append("{:.2f}".format(bleach_times.mean()))
+                        pixel_f = self.bimg.pixel_frequency
+                        bleach_time = bleach_times.mean() * 1000 / pixel_f
+                        lbl.append("{:.2f}".format(bleach_time))
                     else:
                         lbl.append("-")
                     lbl.append("-")
@@ -287,7 +289,7 @@ class MainFrame(wx.Frame):
                     lbl = ["-"] * 5
             else:
                 lbl = ["-"] * 5
-            unit = ["Hz", "Hz", "Hz", "s", "-"]
+            unit = ["Hz", "Hz", "Hz", "ms", "-"]
         if choice == 2:
             caption = ["Max:", "Min:", "Mean:", "Bleach Time:", "-"]
             lbl = []
@@ -303,7 +305,9 @@ class MainFrame(wx.Frame):
                     lbl.append("{:.2f}".format(col.min()))
                     lbl.append("{:.2f}".format(col.mean()))
                     if len(bleach_times) > 0:
-                        lbl.append("{:.2f}".format(bleach_times.mean()))
+                        pixel_f = self.bimg.pixel_frequency
+                        bleach_time = bleach_times.mean() * 1000 / pixel_f
+                        lbl.append("{:.2f}".format(bleach_time))
                     else:
                         lbl.append("-")
                     lbl.append("-")
@@ -311,7 +315,7 @@ class MainFrame(wx.Frame):
                     lbl = ["-"] * 5
             else:
                 lbl = ["-"] * 5
-            unit = ["Hz", "Hz", "Hz", "s", "-"]
+            unit = ["Hz", "Hz", "Hz", "ms", "-"]
         for i in range(5):
             self.caption[i].SetLabel(str(caption[i]))
             self.lbl[i].SetLabel(str(lbl[i]))
