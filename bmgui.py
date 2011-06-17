@@ -211,6 +211,7 @@ class MainFrame(wx.Frame):
         self.rec_on = self.bimg.reconstructed_on
         self.rec_off = self.bimg.reconstructed_off
         self.ratios = self.bimg.ratios
+        self.taus = self.bimg.taus
         # Prepare main figure and details figure
         self.panelOn.prepare(data=self.rec_on, max_rate=self.rec_on.max())
         self.panelOff.prepare(data=self.rec_off, max_rate=self.rec_on.max())
@@ -269,34 +270,56 @@ class MainFrame(wx.Frame):
             if self.bimg is not None \
             and self.x is not None and self.y is not None:
                 row = data[self.y].compressed()
+                row_taus = self.taus[self.y]
+                mask = ma.logical_or(
+                    data[self.y].mask,
+                    isnan(row_taus))
+                taus = ma.array(row_taus, mask=mask).compressed()
                 if len(row) > 0:
                     lbl.append("{:.2f}".format(row.max()))
                     lbl.append("{:.2f}".format(row.min()))
                     lbl.append("{:.2f}".format(row.mean()))
-                    lbl.append("-")
+                    if len(taus) > 0:
+                        pixel_t = 1000 / self.bimg.pixel_frequency
+                        tau = taus.mean() * pixel_t
+                        stddev = (taus * pixel_t).std()
+                        lbl.append("{:.2f} ± {:.2f}".format(tau, stddev))
+                    else:
+                        lbl.append("-")
                     lbl.append("-")
                 else:
                     lbl = ["-"] * 5
             else:
                 lbl = ["-"] * 5
-            unit = ["Hz", "Hz", "Hz", "s", "-"]
+            unit = ["Hz", "Hz", "Hz", "ms", "-"]
         if choice == 2:
             caption = ["Max:", "Min:", "Mean:", "Bleach Time:", "-"]
             lbl = []
             if self.bimg is not None \
             and self.x is not None and self.y is not None:
                 col = data[:,self.x].compressed()
+                col_taus = self.taus[:,self.x]
+                mask = ma.logical_or(
+                    data[:,self.x].mask,
+                    isnan(col_taus))
+                taus = ma.array(col_taus, mask=mask).compressed()
                 if len(col) > 0:
                     lbl.append("{:.2f}".format(col.max()))
                     lbl.append("{:.2f}".format(col.min()))
                     lbl.append("{:.2f}".format(col.mean()))
-                    lbl.append("-")
+                    if len(taus) > 0:
+                        pixel_t = 1000 / self.bimg.pixel_frequency
+                        tau = taus.mean() * pixel_t
+                        stddev = (taus * pixel_t).std()
+                        lbl.append("{:.2f} ± {:.2f}".format(tau, stddev))
+                    else:
+                        lbl.append("-")
                     lbl.append("-")
                 else:
                     lbl = ["-"] * 5
             else:
                 lbl = ["-"] * 5
-            unit = ["Hz", "Hz", "Hz", "s", "-"]
+            unit = ["Hz", "Hz", "Hz", "ms", "-"]
         for i in range(5):
             self.caption[i].SetLabel(str(caption[i]))
             self.lbl[i].SetLabel(str(lbl[i]))
