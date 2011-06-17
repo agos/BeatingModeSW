@@ -280,9 +280,10 @@ class MainFrame(wx.Frame):
                     lbl.append("{:.2f}".format(row.min()))
                     lbl.append("{:.2f}".format(row.mean()))
                     if len(taus) > 0:
-                        pixel_f = self.bimg.pixel_frequency
-                        tau = taus.mean() * 1000 / pixel_f
-                        lbl.append("{:.2f}".format(tau))
+                        pixel_t = 1000 / self.bimg.pixel_frequency
+                        tau = taus.mean() * pixel_t
+                        stddev = (taus * pixel_t).std()
+                        lbl.append("{:.2f} +/- {:.2f}".format(tau, stddev))
                     else:
                         lbl.append("-")
                     lbl.append("-")
@@ -307,9 +308,10 @@ class MainFrame(wx.Frame):
                     lbl.append("{:.2f}".format(col.min()))
                     lbl.append("{:.2f}".format(col.mean()))
                     if len(taus) > 0:
-                        pixel_f = self.bimg.pixel_frequency
-                        tau = taus.mean() * 1000 / pixel_f
-                        lbl.append("{:.2f}".format(tau))
+                        pixel_t = 1000 / self.bimg.pixel_frequency
+                        tau = taus.mean() * pixel_t
+                        stddev = (taus * pixel_t).std()
+                        lbl.append("{:.2f} +/- {:.2f}".format(tau, stddev))
                     else:
                         lbl.append("-")
                     lbl.append("-")
