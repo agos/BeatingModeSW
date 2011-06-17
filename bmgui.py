@@ -283,7 +283,7 @@ class MainFrame(wx.Frame):
                         pixel_t = 1000 / self.bimg.pixel_frequency
                         tau = taus.mean() * pixel_t
                         stddev = (taus * pixel_t).std()
-                        lbl.append("{:.2f} +/- {:.2f}".format(tau, stddev))
+                        lbl.append("{:.2f} ± {:.2f}".format(tau, stddev))
                     else:
                         lbl.append("-")
                     lbl.append("-")
@@ -311,7 +311,7 @@ class MainFrame(wx.Frame):
                         pixel_t = 1000 / self.bimg.pixel_frequency
                         tau = taus.mean() * pixel_t
                         stddev = (taus * pixel_t).std()
-                        lbl.append("{:.2f} +/- {:.2f}".format(tau, stddev))
+                        lbl.append("{:.2f} ± {:.2f}".format(tau, stddev))
                     else:
                         lbl.append("-")
                     lbl.append("-")
