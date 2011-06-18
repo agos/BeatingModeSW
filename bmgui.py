@@ -8,6 +8,7 @@ from numpy import *
 from beatingmode import BeatingImage
 from colors import rate_color_map, ratio_color_map, gray_color_map
 import multiprocessing
+import argparse
 
 
 class MainFrame(wx.Frame):
@@ -526,5 +527,12 @@ class bmgui(wx.App):
 
 
 if __name__ == '__main__':
+    description = 'GUI tool to do multi-row beating mode images reconstruction'
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument('-n', '--no-bleach', action='store_true',
+        help='disable bleaching correction')
+    args = parser.parse_args()
+    no_bleach = args.no_bleach
+    print("Bleaching correction disabled: {0}".format(args.no_bleach))
     app = bmgui(0)
     app.MainLoop()
