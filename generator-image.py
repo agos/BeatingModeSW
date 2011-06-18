@@ -42,7 +42,7 @@ er_data = array(Image.open("dati/ratio.tiff")).astype('float')
 er_data = er_data.repeat(REPETITIONS, 0)
 er_data = er_data.reshape(rows, REPETITIONS, -1)
 scaling_factor = MAX_RATIO / er_data.max()
-er_data = er_data * scaling_factor
+er_data = (er_data * scaling_factor) + 1.0
 
 
 def pixel_start(pos):
