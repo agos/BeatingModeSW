@@ -193,7 +193,7 @@ class MainFrame(wx.Frame):
         dialog.SetSize((300, 200))
         dialog.Update(0, newmsg="Loading data from disk")
         # Do the actual data loading from file
-        self.bimg = BeatingImage(path=path)
+        self.bimg = BeatingImage(path=path, no_bleach=no_bleach)
         # Show measure metadata
         self.lblAcquired.SetLabel(self.bimg.acquired)
         str_pixel_f = "{0} Hz".format(self.bimg.pixel_frequency)
