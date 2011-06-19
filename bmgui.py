@@ -402,6 +402,7 @@ class PanelReconstruct(wx.Panel):
         self.panelOnOff.mpl_connect('axes_leave_event', self.OnLeave)
 
     def prepare(self, data, max_rate=None):
+        self.fig.clear()
         self.axes = self.fig.gca()
         self.axes.cla()
         self.im = self.axes.imshow(zeros_like(data), cmap=rate_color_map,
@@ -471,6 +472,7 @@ class PanelRatios(wx.Panel):
         self.panelRatios.mpl_connect('axes_leave_event', self.OnLeave)
 
     def prepare(self, data):
+        self.fig.clear()
         self.data = data
         self.axes = self.fig.gca()
         self.axes.cla()
