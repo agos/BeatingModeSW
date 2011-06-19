@@ -227,8 +227,8 @@ class MainFrame(wx.Frame):
         # Threshold stuff
         self.sliderThresOn = XRCCTRL(self.panelOn, 'sliderThresholdOn')
         self.sliderThresOff = XRCCTRL(self.panelOff, 'sliderThresholdOff')
-        maxThresOn = self.rec_on.mean() * 0.5
-        maxThresOff = self.rec_off.mean() * 0.5
+        maxThresOn = self.rec_on.mean()
+        maxThresOff = self.rec_off.mean()
         self.sliderThresOn.SetRange(0.0, maxThresOn * 100)
         self.sliderThresOff.SetRange(0.0, maxThresOff * 100)
         self.sliderThresOn.SetTickFreq(5)
