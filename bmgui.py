@@ -170,23 +170,24 @@ class MainFrame(wx.Frame):
             dialog.Destroy()
 
     def loadData(self, path):
-        # Initialize the panels
-        self.notebook.DeleteAllPages()
-        self.panelOn = self.res.LoadPanel(self.notebook,
-            'panelReconstructOn')
-        self.panelOff = self.res.LoadPanel(self.notebook,
-            'panelReconstructOff')
-        self.panelRatios = self.res.LoadPanel(self.notebook,
-            'panelRatios')
-        self.panelOn.Init(self.res, self, on=True)
-        self.panelOff.Init(self.res, self, on=False)
-        self.panelRatios.Init(self.res, self)
-        self.notebook.AddPage(self.panelOn, "Rate on")
-        self.notebook.AddPage(self.panelOff, "Rate off")
-        self.notebook.AddPage(self.panelRatios, "Enhancement Ratios")
-        self.panelOn.Update()
-        self.panelOff.Update()
-        self.panelRatios.Update()
+        if not hasattr(self, 'panelOn'):
+            # Initialize the panels
+            self.notebook.DeleteAllPages()
+            self.panelOn = self.res.LoadPanel(self.notebook,
+                'panelReconstructOn')
+            self.panelOff = self.res.LoadPanel(self.notebook,
+                'panelReconstructOff')
+            self.panelRatios = self.res.LoadPanel(self.notebook,
+                'panelRatios')
+            self.panelOn.Init(self.res, self, on=True)
+            self.panelOff.Init(self.res, self, on=False)
+            self.panelRatios.Init(self.res, self)
+            self.notebook.AddPage(self.panelOn, "Rate on")
+            self.notebook.AddPage(self.panelOff, "Rate off")
+            self.notebook.AddPage(self.panelRatios, "Enhancement Ratios")
+            self.panelOn.Update()
+            self.panelOff.Update()
+            self.panelRatios.Update()
         # Open the Loading progress dialog
         dialog = wx.ProgressDialog("Data loading progress", "Loading...", 100,
             style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_REMAINING_TIME)
@@ -401,6 +402,7 @@ class PanelReconstruct(wx.Panel):
         self.panelOnOff.mpl_connect('axes_leave_event', self.OnLeave)
 
     def prepare(self, data, max_rate=None):
+        self.fig.clear()
         self.axes = self.fig.gca()
         self.axes.cla()
         self.im = self.axes.imshow(zeros_like(data), cmap=rate_color_map,
@@ -470,6 +472,7 @@ class PanelRatios(wx.Panel):
         self.panelRatios.mpl_connect('axes_leave_event', self.OnLeave)
 
     def prepare(self, data):
+        self.fig.clear()
         self.data = data
         self.axes = self.fig.gca()
         self.axes.cla()
