@@ -98,7 +98,7 @@ class MainFrame(wx.Frame):
         ax_top, ax_bottom = self.ax_top, self.ax_bottom
         # Set axes limits
         self.det_im = ax_top.imshow(
-            zeros((self.bimg.repetitions, self.bimg.width)), 
+            zeros((self.bimg.repetitions, self.bimg.width)),
             cmap=rate_color_map, interpolation='nearest',
             vmin=0.0, vmax=self.rec_on.max(), animated=True)
         self.axis = ax_top.get_xaxis()
@@ -398,6 +398,7 @@ class PanelReconstruct(wx.Panel):
         res.AttachUnknownControl('panelReconstructed',
             self.panelOnOff, self)
         self.panelOnOff.draw()
+        self.panelOnOff.mpl_connect('axes_leave_event', self.OnLeave)
 
     def prepare(self, data, max_rate=None):
         self.axes = self.fig.gca()
@@ -443,6 +444,11 @@ class PanelReconstruct(wx.Panel):
         view.location.set(wxmpl.format_coord(axes, xdata, ydata))
         self.mainFrame.update_stats(on=self.on)
 
+    def OnLeave(self, e):
+        self.mainFrame.x, self.mainFrame.y = None, None
+        self.mainFrame.update_stats(on=self.on)
+        self.mainFrame.prepare_details()
+
 
 class PanelRatios(wx.Panel):
 
@@ -461,6 +467,7 @@ class PanelRatios(wx.Panel):
         res.AttachUnknownControl('panelRatios',
             self.panelRatios, self)
         self.panelRatios.draw()
+        self.panelRatios.mpl_connect('axes_leave_event', self.OnLeave)
 
     def prepare(self, data):
         self.data = data
@@ -508,6 +515,11 @@ class PanelRatios(wx.Panel):
         # Changed: we round the coordinates
         view.location.set(wxmpl.format_coord(axes, xdata, ydata))
         self.mainFrame.update_stats()
+
+    def OnLeave(self, e):
+        self.mainFrame.x, self.mainFrame.y = None, None
+        self.mainFrame.update_stats()
+        self.mainFrame.prepare_details()
 
 
 class bmgui(wx.App):
