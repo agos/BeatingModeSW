@@ -16,7 +16,7 @@ SHUTTER_F = 5.856
 SHUTTER_T = 1.0 / (SHUTTER_F * 2.0)
 H_STEP = 0.2
 W_STEP = 0.2
-MAX_RATIO = 5.0
+MAX_RATIO = 3.0
 
 # TODO: cambiare con lettura da file
 # TODO: preparare per multiriga
