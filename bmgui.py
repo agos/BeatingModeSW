@@ -467,6 +467,7 @@ class PanelRatios(wx.Panel):
         res.AttachUnknownControl('panelRatios',
             self.panelRatios, self)
         self.panelRatios.draw()
+        self.panelRatios.mpl_connect('axes_leave_event', self.OnLeave)
 
     def prepare(self, data):
         self.data = data
@@ -514,6 +515,11 @@ class PanelRatios(wx.Panel):
         # Changed: we round the coordinates
         view.location.set(wxmpl.format_coord(axes, xdata, ydata))
         self.mainFrame.update_stats()
+
+    def OnLeave(self, e):
+        self.mainFrame.x, self.mainFrame.y = None, None
+        self.mainFrame.update_stats()
+        self.mainFrame.prepare_details()
 
 
 class bmgui(wx.App):
