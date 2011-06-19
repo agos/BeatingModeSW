@@ -398,6 +398,7 @@ class PanelReconstruct(wx.Panel):
         res.AttachUnknownControl('panelReconstructed',
             self.panelOnOff, self)
         self.panelOnOff.draw()
+        self.panelOnOff.mpl_connect('axes_leave_event', self.OnLeave)
 
     def prepare(self, data, max_rate=None):
         self.axes = self.fig.gca()
@@ -442,6 +443,11 @@ class PanelReconstruct(wx.Panel):
         # Changed: we round the coordinates
         view.location.set(wxmpl.format_coord(axes, xdata, ydata))
         self.mainFrame.update_stats(on=self.on)
+
+    def OnLeave(self, e):
+        self.mainFrame.x, self.mainFrame.y = None, None
+        self.mainFrame.update_stats(on=self.on)
+        self.mainFrame.prepare_details()
 
 
 class PanelRatios(wx.Panel):
