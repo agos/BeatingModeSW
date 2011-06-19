@@ -8,6 +8,7 @@ from numpy import *
 from beatingmode import BeatingImage
 from colors import rate_color_map, ratio_color_map, gray_color_map
 import multiprocessing
+import argparse
 
 
 class MainFrame(wx.Frame):
@@ -47,6 +48,7 @@ class MainFrame(wx.Frame):
             self.lbl.append(XRCCTRL(self, 'lbl{0}'.format(i)))
             self.unit.append(XRCCTRL(self, 'unit{0}'.format(i)))
         self.Bind(wx.EVT_CHOICE, self.OnChoice)
+        self.bimg = None
 
         # Setup the layout for the frame
         mainGrid = wx.BoxSizer(wx.VERTICAL)
@@ -96,7 +98,7 @@ class MainFrame(wx.Frame):
         ax_top, ax_bottom = self.ax_top, self.ax_bottom
         # Set axes limits
         self.det_im = ax_top.imshow(
-            zeros((self.bimg.repetitions, self.bimg.width)), 
+            zeros((self.bimg.repetitions, self.bimg.width)),
             cmap=rate_color_map, interpolation='nearest',
             vmin=0.0, vmax=self.rec_on.max(), animated=True)
         self.axis = ax_top.get_xaxis()
@@ -168,30 +170,31 @@ class MainFrame(wx.Frame):
             dialog.Destroy()
 
     def loadData(self, path):
-        # Initialize the panels
-        self.notebook.DeleteAllPages()
-        self.panelOn = self.res.LoadPanel(self.notebook,
-            'panelReconstructOn')
-        self.panelOff = self.res.LoadPanel(self.notebook,
-            'panelReconstructOff')
-        self.panelRatios = self.res.LoadPanel(self.notebook,
-            'panelRatios')
-        self.panelOn.Init(self.res, self, on=True)
-        self.panelOff.Init(self.res, self, on=False)
-        self.panelRatios.Init(self.res, self)
-        self.notebook.AddPage(self.panelOn, "Rate on")
-        self.notebook.AddPage(self.panelOff, "Rate off")
-        self.notebook.AddPage(self.panelRatios, "Enhancement Ratios")
-        self.panelOn.Update()
-        self.panelOff.Update()
-        self.panelRatios.Update()
+        if not hasattr(self, 'panelOn'):
+            # Initialize the panels
+            self.notebook.DeleteAllPages()
+            self.panelOn = self.res.LoadPanel(self.notebook,
+                'panelReconstructOn')
+            self.panelOff = self.res.LoadPanel(self.notebook,
+                'panelReconstructOff')
+            self.panelRatios = self.res.LoadPanel(self.notebook,
+                'panelRatios')
+            self.panelOn.Init(self.res, self, on=True)
+            self.panelOff.Init(self.res, self, on=False)
+            self.panelRatios.Init(self.res, self)
+            self.notebook.AddPage(self.panelOn, "Probe on")
+            self.notebook.AddPage(self.panelOff, "Probe off")
+            self.notebook.AddPage(self.panelRatios, "Enhancement Ratios")
+            self.panelOn.Update()
+            self.panelOff.Update()
+            self.panelRatios.Update()
         # Open the Loading progress dialog
         dialog = wx.ProgressDialog("Data loading progress", "Loading...", 100,
             style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_REMAINING_TIME)
         dialog.SetSize((300, 200))
         dialog.Update(0, newmsg="Loading data from disk")
         # Do the actual data loading from file
-        self.bimg = BeatingImage(path=path)
+        self.bimg = BeatingImage(path=path, no_bleach=no_bleach)
         # Show measure metadata
         self.lblAcquired.SetLabel(self.bimg.acquired)
         str_pixel_f = "{0} Hz".format(self.bimg.pixel_frequency)
@@ -210,6 +213,7 @@ class MainFrame(wx.Frame):
         self.rec_on = self.bimg.reconstructed_on
         self.rec_off = self.bimg.reconstructed_off
         self.ratios = self.bimg.ratios
+        self.taus = self.bimg.taus
         # Prepare main figure and details figure
         self.panelOn.prepare(data=self.rec_on, max_rate=self.rec_on.max())
         self.panelOff.prepare(data=self.rec_off, max_rate=self.rec_on.max())
@@ -224,8 +228,8 @@ class MainFrame(wx.Frame):
         # Threshold stuff
         self.sliderThresOn = XRCCTRL(self.panelOn, 'sliderThresholdOn')
         self.sliderThresOff = XRCCTRL(self.panelOff, 'sliderThresholdOff')
-        maxThresOn = self.rec_on.mean() * 0.5
-        maxThresOff = self.rec_off.mean() * 0.5
+        maxThresOn = self.rec_on.mean()
+        maxThresOff = self.rec_off.mean()
         self.sliderThresOn.SetRange(0.0, maxThresOn * 100)
         self.sliderThresOff.SetRange(0.0, maxThresOff * 100)
         self.sliderThresOn.SetTickFreq(5)
@@ -245,48 +249,84 @@ class MainFrame(wx.Frame):
         if choice == 0:
             caption = ["Width:", "Height:",
             "Pixel Width:", "Pixel Height:", "Over Threshold:"]
-            lbl = [self.bimg.w_step * self.bimg.width,
-                self.bimg.h_step * self.bimg.height,
-                self.bimg.w_step, self.bimg.h_step,
-                "{:.2%}".format(float(self.ratios.count()) / self.ratios.size)]
+            if self.bimg is not None:
+                lbl = [self.bimg.w_step * self.bimg.width,
+                    self.bimg.h_step * self.bimg.height,
+                    self.bimg.w_step, self.bimg.h_step,
+                    "{:.2%}".format(float(
+                    self.ratios.count()) / self.ratios.size)]
+            else:
+                lbl = ["-"] * 5
             unit = ["µm", "µm", "µm", "µm", "%"]
         else:
-            if on is None:
-                data = self.ratios
-            elif on is False:
-                data = self.rec_off
-            else:
-                data = self.rec_on
+            if self.bimg is not None:
+                if on is None:
+                    data = self.ratios
+                elif on is False:
+                    data = self.rec_off
+                else:
+                    data = self.rec_on
         if choice == 1:
             caption = ["Max:", "Min:", "Mean:", "Bleach Time:", "-"]
             lbl = []
-            if self.x is not None and self.y is not None:
-                row = data[self.y]
-                lbl.append("{:.2f}".format(row.max()))
-                lbl.append("{:.2f}".format(row.min()))
-                lbl.append("{:.2f}".format(row.mean()))
-                lbl.append("-")
-                lbl.append("-")
+            if self.bimg is not None \
+            and self.x is not None and self.y is not None:
+                row = data[self.y].compressed()
+                row_taus = self.taus[self.y]
+                mask = ma.logical_or(
+                    data[self.y].mask,
+                    isnan(row_taus))
+                taus = ma.array(row_taus, mask=mask).compressed()
+                if len(row) > 0:
+                    lbl.append("{:.2f}".format(row.max()))
+                    lbl.append("{:.2f}".format(row.min()))
+                    lbl.append("{:.2f}".format(row.mean()))
+                    if len(taus) > 0:
+                        pixel_t = 1000 / self.bimg.pixel_frequency
+                        tau = taus.mean() * pixel_t
+                        stddev = (taus * pixel_t).std()
+                        lbl.append("{:.2f} ± {:.2f}".format(tau, stddev))
+                    else:
+                        lbl.append("-")
+                    lbl.append("-")
+                else:
+                    lbl = ["-"] * 5
             else:
                 lbl = ["-"] * 5
-            unit = ["Hz", "Hz", "Hz", "s", "-"]
+            unit = ["Hz", "Hz", "Hz", "ms", "-"]
         if choice == 2:
             caption = ["Max:", "Min:", "Mean:", "Bleach Time:", "-"]
             lbl = []
-            if self.x is not None and self.y is not None:
-                col = data[:,self.x]
-                lbl.append("{:.2f}".format(col.max()))
-                lbl.append("{:.2f}".format(col.min()))
-                lbl.append("{:.2f}".format(col.mean()))
-                lbl.append("-")
-                lbl.append("-")
+            if self.bimg is not None \
+            and self.x is not None and self.y is not None:
+                col = data[:,self.x].compressed()
+                col_taus = self.taus[:,self.x]
+                mask = ma.logical_or(
+                    data[:,self.x].mask,
+                    isnan(col_taus))
+                taus = ma.array(col_taus, mask=mask).compressed()
+                if len(col) > 0:
+                    lbl.append("{:.2f}".format(col.max()))
+                    lbl.append("{:.2f}".format(col.min()))
+                    lbl.append("{:.2f}".format(col.mean()))
+                    if len(taus) > 0:
+                        pixel_t = 1000 / self.bimg.pixel_frequency
+                        tau = taus.mean() * pixel_t
+                        stddev = (taus * pixel_t).std()
+                        lbl.append("{:.2f} ± {:.2f}".format(tau, stddev))
+                    else:
+                        lbl.append("-")
+                    lbl.append("-")
+                else:
+                    lbl = ["-"] * 5
             else:
                 lbl = ["-"] * 5
-            unit = ["Hz", "Hz", "Hz", "s", "-"]
+            unit = ["Hz", "Hz", "Hz", "ms", "-"]
         for i in range(5):
             self.caption[i].SetLabel(str(caption[i]))
             self.lbl[i].SetLabel(str(lbl[i]))
             self.unit[i].SetLabel(str(unit[i]))
+            self.lbl[i].Parent.Layout()
 
     def OnChoice(self, e):
         self.update_stats()
@@ -359,8 +399,10 @@ class PanelReconstruct(wx.Panel):
         res.AttachUnknownControl('panelReconstructed',
             self.panelOnOff, self)
         self.panelOnOff.draw()
+        self.panelOnOff.mpl_connect('axes_leave_event', self.OnLeave)
 
     def prepare(self, data, max_rate=None):
+        self.fig.clear()
         self.axes = self.fig.gca()
         self.axes.cla()
         self.im = self.axes.imshow(zeros_like(data), cmap=rate_color_map,
@@ -404,6 +446,11 @@ class PanelReconstruct(wx.Panel):
         view.location.set(wxmpl.format_coord(axes, xdata, ydata))
         self.mainFrame.update_stats(on=self.on)
 
+    def OnLeave(self, e):
+        self.mainFrame.x, self.mainFrame.y = None, None
+        self.mainFrame.update_stats(on=self.on)
+        self.mainFrame.prepare_details()
+
 
 class PanelRatios(wx.Panel):
 
@@ -422,8 +469,10 @@ class PanelRatios(wx.Panel):
         res.AttachUnknownControl('panelRatios',
             self.panelRatios, self)
         self.panelRatios.draw()
+        self.panelRatios.mpl_connect('axes_leave_event', self.OnLeave)
 
     def prepare(self, data):
+        self.fig.clear()
         self.data = data
         self.axes = self.fig.gca()
         self.axes.cla()
@@ -470,6 +519,11 @@ class PanelRatios(wx.Panel):
         view.location.set(wxmpl.format_coord(axes, xdata, ydata))
         self.mainFrame.update_stats()
 
+    def OnLeave(self, e):
+        self.mainFrame.x, self.mainFrame.y = None, None
+        self.mainFrame.update_stats()
+        self.mainFrame.prepare_details()
+
 
 class bmgui(wx.App):
 
@@ -488,5 +542,12 @@ class bmgui(wx.App):
 
 
 if __name__ == '__main__':
+    description = 'GUI tool to do multi-row beating mode images reconstruction'
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument('-n', '--no-bleach', action='store_true',
+        help='disable bleaching correction')
+    args = parser.parse_args()
+    no_bleach = args.no_bleach
+    print("Bleaching correction disabled: {0}".format(args.no_bleach))
     app = bmgui(0)
     app.MainLoop()

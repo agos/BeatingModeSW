@@ -60,8 +60,9 @@ def reconstruct_row_update(p):
             row.unbleached_data[:, i]) if row.central_part_off[pos, i]])
         reconstructed_off[i] = comp_off.mean()
     queue.put((index, reconstructed_on, reconstructed_off,
-        row.unbleached_data))
-    return (index, reconstructed_on, reconstructed_off, row.unbleached_data)
+        row.unbleached_data, row.taus))
+    return (index, reconstructed_on, reconstructed_off,
+        row.unbleached_data, row.taus)
 
 
 class BeatingImageRow(object):
@@ -69,11 +70,13 @@ class BeatingImageRow(object):
         Multiple repetitions are present"""
 
     # TODO cambiare i __ con _
-    def __init__(self, data, pixel_frequency=100.0, shutter_frequency=5.0):
+    def __init__(self, data, pixel_frequency=100.0, shutter_frequency=5.0,
+        no_bleach=False):
         super(BeatingImageRow, self).__init__()
         self.pixel_frequency = pixel_frequency
         self.shutter_frequency = shutter_frequency
         self.data = data
+        self.no_bleach = no_bleach
         self.image_height, self.image_width = self.data.shape
         self.image_size = (self.image_width, self.image_height)
         self.__unbleached_data = None
@@ -101,7 +104,6 @@ class BeatingImageRow(object):
                 y = measurement[1]
                 low = exponential(column_length, p)
                 return [x, y - (exponential(x, p) - low)]
-            masked_image = dstack((self.data, self.beating_mask))
 
             def compensate_column_parameters(c):
                 col = c[:, 0]
@@ -132,7 +134,7 @@ class BeatingImageRow(object):
                     compensated_on = array([compensate(
                       item, parameters_on, col.shape[0]) for item in col_on])
                 else:
-                    parameters_on = (p0,)
+                    parameters_on = [None] * 3
                     compensated_on = col_on
                 # Trovo parametri dark
                 positions = col_off[:, 0]
@@ -156,7 +158,7 @@ class BeatingImageRow(object):
                     compensated_off = array([compensate(
                       item, parameters_off, col.shape[0]) for item in col_off])
                 else:
-                    parameters_off = (p0,)
+                    parameters_off = [None] * 3
                     compensated_off = col_off
                 c = concatenate((compensated_on, compensated_off))
                 i = c[:, 0]
@@ -164,11 +166,18 @@ class BeatingImageRow(object):
                 ind = i.argsort(axis=0)
                 return (c[ind], parameters_on, parameters_off)
 
-            def compensate_column(c):
-                r = compensate_column_parameters(c)
-                return r[0]
-            self.__unbleached_data = array(map(
-                compensate_column, masked_image.swapaxes(0, 1))).swapaxes(0, 1)
+            if not self.no_bleach:
+                masked_image = dstack((self.data, self.beating_mask))
+                comp_data = map(compensate_column_parameters,
+                    masked_image.swapaxes(0,1))
+                comp_cols = [r[0] for r in comp_data]
+                self.taus = [r[1][1] for r in comp_data]
+                self.__unbleached_data = array(comp_cols).swapaxes(0, 1)
+            else:
+                self.__unbleached_data = self.data
+                def func_none(i,j):
+                    return None
+                self.taus = fromfunction(func_none, self.data.shape)
             return self.__unbleached_data
         else:
             return self.__unbleached_data
@@ -274,8 +283,9 @@ class BeatingImageRow(object):
 class BeatingImage(object):
     """docstring for BeatingImage"""
 
-    def __init__(self, path):
+    def __init__(self, path, no_bleach=False):
         super(BeatingImage, self).__init__()
+        self.no_bleach = no_bleach
         self.path = path
         input = open(path, 'r').read().split('---')
         y = yaml.load(input[0])
@@ -300,7 +310,8 @@ class BeatingImage(object):
         self.rows = []
         self.rows = [BeatingImageRow(self.data[row,:,:],
             pixel_frequency=self.pixel_frequency,
-            shutter_frequency=self.shutter_frequency)
+            shutter_frequency=self.shutter_frequency,
+            no_bleach=no_bleach)
                 for row in xrange(self.height)]
 
     def _reconstruct_rows(self):
@@ -321,6 +332,7 @@ class BeatingImage(object):
     def reconstruct_with_update(self, queue, dialog):
         self._rec_on = empty((self.height, self.width), float)
         self._rec_off = empty((self.height, self.width), float)
+        self.taus = empty((self.height, self.width), float)
         start = time.time()
         pool = multiprocessing.Pool(processes=_ncpus)
         results = pool.map_async(reconstruct_row_update,
@@ -332,9 +344,10 @@ class BeatingImage(object):
         for n in range(l):
             result = queue.get()
             i = result[0]
-            (self._rec_on[i], self._rec_off[i]) = (result[1], result[2])
+            self._rec_on[i], self._rec_off[i] = result[1], result[2]
             value += 100.0/l
             self.unbleached_array[i] = result[3]
+            self.taus[i] = result[4]
             dialog.Update(value,
                 newmsg="Reconstructing rows: {0}/{1}".format(n+1, l))
         print("Time to reconstruct: {0} s".format(time.time() - start))
