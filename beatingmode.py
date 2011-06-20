@@ -372,12 +372,13 @@ class BeatingImage(object):
 
     @property
     def taus(self):
+        pixel_t = 1000 / self.pixel_frequency
         mask = ma.logical_or(
                  ma.logical_or(
                    self.reconstructed_on.mask,
                    self.reconstructed_off.mask),
                  isnan(self._taus))
-        return ma.array(self._taus, mask=mask)
+        return ma.array(self._taus, mask=mask) * pixel_t
 
 
 if __name__ == '__main__':

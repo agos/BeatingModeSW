@@ -272,15 +272,14 @@ class MainFrame(wx.Frame):
             if self.bimg is not None \
             and self.x is not None and self.y is not None:
                 row = data[self.y].compressed()
-                taus = self.taus[self.y]
+                taus = self.taus[self.y].compressed()
                 if len(row) > 0:
                     lbl.append("{:.2f}".format(row.max()))
                     lbl.append("{:.2f}".format(row.min()))
                     lbl.append("{:.2f}".format(row.mean()))
                     if len(taus) > 0:
-                        pixel_t = 1000 / self.bimg.pixel_frequency
-                        tau = taus.mean() * pixel_t
-                        stddev = (taus * pixel_t).std()
+                        tau = taus.mean()
+                        stddev = taus.std()
                         lbl.append("{:.2f} ± {:.2f}".format(tau, stddev))
                     else:
                         lbl.append("-")
@@ -296,15 +295,14 @@ class MainFrame(wx.Frame):
             if self.bimg is not None \
             and self.x is not None and self.y is not None:
                 col = data[:,self.x].compressed()
-                col_taus = self.taus[:,self.x]
+                taus = self.taus[:,self.x].compressed()
                 if len(col) > 0:
                     lbl.append("{:.2f}".format(col.max()))
                     lbl.append("{:.2f}".format(col.min()))
                     lbl.append("{:.2f}".format(col.mean()))
                     if len(taus) > 0:
-                        pixel_t = 1000 / self.bimg.pixel_frequency
-                        taus.mean() * pixel_t
-                        stddev = (taus * pixel_t).std()
+                        tau = taus.mean()
+                        stddev = taus.std()
                         lbl.append("{:.2f} ± {:.2f}".format(tau, stddev))
                     else:
                         lbl.append("-")
