@@ -108,6 +108,7 @@ class BeatingImageRow(object):
             def compensate_column_parameters(c):
                 col = c[:, 0]
                 mask = c[:, 1]
+                # TODO togliere le list comprehension
                 col_on = array([[pos, el] for pos, el in enumerate(col)
                     if mask[pos]])
                 col_off = array([[pos, el] for pos, el in enumerate(col)
@@ -131,6 +132,7 @@ class BeatingImageRow(object):
                       or parameters_on[0] < parameters_on[2]:
                         failed = True
                 if not failed:
+                    # TODO vettorizzare
                     compensated_on = array([compensate(
                       item, parameters_on, col.shape[0]) for item in col_on])
                 else:
@@ -155,6 +157,7 @@ class BeatingImageRow(object):
                       or parameters_off[0] < parameters_off[2]:
                         failed = True
                 if not failed:
+                    # TODO vettorizzare
                     compensated_off = array([compensate(
                       item, parameters_off, col.shape[0]) for item in col_off])
                 else:
@@ -168,6 +171,7 @@ class BeatingImageRow(object):
 
             if not self.no_bleach:
                 masked_image = dstack((self.data, self.beating_mask))
+                # TODO vedi vettorizzare di sopra
                 comp_data = map(compensate_column_parameters,
                     masked_image.swapaxes(0,1))
                 comp_cols = [r[0] for r in comp_data]
@@ -187,6 +191,8 @@ class BeatingImageRow(object):
         if self.__beating_mask is None:
             probe_estimate = empty(self.data.shape, bool)
             # Stima iniziale
+            # TODO guardare anche questo FOR
+            # Come minimo posso lavorare per colonne invece che per elementi
             for (pos, val) in ndenumerate(self.data):
                 probe_estimate[pos] = val > self.data[:, pos[1]].mean()
 
@@ -207,12 +213,14 @@ class BeatingImageRow(object):
             r = 50
             c = probe_estimate.shape[1]
             result_matrix = empty((r, c), float)
+            # TODO supervettorizzare
             for i in range(r):
                 result_matrix[i] = build_row_square(c, i/float(r))
             # Miglioro la stima
             phases = apply_along_axis(find_phase, 1, probe_estimate)
             # Tolgo la ciclicità dalle fasi
             new_phases = empty_like(phases)
+            # TODO cos'è sto schifo
             for n, p in enumerate(phases):
                 if n == 0:
                     new_phases[n] = phases[n]
