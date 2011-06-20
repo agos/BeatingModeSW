@@ -175,9 +175,9 @@ class BeatingImageRow(object):
                 self.__unbleached_data = array(comp_cols).swapaxes(0, 1)
             else:
                 self.__unbleached_data = self.data
-                def func_none(i,j):
-                    return None
-                self.taus = fromfunction(func_none, self.data.shape)
+                def func_nan(i,j):
+                    return float('NaN')
+                self.taus = fromfunction(func_nan, self.data.shape)
             return self.__unbleached_data
         else:
             return self.__unbleached_data
@@ -332,7 +332,7 @@ class BeatingImage(object):
     def reconstruct_with_update(self, queue, dialog):
         self._rec_on = empty((self.height, self.width), float)
         self._rec_off = empty((self.height, self.width), float)
-        self.taus = empty((self.height, self.width), float)
+        self._taus = empty((self.height, self.width), float)
         start = time.time()
         pool = multiprocessing.Pool(processes=_ncpus)
         results = pool.map_async(reconstruct_row_update,
@@ -347,7 +347,7 @@ class BeatingImage(object):
             self._rec_on[i], self._rec_off[i] = result[1], result[2]
             value += 100.0/l
             self.unbleached_array[i] = result[3]
-            self.taus[i] = result[4]
+            self._taus[i] = result[4]
             dialog.Update(value,
                 newmsg="Reconstructing rows: {0}/{1}".format(n+1, l))
         print("Time to reconstruct: {0} s".format(time.time() - start))
@@ -369,6 +369,15 @@ class BeatingImage(object):
     def ratios(self):
         # TODO implementare caching
         return self.reconstructed_on / self.reconstructed_off
+
+    @property
+    def taus(self):
+        mask = ma.logical_or(
+                 ma.logical_or(
+                   self.reconstructed_on.mask,
+                   self.reconstructed_off.mask),
+                 isnan(self._taus))
+        return ma.array(self._taus, mask=mask)
 
 
 if __name__ == '__main__':
