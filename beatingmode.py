@@ -158,7 +158,7 @@ class BeatingImageRow(object):
                 # TODO vedi vettorizzare di sopra
                 comp_data = map(compensate_column_parameters, masked_data.T)
                 comp_cols = [r[0] for r in comp_data]
-                self.taus = [r[1][1] for r in comp_data]
+                self.taus = [(r[1][1] + r[2][1]) / 2 for r in comp_data]
                 self.__unbleached_data = array(comp_cols).T
             else:
                 self.__unbleached_data = self.data
