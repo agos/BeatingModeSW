@@ -162,9 +162,7 @@ class BeatingImageRow(object):
                 self.__unbleached_data = array(comp_cols).T
             else:
                 self.__unbleached_data = self.data
-                def func_nan(i,j):
-                    return float('NaN')
-                self.taus = fromfunction(func_nan, self.data.shape)
+                self.taus = [nan] * self.data.shape[1]
             return self.__unbleached_data
         else:
             return self.__unbleached_data
