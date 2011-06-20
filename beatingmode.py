@@ -136,7 +136,7 @@ class BeatingImageRow(object):
                 failed = False
                 try:
                     result = optimize.curve_fit(
-                        fitting_function, pos_off, samples, p0)
+                        fitting_function, pos_off, val_off, p0)
                 except Exception, e:
                     failed = True
                 if not failed:
@@ -144,8 +144,8 @@ class BeatingImageRow(object):
                     if any(parameters_off > 1000) or a < 0 or c < 0 or a < c:
                         failed = True
                 if not failed:
-                    expo = exponential(samples, parameters_on)
-                    comp_on = (c_off - expo + expo.min())
+                    expo = exponential(samples, parameters_off)
+                    comp_off = (c_off - expo + expo.min())
                 else:
                     parameters_off = [None] * 3
                     comp_off = c_off
