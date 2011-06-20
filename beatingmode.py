@@ -159,7 +159,7 @@ class BeatingImageRow(object):
                 comp_data = map(compensate_column_parameters, masked_data.T)
                 comp_cols = [r[0] for r in comp_data]
                 self.taus = [r[1][1] for r in comp_data]
-                self.__unbleached_data = array(comp_cols).swapaxes(0, 1)
+                self.__unbleached_data = array(comp_cols).T
             else:
                 self.__unbleached_data = self.data
                 def func_nan(i,j):
