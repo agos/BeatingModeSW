@@ -170,12 +170,9 @@ class BeatingImageRow(object):
     @property
     def beating_mask(self):
         if self.__beating_mask is None:
-            probe_estimate = empty(self.data.shape, bool)
             # Stima iniziale
-            # TODO guardare anche questo FOR
-            # Come minimo posso lavorare per colonne invece che per elementi
-            for (pos, val) in ndenumerate(self.data):
-                probe_estimate[pos] = val > self.data[:, pos[1]].mean()
+            probe_estimate = apply_along_axis(
+                lambda c: c > c.mean(), 0, self.data)
 
             def build_row_square(l, phi):
                 x = arange(l)
