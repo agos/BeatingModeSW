@@ -129,7 +129,7 @@ class BeatingImageRow(object):
                     expo = exponential(samples, parameters_on)
                     comp_on = (c_on - expo + expo.min())
                 else:
-                    parameters_on = [None] * 3
+                    parameters_on = [nan] * 3
                     comp_on = c_on
                 # Trovo parametri dark
                 p0 = [val_off.max() - val_off.min(), 50, val_off.min()]
@@ -147,7 +147,7 @@ class BeatingImageRow(object):
                     expo = exponential(samples, parameters_off)
                     comp_off = (c_off - expo + expo.min())
                 else:
-                    parameters_off = [None] * 3
+                    parameters_off = [nan] * 3
                     comp_off = c_off
 
                 c = comp_on.filled(0) + comp_off.filled(0)
