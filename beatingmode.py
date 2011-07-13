@@ -106,78 +106,63 @@ class BeatingImageRow(object):
                 return [x, y - (exponential(x, p) - low)]
 
             def compensate_column_parameters(c):
-                col = c[:, 0]
-                mask = c[:, 1]
-                col_on = array([[pos, el] for pos, el in enumerate(col)
-                    if mask[pos]])
-                col_off = array([[pos, el] for pos, el in enumerate(col)
-                    if not mask[pos]])
+                c_on = ma.array(c.data, mask=~c.mask)
+                c_off = c
+                samples = arange(c.shape[0])
+                val_on = c_on.compressed()
+                val_off = c_off.compressed()
+                pos_on = samples[c.mask]
+                pos_off = samples[~c.mask]
                 # Trovo parametri bright
-                positions = col_on[:, 0]
-                samples = col_on[:, 1]
-                p0 = [samples.max() - samples.min(), 50, samples.min()]
+                p0 = [val_on.max() - val_on.min(), 50, val_on.min()]
                 failed = False
                 try:
                     result = optimize.curve_fit(
-                        fitting_function, positions, samples, p0)
+                        fitting_function, pos_on, val_on, p0)
                 except Exception, e:
-                    # print e
                     failed = True
                 if not failed:
-                    parameters_on = result[0]
-                    if any(parameters_on > 1000) \
-                      or parameters_on[0] < 0 \
-                      or parameters_on[2] < 0 \
-                      or parameters_on[0] < parameters_on[2]:
+                    a, b, c = parameters_on = result[0]
+                    if any(parameters_on > 1000) or a < 0 or c < 0 or a < c:
                         failed = True
                 if not failed:
-                    compensated_on = array([compensate(
-                      item, parameters_on, col.shape[0]) for item in col_on])
+                    expo = exponential(samples, parameters_on)
+                    comp_on = (c_on - expo + expo.min())
                 else:
-                    parameters_on = [None] * 3
-                    compensated_on = col_on
+                    parameters_on = [nan] * 3
+                    comp_on = c_on
                 # Trovo parametri dark
-                positions = col_off[:, 0]
-                samples = col_off[:, 1]
-                p0 = [samples.max()- samples.min(), 50, samples.min()]
+                p0 = [val_off.max() - val_off.min(), 50, val_off.min()]
                 failed = False
                 try:
                     result = optimize.curve_fit(
-                        fitting_function, positions, samples, p0)
+                        fitting_function, pos_off, val_off, p0)
                 except Exception, e:
-                    # print e
                     failed = True
                 if not failed:
-                    parameters_off = result[0]
-                    if any(parameters_off > 1000) \
-                      or parameters_off[0] < 0 \
-                      or parameters_off[2] < 0 \
-                      or parameters_off[0] < parameters_off[2]:
+                    a,b,c = parameters_off = result[0]
+                    if any(parameters_off > 1000) or a < 0 or c < 0 or a < c:
                         failed = True
                 if not failed:
-                    compensated_off = array([compensate(
-                      item, parameters_off, col.shape[0]) for item in col_off])
+                    expo = exponential(samples, parameters_off)
+                    comp_off = (c_off - expo + expo.min())
                 else:
-                    parameters_off = [None] * 3
-                    compensated_off = col_off
-                c = concatenate((compensated_on, compensated_off))
-                i = c[:, 0]
-                c = c[:, 1]
-                ind = i.argsort(axis=0)
-                return (c[ind], parameters_on, parameters_off)
+                    parameters_off = [nan] * 3
+                    comp_off = c_off
+
+                c = comp_on.filled(0) + comp_off.filled(0)
+                return (c, parameters_on, parameters_off)
 
             if not self.no_bleach:
-                masked_image = dstack((self.data, self.beating_mask))
-                comp_data = map(compensate_column_parameters,
-                    masked_image.swapaxes(0,1))
+                masked_data = ma.array(self.data, mask=self.beating_mask)
+                # TODO vedi vettorizzare di sopra
+                comp_data = map(compensate_column_parameters, masked_data.T)
                 comp_cols = [r[0] for r in comp_data]
-                self.taus = [r[1][1] for r in comp_data]
-                self.__unbleached_data = array(comp_cols).swapaxes(0, 1)
+                self.taus = [(r[1][1] + r[2][1]) / 2 for r in comp_data]
+                self.__unbleached_data = array(comp_cols).T
             else:
                 self.__unbleached_data = self.data
-                def func_none(i,j):
-                    return None
-                self.taus = fromfunction(func_none, self.data.shape)
+                self.taus = [nan] * self.data.shape[1]
             return self.__unbleached_data
         else:
             return self.__unbleached_data
@@ -185,10 +170,9 @@ class BeatingImageRow(object):
     @property
     def beating_mask(self):
         if self.__beating_mask is None:
-            probe_estimate = empty(self.data.shape, bool)
             # Stima iniziale
-            for (pos, val) in ndenumerate(self.data):
-                probe_estimate[pos] = val > self.data[:, pos[1]].mean()
+            probe_estimate = apply_along_axis(
+                lambda c: c > c.mean(), 0, self.data)
 
             def build_row_square(l, phi):
                 x = arange(l)
@@ -207,12 +191,14 @@ class BeatingImageRow(object):
             r = 50
             c = probe_estimate.shape[1]
             result_matrix = empty((r, c), float)
+            # TODO supervettorizzare
             for i in range(r):
                 result_matrix[i] = build_row_square(c, i/float(r))
             # Miglioro la stima
             phases = apply_along_axis(find_phase, 1, probe_estimate)
             # Tolgo la ciclicità dalle fasi
             new_phases = empty_like(phases)
+            # TODO cos'è sto schifo
             for n, p in enumerate(phases):
                 if n == 0:
                     new_phases[n] = phases[n]
@@ -332,24 +318,39 @@ class BeatingImage(object):
     def reconstruct_with_update(self, queue, dialog):
         self._rec_on = empty((self.height, self.width), float)
         self._rec_off = empty((self.height, self.width), float)
-        self.taus = empty((self.height, self.width), float)
+        self._taus = empty((self.height, self.width), float)
         start = time.time()
-        pool = multiprocessing.Pool(processes=_ncpus)
-        results = pool.map_async(reconstruct_row_update,
-            [(x,queue,i) for (i,x) in enumerate(self.rows)])
         l = len(self.rows)
-        value = 0
-        dialog.Update(value, newmsg="Reconstructing rows: 0/{0}".format(l))
-        self.unbleached_array = empty((l, self.repetitions, self.width))
-        for n in range(l):
-            result = queue.get()
-            i = result[0]
-            self._rec_on[i], self._rec_off[i] = result[1], result[2]
-            value += 100.0/l
-            self.unbleached_array[i] = result[3]
-            self.taus[i] = result[4]
-            dialog.Update(value,
-                newmsg="Reconstructing rows: {0}/{1}".format(n+1, l))
+        if SETTING_PARALLEL_PROCESSING:
+            pool = multiprocessing.Pool(processes=_ncpus)
+            results = pool.map_async(reconstruct_row_update,
+                [(x,queue,i) for (i,x) in enumerate(self.rows)])
+            value = 0
+            dialog.Update(value, newmsg="Reconstructing rows: 0/{0}".format(l))
+            self.unbleached_array = empty((l, self.repetitions, self.width))
+            for n in range(l):
+                result = queue.get()
+                i = result[0]
+                self._rec_on[i], self._rec_off[i] = result[1], result[2]
+                value += 100.0/l
+                self.unbleached_array[i] = result[3]
+                self._taus[i] = result[4]
+                dialog.Update(value,
+                    newmsg="Reconstructing rows: {0}/{1}".format(n+1, l))
+        else:
+            results = map(reconstruct_row_update,
+                [(x,queue,i) for (i,x) in enumerate(self.rows)])
+            self.unbleached_array = empty((l, self.repetitions, self.width))
+            value = 0
+            for n, result in enumerate(results):
+                result = queue.get()
+                i = result[0]
+                self._rec_on[i], self._rec_off[i] = result[1], result[2]
+                value += 100.0/l
+                self.unbleached_array[i] = result[3]
+                self._taus[i] = result[4]
+                dialog.Update(value,
+                    newmsg="Reconstructing rows: {0}/{1}".format(n+1, l))
         print("Time to reconstruct: {0} s".format(time.time() - start))
         return results
 
@@ -369,6 +370,16 @@ class BeatingImage(object):
     def ratios(self):
         # TODO implementare caching
         return self.reconstructed_on / self.reconstructed_off
+
+    @property
+    def taus(self):
+        pixel_t = 1000 / self.pixel_frequency
+        mask = ma.logical_or(
+                 ma.logical_or(
+                   self.reconstructed_on.mask,
+                   self.reconstructed_off.mask),
+                 isnan(self._taus))
+        return ma.array(self._taus, mask=mask) * pixel_t
 
 
 if __name__ == '__main__':

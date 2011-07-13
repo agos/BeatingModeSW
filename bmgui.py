@@ -272,19 +272,14 @@ class MainFrame(wx.Frame):
             if self.bimg is not None \
             and self.x is not None and self.y is not None:
                 row = data[self.y].compressed()
-                row_taus = self.taus[self.y]
-                mask = ma.logical_or(
-                    data[self.y].mask,
-                    isnan(row_taus))
-                taus = ma.array(row_taus, mask=mask).compressed()
+                taus = self.taus[self.y].compressed()
                 if len(row) > 0:
                     lbl.append("{:.2f}".format(row.max()))
                     lbl.append("{:.2f}".format(row.min()))
                     lbl.append("{:.2f}".format(row.mean()))
                     if len(taus) > 0:
-                        pixel_t = 1000 / self.bimg.pixel_frequency
-                        tau = taus.mean() * pixel_t
-                        stddev = (taus * pixel_t).std()
+                        tau = taus.mean()
+                        stddev = taus.std()
                         lbl.append("{:.2f} ± {:.2f}".format(tau, stddev))
                     else:
                         lbl.append("-")
@@ -300,19 +295,14 @@ class MainFrame(wx.Frame):
             if self.bimg is not None \
             and self.x is not None and self.y is not None:
                 col = data[:,self.x].compressed()
-                col_taus = self.taus[:,self.x]
-                mask = ma.logical_or(
-                    data[:,self.x].mask,
-                    isnan(col_taus))
-                taus = ma.array(col_taus, mask=mask).compressed()
+                taus = self.taus[:,self.x].compressed()
                 if len(col) > 0:
                     lbl.append("{:.2f}".format(col.max()))
                     lbl.append("{:.2f}".format(col.min()))
                     lbl.append("{:.2f}".format(col.mean()))
                     if len(taus) > 0:
-                        pixel_t = 1000 / self.bimg.pixel_frequency
-                        tau = taus.mean() * pixel_t
-                        stddev = (taus * pixel_t).std()
+                        tau = taus.mean()
+                        stddev = taus.std()
                         lbl.append("{:.2f} ± {:.2f}".format(tau, stddev))
                     else:
                         lbl.append("-")
@@ -342,6 +332,7 @@ class MainFrame(wx.Frame):
         self.panelOn.Replot(data=self.rec_on)
         self.ratios = self.bimg.ratios
         self.panelRatios.Replot(data=self.ratios)
+        self.taus = self.bimg.taus
         self.update_stats()
 
     def OnSliderOff(self, e):
@@ -352,6 +343,7 @@ class MainFrame(wx.Frame):
         self.panelOff.Replot(data=self.rec_off)
         self.ratios = self.bimg.ratios
         self.panelRatios.Replot(data=self.ratios)
+        self.taus = self.bimg.taus
         self.update_stats()
 
     def OnSave(self, e):
