@@ -1,0 +1,15 @@
+Beating mode analysis software
+==============================
+
+Usage:
+
+python bmgui.py
+
+or 
+
+python27 bmgui.py
+
+
+To upgrade:
+
+git pull
